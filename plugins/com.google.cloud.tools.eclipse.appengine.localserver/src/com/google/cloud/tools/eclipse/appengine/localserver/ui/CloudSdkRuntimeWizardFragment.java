@@ -15,7 +15,7 @@
 package com.google.cloud.tools.eclipse.appengine.localserver.ui;
 
 import com.google.cloud.tools.eclipse.appengine.localserver.runtime.CloudSdkRuntime;
-import com.google.cloud.tools.eclipse.sdk.CloudSdkProvider;
+// import com.google.cloud.tools.eclipse.sdk.CloudSdkProvider;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -146,10 +146,10 @@ public final class CloudSdkRuntimeWizardFragment extends WizardFragment {
       }
     });
 
-    File location = new CloudSdkProvider().getCloudSdkLocation();
+    /* File location = new CloudSdkProvider().getCloudSdkLocation();
     if (location != null) {
       dirTextBox.setText(location.toString());
-    }
+    } */
   }
 
   private CloudSdkRuntime getRuntimeDelegate() {
