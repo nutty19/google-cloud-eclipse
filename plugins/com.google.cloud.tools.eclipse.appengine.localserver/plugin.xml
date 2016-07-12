@@ -206,4 +206,8 @@
              typeIds="com.google.cloud.tools.eclipse.appengine.localserver.server.apptools">
        </publishTask>
    </extension>
+   <extension point="org.eclipse.jst.server.core.runtimeFacetMappings">
+    <runtimeFacetMapping runtimeTypeId="com.google.cloud.tools.eclipse.runtime.apptools"
+        runtime-component="com.google.cloud.tools.eclipse.runtime.component.custom" version="1"/>
+   </extension>
 </plugin>
