@@ -1,5 +1,6 @@
 package com.google.cloud.tools.eclipse.appengine.localserver.server;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -12,17 +13,29 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 
+import com.google.cloud.tools.eclipse.appengine.localserver.Activator;
+
 public class TargetPlatform {
 
-  static void showConsole(MessageConsole console) throws PartInitException {
-    IWorkbench workbench = PlatformUI.getWorkbench();
-    IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-    if (window != null) { // TODO how to open when this is null?
-      // see https://wiki.eclipse.org/FAQ_How_do_I_find_the_active_workbench_page%3F
-      IWorkbenchPage page = window.getActivePage();
-      IConsoleView view = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
-      view.display(console);
-    }
+  static void showConsole(final MessageConsole console) {
+    Display.getDefault().asyncExec(new Runnable() {
+      public void run() {
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+        if (window != null) { // TODO how to open when this is null?
+          // see https://wiki.eclipse.org/FAQ_How_do_I_find_the_active_workbench_page%3F
+          IWorkbenchPage page = window.getActivePage();
+          IConsoleView view = null;
+          try {
+            view = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
+          } catch (PartInitException ex) {
+            Activator.logError(ex);
+            return;
+          }
+          view.display(console);
+        }
+      }
+    });
   }
 
   static MessageConsole findConsole(String name) {
