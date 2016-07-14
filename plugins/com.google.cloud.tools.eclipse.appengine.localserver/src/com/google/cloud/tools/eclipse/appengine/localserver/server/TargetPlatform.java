@@ -14,6 +14,7 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 
 import com.google.cloud.tools.eclipse.appengine.localserver.Activator;
+import com.google.cloud.tools.eclipse.appengine.localserver.ui.LocalAppEngineConsole;
 
 public class TargetPlatform {
 
@@ -38,16 +39,16 @@ public class TargetPlatform {
     });
   }
 
-  static MessageConsole findConsole(String name) {
+  static LocalAppEngineConsole findConsole(String name, LocalAppEngineServerBehaviour serverBehaviour) {
     ConsolePlugin plugin = ConsolePlugin.getDefault();
     IConsoleManager manager = plugin.getConsoleManager();
     IConsole[] consoles = manager.getConsoles();
     for (int i = 0; i < consoles.length; i++)
        if (name.equals(consoles[i].getName())) {
-          return (MessageConsole) consoles[i];
+          return (LocalAppEngineConsole) consoles[i];
        }
     // console not found, so create a new one
-    MessageConsole console = new MessageConsole(name, null);
+    LocalAppEngineConsole console = new LocalAppEngineConsole(name, serverBehaviour);
     manager.addConsoles(new IConsole[]{console});
     return console;
    }
