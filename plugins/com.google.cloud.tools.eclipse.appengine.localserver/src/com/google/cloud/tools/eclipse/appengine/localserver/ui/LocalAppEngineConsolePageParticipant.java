@@ -11,6 +11,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.wst.server.ui.internal.ImageResource;
 import org.eclipse.wst.server.ui.internal.Messages;
 
+import com.google.cloud.tools.eclipse.appengine.localserver.server.LocalAppEngineServerBehaviour;
+
 /**
  * Adds a stop button for the App Engine runtime to the {@link LocalAppEngineConsole}
  */
@@ -52,7 +54,10 @@ public class LocalAppEngineConsolePageParticipant implements IConsolePagePartici
     terminateAction = new Action(Messages.actionStop) {
         public void run() {
             //code to execute when button is pressed
-          console.getServerBehaviourDelegate().stop(true);
+          LocalAppEngineServerBehaviour serverBehaviour = console.getServerBehaviourDelegate();
+          if (serverBehaviour != null) {
+            serverBehaviour.stop(true);
+          }
           update();
         }
     };
@@ -66,8 +71,11 @@ public class LocalAppEngineConsolePageParticipant implements IConsolePagePartici
   
   private void update() {
     if (terminateAction != null) {
-      IStatus status = console.getServerBehaviourDelegate().canStop();
-      terminateAction.setEnabled(status.isOK());
+      LocalAppEngineServerBehaviour serverBehaviour = console.getServerBehaviourDelegate();
+      if (serverBehaviour != null) {
+        IStatus status = serverBehaviour.canStop();
+        terminateAction.setEnabled(status.isOK());
+      }
     }
   }
  
