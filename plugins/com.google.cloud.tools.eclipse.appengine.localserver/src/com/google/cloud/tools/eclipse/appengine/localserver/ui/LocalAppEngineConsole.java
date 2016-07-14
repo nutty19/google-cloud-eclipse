@@ -15,7 +15,7 @@ public class LocalAppEngineConsole extends MessageConsole {
     this.serverBehaviour = serverBehaviour;
   }
 
-  public LocalAppEngineServerBehaviour getServerBehaviourDeelgate() {
+  public LocalAppEngineServerBehaviour getServerBehaviourDelegate() {
     return serverBehaviour;
   }
 }

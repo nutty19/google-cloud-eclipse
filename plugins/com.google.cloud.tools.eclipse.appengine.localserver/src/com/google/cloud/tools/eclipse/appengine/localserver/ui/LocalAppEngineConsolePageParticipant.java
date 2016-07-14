@@ -26,7 +26,7 @@ public class LocalAppEngineConsolePageParticipant implements IConsolePagePartici
 
   @Override
   public void init(IPageBookViewPage page, IConsole console) {
-    this.console = (LocalAppEngineConsole)console;
+    this.console = (LocalAppEngineConsole) console;
     
     // contribute to toolbar
     IActionBars actionBars = page.getSite().getActionBars();
@@ -52,7 +52,7 @@ public class LocalAppEngineConsolePageParticipant implements IConsolePagePartici
     terminateAction = new Action(Messages.actionStop) {
         public void run() {
             //code to execute when button is pressed
-          console.getServerBehaviourDeelgate().stop(true);
+          console.getServerBehaviourDelegate().stop(true);
           update();
         }
     };
@@ -66,7 +66,7 @@ public class LocalAppEngineConsolePageParticipant implements IConsolePagePartici
   
   private void update() {
     if (terminateAction != null) {
-      IStatus status = console.getServerBehaviourDeelgate().canStop();
+      IStatus status = console.getServerBehaviourDelegate().canStop();
       terminateAction.setEnabled(status.isOK());
     }
   }
