@@ -59,7 +59,7 @@ extends AbstractJavaLaunchConfigurationDelegate {
       runnables.add(deployPath.toFile());
     }
 
-    LocalAppEngineConsole console = TargetPlatform.findConsole(configuration.getName(), serverBehaviour);
+    LocalAppEngineConsole console = ConsoleUtilities.findConsole(configuration.getName(), serverBehaviour);
     console.clearConsole();
     console.activate();
 

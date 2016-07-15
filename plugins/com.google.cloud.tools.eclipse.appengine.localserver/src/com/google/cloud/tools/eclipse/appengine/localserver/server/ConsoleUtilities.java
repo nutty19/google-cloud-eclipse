@@ -5,8 +5,7 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import com.google.cloud.tools.eclipse.appengine.localserver.ui.LocalAppEngineConsole;
 
-public class TargetPlatform {
-
+public class ConsoleUtilities {
   static LocalAppEngineConsole findConsole(String name, LocalAppEngineServerBehaviour serverBehaviour) {
     ConsolePlugin plugin = ConsolePlugin.getDefault();
     IConsoleManager manager = plugin.getConsoleManager();
