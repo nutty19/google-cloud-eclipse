@@ -1,42 +1,11 @@
 package com.google.cloud.tools.eclipse.appengine.localserver.server;
 
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.console.MessageConsole;
-
-import com.google.cloud.tools.eclipse.appengine.localserver.Activator;
 import com.google.cloud.tools.eclipse.appengine.localserver.ui.LocalAppEngineConsole;
 
 public class TargetPlatform {
-
-  static void showConsole(final MessageConsole console) {
-    Display.getDefault().asyncExec(new Runnable() {
-      public void run() {
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-        if (window != null) { // TODO how to open when this is null?
-          // see https://wiki.eclipse.org/FAQ_How_do_I_find_the_active_workbench_page%3F
-          IWorkbenchPage page = window.getActivePage();
-          try {
-            IConsoleView view = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
-            view.display(console);
-          } catch (PartInitException ex) {
-            Activator.logError(ex);
-            return;
-          }
-        }
-      }
-    });
-  }
 
   static LocalAppEngineConsole findConsole(String name, LocalAppEngineServerBehaviour serverBehaviour) {
     ConsolePlugin plugin = ConsolePlugin.getDefault();

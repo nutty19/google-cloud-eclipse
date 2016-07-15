@@ -19,7 +19,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.SocketUtil;
-import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.IServer;
 import org.eclipse.wst.server.core.ServerUtil;
@@ -62,7 +61,7 @@ extends AbstractJavaLaunchConfigurationDelegate {
 
     LocalAppEngineConsole console = TargetPlatform.findConsole(configuration.getName(), serverBehaviour);
     console.clearConsole();
-    TargetPlatform.showConsole(console);
+    console.activate();
 
     LocalAppEngineServerDelegate serverDelegate = LocalAppEngineServerDelegate.getAppEngineServer(server);
     int debugPort = -1;
