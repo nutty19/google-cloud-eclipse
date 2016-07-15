@@ -50,23 +50,24 @@ public class LocalAppEngineConsolePageParticipant implements IConsolePagePartici
     update();
   }
   
-  private void configureToolBar(IToolBarManager mgr) {
+  private void configureToolBar(IToolBarManager toolbarManager) {
     terminateAction = new Action(Messages.actionStop) {
-        public void run() {
-            //code to execute when button is pressed
-          LocalAppEngineServerBehaviour serverBehaviour = console.getServerBehaviourDelegate();
-          if (serverBehaviour != null) {
-            serverBehaviour.stop(true);
-          }
-          update();
+      @Override
+      public void run() {
+        //code to execute when button is pressed
+        LocalAppEngineServerBehaviour serverBehaviour = console.getServerBehaviourDelegate();
+        if (serverBehaviour != null) {
+          serverBehaviour.stop(true);
         }
+        update();
+      }
     };
     terminateAction.setToolTipText(Messages.actionStopToolTip);
     terminateAction.setImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_ELCL_STOP));
     terminateAction.setHoverImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_CLCL_STOP));
     terminateAction.setDisabledImageDescriptor(ImageResource.getImageDescriptor(ImageResource.IMG_DLCL_STOP));
     
-    mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, terminateAction);
+    toolbarManager.appendToGroup(IConsoleConstants.LAUNCH_GROUP, terminateAction);
   }
   
   private void update() {
