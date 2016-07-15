@@ -65,9 +65,9 @@ public class LocalAppEngineServerBehaviour extends ServerBehaviourDelegate {
   public IStatus canStop() {
     int serverState = getServer().getServerState();
     if ((serverState != IServer.STATE_STOPPING) && (serverState != IServer.STATE_STOPPED)) {
-      return new Status(IStatus.OK, Activator.PLUGIN_ID, null);
+      return Status.OK_STATUS;
     } else {
-      return new Status(IStatus.ERROR, Activator.PLUGIN_ID, null);
+      return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Stop in progress");
     }
   }
 
