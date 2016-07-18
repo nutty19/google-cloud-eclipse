@@ -18,7 +18,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 
-import com.google.cloud.tools.eclipse.appengine.newproject.AppEngineFacet;
+import com.google.cloud.tools.eclipse.appengine.facets.AppEngineFacet;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;

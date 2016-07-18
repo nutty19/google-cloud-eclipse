@@ -1,4 +1,4 @@
-package com.google.cloud.tools.eclipse.appengine.newproject;
+package com.google.cloud.tools.eclipse.appengine.facets;
 
 import java.io.File;
 import java.util.HashSet;
