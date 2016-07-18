@@ -25,7 +25,7 @@ import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 
-import com.google.cloud.tools.eclipse.appengine.facets.AppEngineFacet;
+import com.google.cloud.tools.eclipse.appengine.facets.FacetInstallDelegate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -75,8 +75,8 @@ class CreateAppEngineStandardWtpProject extends WorkspaceModifyOperation {
       installWebFacet(facetedProject, progress.newChild(10));
       
       // must happen after other two facets because the appengine facet requires them
-      AppEngineFacet.installAppEngineFacet(facetedProject, progress.newChild(10));
-      AppEngineFacet.installAppEngineRuntime(facetedProject, progress.newChild(20));
+      FacetInstallDelegate.installAppEngineFacet(facetedProject, progress.newChild(10));
+      FacetInstallDelegate.installAppEngineRuntime(facetedProject, progress.newChild(20));
     } catch (ExecutionException ex) {
       throw new InvocationTargetException(ex, ex.getMessage());
     } finally {
