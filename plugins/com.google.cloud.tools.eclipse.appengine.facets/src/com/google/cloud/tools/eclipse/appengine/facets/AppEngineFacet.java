@@ -10,5 +10,4 @@ public class AppEngineFacet {
   static final String INSTALL_ACTION_ID = "com.google.cloud.tools.eclipse.appengine.facet.install.action";
   static final String UNINSTALL_ACTION_ID = "com.google.cloud.tools.eclipse.appengine.facet.uninstall.action";
 
-
 }
