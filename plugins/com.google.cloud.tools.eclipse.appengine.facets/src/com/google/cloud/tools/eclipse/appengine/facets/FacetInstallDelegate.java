@@ -56,13 +56,13 @@ public class FacetInstallDelegate implements IDelegate {
     Set<IRuntime> runtimes = RuntimeManager.getRuntimes(facets);
     project.setTargetedRuntimes(runtimes, monitor);
 
-    if (RuntimeManager.isRuntimeDefined(AppEngineFacet.DEFAULT_RUNTIME_NAME)) {
-      IRuntime appEngineRuntime = RuntimeManager.getRuntime(AppEngineFacet.DEFAULT_RUNTIME_NAME);
+    if (RuntimeManager.isRuntimeDefined(AppEngineStandardFacet.DEFAULT_RUNTIME_NAME)) {
+      IRuntime appEngineRuntime = RuntimeManager.getRuntime(AppEngineStandardFacet.DEFAULT_RUNTIME_NAME);
       project.setPrimaryRuntime(appEngineRuntime, monitor);
     } else { // Create a new App Engine runtime
-      IRuntimeType appEngineRuntimeType = ServerCore.findRuntimeType(AppEngineFacet.DEFAULT_RUNTIME_ID);
+      IRuntimeType appEngineRuntimeType = ServerCore.findRuntimeType(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
       if (appEngineRuntimeType == null) {
-        throw new NullPointerException("Could not find " + AppEngineFacet.DEFAULT_RUNTIME_NAME + " runtime type");
+        throw new NullPointerException("Could not find " + AppEngineStandardFacet.DEFAULT_RUNTIME_NAME + " runtime type");
       }
 
       IRuntimeWorkingCopy appEngineRuntimeWorkingCopy
@@ -87,8 +87,8 @@ public class FacetInstallDelegate implements IDelegate {
   public static void installAppEngineFacet(IFacetedProject facetedProject, IProgressMonitor monitor)
       throws CoreException {
     IFacetedProjectWorkingCopy workingCopy = facetedProject.createWorkingCopy();
-    IProjectFacet appEngineFacet = ProjectFacetsManager.getProjectFacet(AppEngineFacet.APP_ENGINE_FACET_ID);
-    IProjectFacetVersion appEngineFacetVersion = appEngineFacet.getVersion(AppEngineFacet.APP_ENGINE_FACET_VERSION);
+    IProjectFacet appEngineFacet = ProjectFacetsManager.getProjectFacet(AppEngineStandardFacet.ID);
+    IProjectFacetVersion appEngineFacetVersion = appEngineFacet.getVersion(AppEngineStandardFacet.VERSION);
     workingCopy.addProjectFacet(appEngineFacetVersion);
     workingCopy.commitChanges(monitor);
   }
