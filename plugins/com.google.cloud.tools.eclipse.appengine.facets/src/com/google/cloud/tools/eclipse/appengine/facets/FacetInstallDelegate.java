@@ -29,6 +29,7 @@ import org.eclipse.wst.server.core.IRuntimeType;
 import org.eclipse.wst.server.core.IRuntimeWorkingCopy;
 import org.eclipse.wst.server.core.ServerCore;
 
+import com.google.cloud.tools.appengine.cloudsdk.CloudSdk;
 import com.google.cloud.tools.eclipse.sdk.CloudSdkProvider;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 
@@ -67,11 +68,15 @@ public class FacetInstallDelegate implements IDelegate {
 
       IRuntimeWorkingCopy appEngineRuntimeWorkingCopy
           = appEngineRuntimeType.createRuntime(null, monitor);
-      File sdkLocation = new CloudSdkProvider(null).getCloudSdkLocation();
-      if (sdkLocation != null) {
-        IPath sdkPath = Path.fromOSString(sdkLocation.getAbsolutePath());
-        appEngineRuntimeWorkingCopy.setLocation(sdkPath);
+      CloudSdk cloudSdk = new CloudSdkProvider().getCloudSdk();
+      if (cloudSdk != null) {
+        java.nio.file.Path sdkLocation = cloudSdk.getJavaAppEngineSdkPath();
+        if (sdkLocation != null) {
+          IPath sdkPath = Path.fromOSString(sdkLocation.toAbsolutePath().toString());
+          appEngineRuntimeWorkingCopy.setLocation(sdkPath);
+        }
       }
+
       org.eclipse.wst.server.core.IRuntime appEngineServerRuntime
           = appEngineRuntimeWorkingCopy.save(true, monitor);
       IRuntime appEngineFacetRuntime = FacetUtil.getRuntime(appEngineServerRuntime);
