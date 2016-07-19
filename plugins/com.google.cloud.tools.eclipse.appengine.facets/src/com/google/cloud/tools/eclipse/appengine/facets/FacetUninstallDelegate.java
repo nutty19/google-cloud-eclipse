@@ -30,7 +30,7 @@ public class FacetUninstallDelegate implements IDelegate {
     int appEngineContainerIndex = 0;
     boolean isAppEngineSdkPresent = false;
     for (int i = 0; i < rawClasspath.length; i++) {
-      if (rawClasspath[i].getPath().toString().equals(AppEngineSdkClasspathContainer.CONTAINER_ID)) {
+      if (AppEngineSdkClasspathContainer.CONTAINER_ID.equals(rawClasspath[i].getPath().toString())) {
         isAppEngineSdkPresent = true;
       } else {
         newClasspath[appEngineContainerIndex++] = rawClasspath[i];
