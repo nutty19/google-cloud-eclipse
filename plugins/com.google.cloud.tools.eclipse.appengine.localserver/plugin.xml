@@ -71,6 +71,18 @@
                version="1.7">
          </facet>
       </supported>
+      <adapter>
+         <runtime-component
+               id="com.google.appengine.standard.runtime">
+         </runtime-component>
+         <!-- TODO non-internal class to use here for factory -->
+         <factory
+               class="org.eclipse.jst.server.core.internal.RuntimeClasspathProvider$Factory">
+         </factory>
+         <type
+               class="org.eclipse.jst.common.project.facet.core.IClasspathProvider">
+         </type>
+      </adapter>
    </extension>
    <extension
          point="org.eclipse.jst.server.core.runtimeFacetMappings">
