@@ -1,6 +1,5 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,11 +33,6 @@ import com.google.cloud.tools.eclipse.sdk.CloudSdkProvider;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 
 public class FacetInstallDelegate implements IDelegate {
-  /**
-   * When the user clicks the "Apply" or "OK" button in the Project Facet page,
-   * this function is called through {@link FacetedProject#mergeChanges} and if this function
-   * exits without an exception, the facet will be added to the project via {@link FacetedProject}.
-   */
   @Override
   public void execute(IProject project,
                       IProjectFacetVersion version,
@@ -89,15 +83,30 @@ public class FacetInstallDelegate implements IDelegate {
     }
   }
 
+  /**
+   * Checks to see if <code>facetedProject</code> has the App Engine facet installed. If not, it installs
+   * the App Engine facet.
+   *
+   * @param facetedProject the workspace faceted project????????/
+   * @param monitor the progress monitor
+   * @throws CoreException
+   */
   public static void installAppEngineFacet(IFacetedProject facetedProject, IProgressMonitor monitor)
       throws CoreException {
-    IFacetedProjectWorkingCopy workingCopy = facetedProject.createWorkingCopy();
     IProjectFacet appEngineFacet = ProjectFacetsManager.getProjectFacet(AppEngineStandardFacet.ID);
     IProjectFacetVersion appEngineFacetVersion = appEngineFacet.getVersion(AppEngineStandardFacet.VERSION);
-    workingCopy.addProjectFacet(appEngineFacetVersion);
-    workingCopy.commitChanges(monitor);
+
+    // TODO: fix - this something cause the following error-------------------------------
+    if (!facetedProject.hasProjectFacet(appEngineFacet)) {
+      IFacetedProjectWorkingCopy workingCopy = facetedProject.createWorkingCopy();
+      workingCopy.addProjectFacet(appEngineFacetVersion);
+      workingCopy.commitChanges(monitor);
+    }
   }
 
+  /**
+   * Adds jars associated with the App Engine facet
+   */
   private void updateClasspath(IProject project, IProgressMonitor monitor) throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
     IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
