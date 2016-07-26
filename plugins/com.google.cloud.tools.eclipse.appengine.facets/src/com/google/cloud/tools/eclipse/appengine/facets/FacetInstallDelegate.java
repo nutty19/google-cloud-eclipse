@@ -1,6 +1,8 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
@@ -44,16 +46,30 @@ public class FacetInstallDelegate implements IDelegate {
 
   }
 
+  /**
+   * If App Engine runtimes exist in the workspace, add them to the list of targeted runtimes
+   * of <code>project</code>, otherwise create a new App Engine runtime and add it to the list
+   * of targeted runtimes.
+   *
+   * @param project the workspace faceted project
+   * @param monitor the progress monitor
+   * @throws CoreException
+   */
   public static void installAppEngineRuntime(IFacetedProject project, IProgressMonitor monitor)
       throws CoreException {
     Set<IProjectFacetVersion> facets = new HashSet<>();
     facets.add(WebFacetUtils.WEB_25);
     Set<IRuntime> runtimes = RuntimeManager.getRuntimes(facets);
     project.setTargetedRuntimes(runtimes, monitor);
+    org.eclipse.wst.server.core.IRuntime[] appEngineRuntimes = getAppEngineRuntime();
 
-    if (RuntimeManager.isRuntimeDefined(AppEngineStandardFacet.DEFAULT_RUNTIME_NAME)) {
-      IRuntime appEngineRuntime = RuntimeManager.getRuntime(AppEngineStandardFacet.DEFAULT_RUNTIME_NAME);
-      project.setPrimaryRuntime(appEngineRuntime, monitor);
+    if (appEngineRuntimes.length > 0) {
+      IRuntime appEngineFacetRuntime = null;
+      for(int index = 0; index < appEngineRuntimes.length; index++) {
+        appEngineFacetRuntime = FacetUtil.getRuntime(appEngineRuntimes[index]);
+        project.addTargetedRuntime(appEngineFacetRuntime, monitor);
+      }
+      project.setPrimaryRuntime(appEngineFacetRuntime, monitor);
     } else { // Create a new App Engine runtime
       IRuntimeType appEngineRuntimeType = ServerCore.findRuntimeType(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
       if (appEngineRuntimeType == null) {
@@ -87,7 +103,7 @@ public class FacetInstallDelegate implements IDelegate {
    * Checks to see if <code>facetedProject</code> has the App Engine facet installed. If not, it installs
    * the App Engine facet.
    *
-   * @param facetedProject the workspace faceted project????????/
+   * @param facetedProject the workspace faceted project
    * @param monitor the progress monitor
    * @throws CoreException
    */
@@ -120,6 +136,22 @@ public class FacetInstallDelegate implements IDelegate {
                                    },
                                    true /* isExported */);
     javaProject.setRawClasspath(newClasspath, monitor);
+  }
+
+  // TODO: find a more general form of this method
+  private static org.eclipse.wst.server.core.IRuntime[] getAppEngineRuntime() {
+    org.eclipse.wst.server.core.IRuntime[] allRuntimes = ServerCore.getRuntimes();
+    List<org.eclipse.wst.server.core.IRuntime> appEngineRuntimes = new ArrayList<>();
+
+    for (int i = 0; i < allRuntimes.length; i++) {
+      if (allRuntimes[i].getRuntimeType().getId().equals(AppEngineStandardFacet.DEFAULT_RUNTIME_ID)) {
+        appEngineRuntimes.add(allRuntimes[i]);
+      }
+    }
+
+    org.eclipse.wst.server.core.IRuntime[] appEngineRuntimesArray =
+        new org.eclipse.wst.server.core.IRuntime[appEngineRuntimes.size()];
+    return appEngineRuntimes.toArray(appEngineRuntimesArray);
   }
 
 }

@@ -68,8 +68,8 @@ public class FacetUninstallDelegate implements IDelegate {
           Set<IRuntime> targetedRuntimes = facetedProject.getTargetedRuntimes();
 
           for (IRuntime aRuntime : targetedRuntimes) {
-            org.eclipse.wst.server.core.IRuntime runtime2 = FacetUtil.getRuntime(aRuntime);
-            if (runtime2.getRuntimeType().getId().equals(AppEngineStandardFacet.DEFAULT_RUNTIME_ID)) {
+            org.eclipse.wst.server.core.IRuntime serverRuntime = FacetUtil.getRuntime(aRuntime);
+            if (serverRuntime.getRuntimeType().getId().equals(AppEngineStandardFacet.DEFAULT_RUNTIME_ID)) {
               facetedProject.removeTargetedRuntime(aRuntime, monitor);
             }
           }
