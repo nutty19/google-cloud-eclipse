@@ -51,9 +51,9 @@ public class FacetInstallDelegate implements IDelegate {
                       Object config,
                       IProgressMonitor monitor) throws CoreException {
     if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
-      updateClasspath(project, monitor);
+      addAppEngineJarsToClasspath(project, monitor);
       IFacetedProject facetedProject = ProjectFacetsManager.create(project);
-      AppEngineStandardFacet.installAppEngineRuntime(facetedProject, monitor);
+      installAppEngineRuntime(facetedProject, monitor);
       createConfigFiles(project, monitor);
     }
 
@@ -135,20 +135,30 @@ public class FacetInstallDelegate implements IDelegate {
   }
 
   /**
-   * Adds jars associated with the App Engine facet
+   * Adds jars associated with the App Engine facet if they don't already exist in
+   * <code>project</code>
    */
-  private void updateClasspath(IProject project, IProgressMonitor monitor) throws CoreException {
+  private void addAppEngineJarsToClasspath(IProject project, IProgressMonitor monitor)
+      throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
     IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
+    IClasspathEntry appEngineContainer = JavaCore.newContainerEntry(new Path(AppEngineSdkClasspathContainer.CONTAINER_ID),
+        new IAccessRule[0],
+        new IClasspathAttribute[]{
+            UpdateClasspathAttributeUtil.createDependencyAttribute(true /*isWebApp */)
+        },
+        true /* isExported */);
+
+    // Check if App Engine container entry already exists
+    for (int i = 0, length = rawClasspath.length; i < length; i++) {
+      if (rawClasspath[i].equals(appEngineContainer)) {
+        return;
+      }
+    }
+
     IClasspathEntry[] newClasspath = new IClasspathEntry[rawClasspath.length + 1];
     System.arraycopy(rawClasspath, 0, newClasspath, 0, rawClasspath.length);
-    newClasspath[newClasspath.length - 1] =
-        JavaCore.newContainerEntry(new Path(AppEngineSdkClasspathContainer.CONTAINER_ID),
-                                   new IAccessRule[0],
-                                   new IClasspathAttribute[]{
-                                       UpdateClasspathAttributeUtil.createDependencyAttribute(true /*isWebApp */)
-                                   },
-                                   true /* isExported */);
+    newClasspath[newClasspath.length - 1] = appEngineContainer;
     javaProject.setRawClasspath(newClasspath, monitor);
   }
 
