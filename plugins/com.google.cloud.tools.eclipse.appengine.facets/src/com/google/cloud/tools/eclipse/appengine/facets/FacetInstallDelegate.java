@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -73,16 +74,17 @@ public class FacetInstallDelegate implements IDelegate {
     Set<IProjectFacetVersion> facets = new HashSet<>();
     facets.add(WebFacetUtils.WEB_25);
     Set<IRuntime> runtimes = RuntimeManager.getRuntimes(facets);
-    project.setTargetedRuntimes(runtimes, monitor);
+    final IFacetedProjectWorkingCopy fpwc = project.createWorkingCopy();
+    fpwc.setTargetedRuntimes(runtimes);
     org.eclipse.wst.server.core.IRuntime[] appEngineRuntimes = getAppEngineRuntime();
 
     if (appEngineRuntimes.length > 0) {
       IRuntime appEngineFacetRuntime = null;
       for(int index = 0; index < appEngineRuntimes.length; index++) {
         appEngineFacetRuntime = FacetUtil.getRuntime(appEngineRuntimes[index]);
-        project.addTargetedRuntime(appEngineFacetRuntime, monitor);
+        fpwc.addTargetedRuntime(appEngineFacetRuntime);
       }
-      project.setPrimaryRuntime(appEngineFacetRuntime, monitor);
+      fpwc.setPrimaryRuntime(appEngineFacetRuntime);
     } else { // Create a new App Engine runtime
       IRuntimeType appEngineRuntimeType =
           ServerCore.findRuntimeType(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
@@ -108,9 +110,25 @@ public class FacetInstallDelegate implements IDelegate {
         throw new NullPointerException("Could not locate App Engine facet runtime");
       }
 
-      project.addTargetedRuntime(appEngineFacetRuntime, monitor);
-      project.setPrimaryRuntime(appEngineFacetRuntime, monitor);
+      fpwc.addTargetedRuntime(appEngineFacetRuntime);
+      fpwc.setPrimaryRuntime(appEngineFacetRuntime);
     }
+
+    // This is to prevent the error "Cannot modify faceted project from within a facet delegate"
+    Job commitChanges = new Job("Add App Engine runtime to " + fpwc.getProjectName()) {
+
+      @Override
+      protected IStatus run(IProgressMonitor monitor) {
+        try {
+          fpwc.commitChanges(monitor);
+        } catch (CoreException e) {
+          return e.getStatus();
+        }
+        return Status.OK_STATUS;
+      }
+
+    };
+    commitChanges.schedule();
   }
 
   /**
