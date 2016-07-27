@@ -1,15 +1,21 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -35,6 +41,10 @@ import com.google.cloud.tools.eclipse.sdk.CloudSdkProvider;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 
 public class FacetInstallDelegate implements IDelegate {
+  private final static String APPENGINE_WEB_XML = "appengine-web.xml";
+  private final static String APPENGINE_WEB_XML_PATH = "src/main/webapp/WEB-INF/appengine-web.xml";
+  private final static String APPENGINE_WEB_XML_DIR = "src/main/webapp/WEB-INF/";
+
   @Override
   public void execute(IProject project,
                       IProjectFacetVersion version,
@@ -42,6 +52,9 @@ public class FacetInstallDelegate implements IDelegate {
                       IProgressMonitor monitor) throws CoreException {
     if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
       updateClasspath(project, monitor);
+      IFacetedProject facetedProject = ProjectFacetsManager.create(project);
+      AppEngineStandardFacet.installAppEngineRuntime(facetedProject, monitor);
+      createConfigFiles(project, monitor);
     }
 
   }
@@ -71,13 +84,14 @@ public class FacetInstallDelegate implements IDelegate {
       }
       project.setPrimaryRuntime(appEngineFacetRuntime, monitor);
     } else { // Create a new App Engine runtime
-      IRuntimeType appEngineRuntimeType = ServerCore.findRuntimeType(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
+      IRuntimeType appEngineRuntimeType =
+          ServerCore.findRuntimeType(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
       if (appEngineRuntimeType == null) {
         throw new NullPointerException("Could not find " + AppEngineStandardFacet.DEFAULT_RUNTIME_NAME + " runtime type");
       }
 
-      IRuntimeWorkingCopy appEngineRuntimeWorkingCopy
-          = appEngineRuntimeType.createRuntime(null, monitor);
+      IRuntimeWorkingCopy appEngineRuntimeWorkingCopy =
+          appEngineRuntimeType.createRuntime(null, monitor);
       CloudSdk cloudSdk = new CloudSdkProvider().getCloudSdk();
       if (cloudSdk != null) {
         java.nio.file.Path sdkLocation = cloudSdk.getJavaAppEngineSdkPath();
@@ -87,8 +101,8 @@ public class FacetInstallDelegate implements IDelegate {
         }
       }
 
-      org.eclipse.wst.server.core.IRuntime appEngineServerRuntime
-          = appEngineRuntimeWorkingCopy.save(true, monitor);
+      org.eclipse.wst.server.core.IRuntime appEngineServerRuntime =
+          appEngineRuntimeWorkingCopy.save(true, monitor);
       IRuntime appEngineFacetRuntime = FacetUtil.getRuntime(appEngineServerRuntime);
       if (appEngineFacetRuntime == null) {
         throw new NullPointerException("Could not locate App Engine facet runtime");
@@ -154,4 +168,44 @@ public class FacetInstallDelegate implements IDelegate {
     return appEngineRuntimes.toArray(appEngineRuntimesArray);
   }
 
+  /**
+   * Creates an appengine-web.xml file in the WEB-INF folder if it doesn't exist
+   * @throws CoreException
+   */
+  private static void createConfigFiles(IProject project, IProgressMonitor monitor)
+      throws CoreException {
+    IFile appEngineWebXml = project.getFile(APPENGINE_WEB_XML_PATH);
+    if (appEngineWebXml.exists()) {
+      return;
+    }
+
+    IFolder configDir = project.getFolder(APPENGINE_WEB_XML_DIR);
+    if(!configDir.exists()) {
+      Path configDirPath = new Path(APPENGINE_WEB_XML_DIR);
+      IContainer current = project;
+      for( int i = 0, n = configDirPath.segmentCount(); i < n; i++ )
+      {
+        final String name = configDirPath.segment( i );
+        IFolder folder = current.getFolder( new Path( name ) );
+
+        if(!folder.exists()) {
+          folder.create( true, true, null );
+        }
+        current = folder;
+      }
+      configDir = (IFolder) current;
+    }
+
+    InputStream in = FacetInstallDelegate.class.getResourceAsStream("templates/" + APPENGINE_WEB_XML + ".ftl");
+    if (in == null) {
+      IStatus status = new Status(Status.ERROR, "todo plugin ID",
+          "Could not load template for " + APPENGINE_WEB_XML, null);
+      throw new CoreException(status);
+    }
+
+    IFile configFile = configDir.getFile(APPENGINE_WEB_XML);
+    if (!configFile.exists()) {
+      configFile.create(in, true, monitor);
+    }
+  }
 }
