@@ -25,12 +25,12 @@ public class FacetUninstallDelegate implements IDelegate {
   @Override
   public void execute(IProject project, IProjectFacetVersion version, Object config,
       IProgressMonitor monitor) throws CoreException {
+    // TODO: what is the complete scenerio for maven project?
     if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
       SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
       updateClasspath(project, subMonitor.newChild(50));
       uninstallAppEngineRuntime(project, subMonitor.newChild(50));
     }
-
   }
 
   private void updateClasspath(IProject project, IProgressMonitor monitor) throws CoreException {

@@ -71,6 +71,7 @@ public class FacetInstallDelegate implements IDelegate {
    */
   public static void installAppEngineRuntime(IFacetedProject project, IProgressMonitor monitor)
       throws CoreException {
+    // TODO what happens if the project already has App Engine runtime?
     Set<IProjectFacetVersion> facets = new HashSet<>();
     facets.add(WebFacetUtils.WEB_25);
     Set<IRuntime> runtimes = RuntimeManager.getRuntimes(facets);
@@ -141,6 +142,7 @@ public class FacetInstallDelegate implements IDelegate {
    */
   public static void installAppEngineFacet(IFacetedProject facetedProject, IProgressMonitor monitor)
       throws CoreException {
+    // TODO: also install Dynamic Web Module 2.5 and Java 1.7?
     IProjectFacet appEngineFacet = ProjectFacetsManager.getProjectFacet(AppEngineStandardFacet.ID);
     IProjectFacetVersion appEngineFacetVersion = appEngineFacet.getVersion(AppEngineStandardFacet.VERSION);
 
