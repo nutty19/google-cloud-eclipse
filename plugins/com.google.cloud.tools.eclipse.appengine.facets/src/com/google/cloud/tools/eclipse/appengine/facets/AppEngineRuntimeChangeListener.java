@@ -16,7 +16,7 @@ import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntimeComponent;
 
 
-public class RuntimeChangeListener implements IFacetedProjectListener {
+public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
 
   @Override
   public void handleEvent(IFacetedProjectEvent event) {
