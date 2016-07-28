@@ -19,9 +19,17 @@ import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jst.common.project.facet.core.JavaFacet;
+import org.eclipse.jst.common.project.facet.core.JavaFacetInstallConfig;
 import org.eclipse.jst.j2ee.classpathdep.UpdateClasspathAttributeUtil;
+import org.eclipse.jst.j2ee.project.facet.IJ2EEFacetInstallDataModelProperties;
+import org.eclipse.jst.j2ee.project.facet.IJ2EEModuleFacetInstallDataModelProperties;
+import org.eclipse.jst.j2ee.web.project.facet.IWebFacetInstallDataModelProperties;
+import org.eclipse.jst.j2ee.web.project.facet.WebFacetInstallDataModelProvider;
 import org.eclipse.jst.j2ee.web.project.facet.WebFacetUtils;
 import org.eclipse.jst.server.core.FacetUtil;
+import org.eclipse.wst.common.frameworks.datamodel.DataModelFactory;
+import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
@@ -141,7 +149,10 @@ public class FacetInstallDelegate implements IDelegate {
    */
   public static void installAppEngineFacet(IFacetedProject facetedProject, IProgressMonitor monitor)
       throws CoreException {
-    // TODO: also install Dynamic Web Module 2.5 and Java 1.7?
+    // Install required App Engine facets Java 1.7 and Dynamic Web Module 2.5
+    installJavaFacet(facetedProject, monitor);
+    installWebFacet(facetedProject, monitor);
+
     IProjectFacet appEngineFacet = ProjectFacetsManager.getProjectFacet(AppEngineStandardFacet.ID);
     IProjectFacetVersion appEngineFacetVersion = appEngineFacet.getVersion(AppEngineStandardFacet.VERSION);
 
@@ -150,6 +161,40 @@ public class FacetInstallDelegate implements IDelegate {
       workingCopy.addProjectFacet(appEngineFacetVersion);
       workingCopy.commitChanges(monitor);
     }
+  }
+
+  /**
+   * Installs Java 1.7 facet if it doesn't already exits in <code>factedProject</code>
+   */
+  private static void installJavaFacet(IFacetedProject facetedProject, IProgressMonitor monitor)
+      throws CoreException {
+    if (facetedProject.hasProjectFacet(JavaFacet.VERSION_1_7)) {
+      return;
+    }
+
+    JavaFacetInstallConfig javaConfig = new JavaFacetInstallConfig();
+    List<IPath> sourcePaths = new ArrayList<>();
+    sourcePaths.add(new Path("src/main/java"));
+    sourcePaths.add(new Path("src/test/java"));
+    javaConfig.setSourceFolders(sourcePaths);
+    facetedProject.installProjectFacet(JavaFacet.VERSION_1_7, javaConfig, monitor);
+  }
+
+  /**
+   * Installs Dynamic Web Module 2.5 facet if it doesn't already exits in <code>factedProject</code>
+   */
+  private static void installWebFacet(IFacetedProject facetedProject, IProgressMonitor monitor)
+      throws CoreException {
+    if (facetedProject.hasProjectFacet(WebFacetUtils.WEB_25)) {
+      return;
+    }
+
+    IDataModel webModel = DataModelFactory.createDataModel(new WebFacetInstallDataModelProvider());
+    webModel.setBooleanProperty(IJ2EEModuleFacetInstallDataModelProperties.ADD_TO_EAR, false);
+    webModel.setBooleanProperty(IJ2EEFacetInstallDataModelProperties.GENERATE_DD, false);
+    webModel.setBooleanProperty(IWebFacetInstallDataModelProperties.INSTALL_WEB_LIBRARY, false);
+    webModel.setStringProperty(IWebFacetInstallDataModelProperties.CONFIG_FOLDER, "src/main/webapp");
+    facetedProject.installProjectFacet(WebFacetUtils.WEB_25, webModel, monitor);
   }
 
   /**
@@ -198,7 +243,6 @@ public class FacetInstallDelegate implements IDelegate {
 
   /**
    * Creates an appengine-web.xml file in the WEB-INF folder if it doesn't exist
-   * @throws CoreException
    */
   private static void createConfigFiles(IProject project, IProgressMonitor monitor)
       throws CoreException {
