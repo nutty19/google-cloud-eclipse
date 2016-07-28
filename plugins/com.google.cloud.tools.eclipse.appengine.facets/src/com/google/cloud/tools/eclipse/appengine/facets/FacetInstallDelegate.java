@@ -1,10 +1,7 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.google.cloud.tools.appengine.cloudsdk.CloudSdk;
+import com.google.cloud.tools.eclipse.util.MavenUtils;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -37,9 +34,11 @@ import org.eclipse.wst.server.core.IRuntimeType;
 import org.eclipse.wst.server.core.IRuntimeWorkingCopy;
 import org.eclipse.wst.server.core.ServerCore;
 
-import com.google.cloud.tools.appengine.cloudsdk.CloudSdk;
-import com.google.cloud.tools.eclipse.sdk.CloudSdkProvider;
-import com.google.cloud.tools.eclipse.util.MavenUtils;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FacetInstallDelegate implements IDelegate {
   private final static String APPENGINE_WEB_XML = "appengine-web.xml";
@@ -93,9 +92,9 @@ public class FacetInstallDelegate implements IDelegate {
         throw new NullPointerException("Could not find " + AppEngineStandardFacet.DEFAULT_RUNTIME_NAME + " runtime type");
       }
 
-      IRuntimeWorkingCopy appEngineRuntimeWorkingCopy =
-          appEngineRuntimeType.createRuntime(null, monitor);
-      CloudSdk cloudSdk = new CloudSdkProvider().getCloudSdk();
+      IRuntimeWorkingCopy appEngineRuntimeWorkingCopy
+          = appEngineRuntimeType.createRuntime(null, monitor);
+      CloudSdk cloudSdk = new CloudSdk.Builder().build();
       if (cloudSdk != null) {
         java.nio.file.Path sdkLocation = cloudSdk.getJavaAppEngineSdkPath();
         if (sdkLocation != null) {
@@ -146,7 +145,6 @@ public class FacetInstallDelegate implements IDelegate {
     IProjectFacet appEngineFacet = ProjectFacetsManager.getProjectFacet(AppEngineStandardFacet.ID);
     IProjectFacetVersion appEngineFacetVersion = appEngineFacet.getVersion(AppEngineStandardFacet.VERSION);
 
-    // TODO: fix - this something cause the following error-------------------------------
     if (!facetedProject.hasProjectFacet(appEngineFacet)) {
       IFacetedProjectWorkingCopy workingCopy = facetedProject.createWorkingCopy();
       workingCopy.addProjectFacet(appEngineFacetVersion);

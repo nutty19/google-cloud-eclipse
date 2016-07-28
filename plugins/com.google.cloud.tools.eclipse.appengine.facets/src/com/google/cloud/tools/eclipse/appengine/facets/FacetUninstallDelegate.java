@@ -1,7 +1,5 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
-import java.util.Set;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,6 +17,8 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
+
+import java.util.Set;
 
 public class FacetUninstallDelegate implements IDelegate {
 
