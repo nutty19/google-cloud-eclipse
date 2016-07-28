@@ -12,7 +12,7 @@
             version="1">
          <moduleType
                types="jst.web"
-               versions="[2.2-2.5]">
+               versions="2.5">
          </moduleType>
          <moduleType
                types="java"
@@ -64,7 +64,7 @@
          </facet>
          <facet
                id="jst.web"
-               version="[2.2-2.5]">
+               version="2.5">
          </facet>
          <facet
                id="java"
@@ -113,7 +113,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="com.google.cloud.tools.eclipse.appengine.localserver.server.LocalAppEngineServerLaunchConfigurationDelegate"
-            id="com.google.appengine.launchConfigType"
+            id="com.google.appengine.AppToolsLaunchConfigurationType"
             modes="run, debug, profile"
             name="%apptoolsServerTypeName">
       </launchConfigurationType>
@@ -125,6 +125,14 @@
             icon="platform:/plugin/com.google.cloud.tools.eclipse.appengine.ui/icons/gcp-16x16.png"
             id="com.google.appengine.launchConfigurationTypeImages">
       </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="com.google.cloud.tools.eclipse.appengine.localserver.ui.AppEngineTabGroup"
+            id="com.google.cloud.tools.eclipse.appengine.localserver.ui.AppEngineTabGroup"
+            type="com.google.appengine.AppToolsLaunchConfigurationType">
+      </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.ui.console.consolePageParticipants">
