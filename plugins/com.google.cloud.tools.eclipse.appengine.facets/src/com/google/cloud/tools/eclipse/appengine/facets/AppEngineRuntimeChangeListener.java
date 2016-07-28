@@ -23,7 +23,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
   public void handleEvent(IFacetedProjectEvent event) {
     // PRIMARY_RUNTIME_CHANGED occurs in scenarios including when you select runtimes on the
     // "New Faceted Project" wizard and the "New Dynamic Web Project" wizard.
-    // IFacetedProjectEvent.Type.TARGETED_RUNTIMES_CHANGED does mnot happen
+    // IFacetedProjectEvent.Type.TARGETED_RUNTIMES_CHANGED does not happen
     if (event.getType() != IFacetedProjectEvent.Type.PRIMARY_RUNTIME_CHANGED) {
       return;
     }
@@ -38,12 +38,13 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
       return;
     }
 
-    // Check to see if the App Engine facet has been installed in the project
+    // Check if the App Engine facet has been installed in the project
     final IFacetedProject project = runtimeChangeEvent.getProject();
     if (AppEngineStandardFacet.hasAppEngineFacet(project)) {
       return;
     }
 
+    // TODO: do we need to run this as a job?
     // Add the App Engine facet
     Job addFacetJob = new Job("Add App Engine facet to " + project.getProject().getName()) {
 
@@ -53,7 +54,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
         IStatus installStatus = Status.OK_STATUS;
 
         try {
-          FacetInstallDelegate.installAppEngineFacet(project, monitor);
+          FacetInstallDelegate.installAppEngineFacet(project, false /* installDependentFacets */, monitor);
           return installStatus;
         } catch (CoreException e) {
           // Displays missing constraints that prevented facet installation

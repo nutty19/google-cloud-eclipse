@@ -147,11 +147,13 @@ public class FacetInstallDelegate implements IDelegate {
    * @param monitor the progress monitor
    * @throws CoreException
    */
-  public static void installAppEngineFacet(IFacetedProject facetedProject, IProgressMonitor monitor)
+  public static void installAppEngineFacet(IFacetedProject facetedProject, boolean installDependentFacets, IProgressMonitor monitor)
       throws CoreException {
     // Install required App Engine facets Java 1.7 and Dynamic Web Module 2.5
-    installJavaFacet(facetedProject, monitor);
-    installWebFacet(facetedProject, monitor);
+    if (installDependentFacets) {
+      installJavaFacet(facetedProject, monitor);
+      installWebFacet(facetedProject, monitor);
+    }
 
     IProjectFacet appEngineFacet = ProjectFacetsManager.getProjectFacet(AppEngineStandardFacet.ID);
     IProjectFacetVersion appEngineFacetVersion = appEngineFacet.getVersion(AppEngineStandardFacet.VERSION);
@@ -177,6 +179,7 @@ public class FacetInstallDelegate implements IDelegate {
     sourcePaths.add(new Path("src/main/java"));
     sourcePaths.add(new Path("src/test/java"));
     javaConfig.setSourceFolders(sourcePaths);
+    // TODO: when do we use IFacetedProject#installProjectFacet vs IFacetedProjectWorkingCopy#addProjectFacet
     facetedProject.installProjectFacet(JavaFacet.VERSION_1_7, javaConfig, monitor);
   }
 

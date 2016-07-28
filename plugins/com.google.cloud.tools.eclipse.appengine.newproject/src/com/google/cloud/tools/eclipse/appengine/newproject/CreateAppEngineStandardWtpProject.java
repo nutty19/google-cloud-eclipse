@@ -56,7 +56,7 @@ class CreateAppEngineStandardWtpProject extends WorkspaceModifyOperation {
           newProject, true, progress.newChild(20));
       
       CodeTemplates.materialize(newProject, config, progress.newChild(20));
-      FacetInstallDelegate.installAppEngineFacet(facetedProject, progress.newChild(10));
+      FacetInstallDelegate.installAppEngineFacet(facetedProject, true /* installDependentFacets */, progress.newChild(20));
       FacetInstallDelegate.installAppEngineRuntime(facetedProject, progress.newChild(20));
     } catch (ExecutionException ex) {
       throw new InvocationTargetException(ex, ex.getMessage());
