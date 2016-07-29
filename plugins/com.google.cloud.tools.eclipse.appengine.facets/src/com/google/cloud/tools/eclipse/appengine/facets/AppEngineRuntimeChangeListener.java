@@ -54,7 +54,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
         IStatus installStatus = Status.OK_STATUS;
 
         try {
-          FacetInstallDelegate.installAppEngineFacet(project, false /* installDependentFacets */, monitor);
+          AppEngineStandardFacet.installAppEngineFacet(project, false /* installDependentFacets */, monitor);
           return installStatus;
         } catch (CoreException e) {
           // Displays missing constraints that prevented facet installation

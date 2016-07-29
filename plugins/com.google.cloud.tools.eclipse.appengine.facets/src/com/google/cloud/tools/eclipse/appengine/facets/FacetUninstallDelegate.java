@@ -28,12 +28,12 @@ public class FacetUninstallDelegate implements IDelegate {
     // TODO: what is the complete scenerio for maven project?
     if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
       SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
-      updateClasspath(project, subMonitor.newChild(50));
+      removeAppEngineJarsFromClasspath(project, subMonitor.newChild(50));
       uninstallAppEngineRuntime(project, subMonitor.newChild(50));
     }
   }
 
-  private void updateClasspath(IProject project, IProgressMonitor monitor) throws CoreException {
+  private void removeAppEngineJarsFromClasspath(IProject project, IProgressMonitor monitor) throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
     IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
     IClasspathEntry[] newClasspath = new IClasspathEntry[rawClasspath.length - 1];
@@ -58,19 +58,17 @@ public class FacetUninstallDelegate implements IDelegate {
    * <code>project</code>.
    */
   private void uninstallAppEngineRuntime(final IProject project, IProgressMonitor monitor) {
-    Job uninstallJob = new Job("") {
+    Job uninstallJob = new Job("Uninstall App Engine runtimes in " + project.getName()) {
 
       @Override
       protected IStatus run(IProgressMonitor monitor) {
-        IFacetedProject facetedProject;
         try {
-          facetedProject = ProjectFacetsManager.create(project);
+          IFacetedProject facetedProject = ProjectFacetsManager.create(project);
           Set<IRuntime> targetedRuntimes = facetedProject.getTargetedRuntimes();
 
-          for (IRuntime aRuntime : targetedRuntimes) {
-            org.eclipse.wst.server.core.IRuntime serverRuntime = FacetUtil.getRuntime(aRuntime);
-            if (serverRuntime.getRuntimeType().getId().equals(AppEngineStandardFacet.DEFAULT_RUNTIME_ID)) {
-              facetedProject.removeTargetedRuntime(aRuntime, monitor);
+          for (IRuntime targetedRuntime : targetedRuntimes) {
+            if (AppEngineStandardFacet.isAppEngineRunime(targetedRuntime)) {
+              facetedProject.removeTargetedRuntime(targetedRuntime, monitor);
             }
           }
         } catch (CoreException e) {

@@ -8,12 +8,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.undo.CreateProjectOperation;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 
+import com.google.cloud.tools.eclipse.appengine.facets.AppEngineStandardFacet;
 import com.google.cloud.tools.eclipse.appengine.facets.FacetInstallDelegate;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,7 +44,7 @@ class CreateAppEngineStandardWtpProject extends WorkspaceModifyOperation {
     SubMonitor progress = SubMonitor.convert(monitor, 100);
     
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
-    IProject newProject = config.getProject();
+    final IProject newProject = config.getProject();
     URI location = config.getEclipseProjectLocationUri();
 
     String name = newProject.getName();
@@ -51,13 +55,26 @@ class CreateAppEngineStandardWtpProject extends WorkspaceModifyOperation {
         description, "Creating new App Engine Project");
     try {
       operation.execute(progress.newChild(20), uiInfoAdapter);
-      
-      IFacetedProject facetedProject = ProjectFacetsManager.create(
-          newProject, true, progress.newChild(20));
-      
       CodeTemplates.materialize(newProject, config, progress.newChild(20));
-      FacetInstallDelegate.installAppEngineFacet(facetedProject, true /* installDependentFacets */, progress.newChild(20));
-      FacetInstallDelegate.installAppEngineRuntime(facetedProject, progress.newChild(20));
+
+      Job facetInstallJob = new Job("Install App Engine Facet and runtimes in " + newProject.getName()) {
+
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+          try {
+            final IFacetedProject facetedProject = ProjectFacetsManager.create(
+                newProject, true, monitor);
+            AppEngineStandardFacet.installAppEngineFacet(
+                facetedProject, true /* installDependentFacets */, monitor);
+            AppEngineStandardFacet.installAllAppEngineRuntimes(facetedProject, true, monitor);
+          } catch (CoreException e) {
+            return e.getStatus();
+          }
+          return Status.OK_STATUS;
+        }
+  
+      };
+      facetInstallJob.schedule();
     } catch (ExecutionException ex) {
       throw new InvocationTargetException(ex, ex.getMessage());
     } finally {
