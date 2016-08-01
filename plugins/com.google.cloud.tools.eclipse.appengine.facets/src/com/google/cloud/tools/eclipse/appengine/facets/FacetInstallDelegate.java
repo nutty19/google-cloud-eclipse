@@ -1,6 +1,5 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
-import com.google.cloud.tools.appengine.cloudsdk.CloudSdk;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 
 import org.eclipse.core.resources.IContainer;
@@ -8,45 +7,19 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jst.common.project.facet.core.JavaFacet;
-import org.eclipse.jst.common.project.facet.core.JavaFacetInstallConfig;
 import org.eclipse.jst.j2ee.classpathdep.UpdateClasspathAttributeUtil;
-import org.eclipse.jst.j2ee.project.facet.IJ2EEFacetInstallDataModelProperties;
-import org.eclipse.jst.j2ee.project.facet.IJ2EEModuleFacetInstallDataModelProperties;
-import org.eclipse.jst.j2ee.web.project.facet.IWebFacetInstallDataModelProperties;
-import org.eclipse.jst.j2ee.web.project.facet.WebFacetInstallDataModelProvider;
-import org.eclipse.jst.j2ee.web.project.facet.WebFacetUtils;
-import org.eclipse.jst.server.core.FacetUtil;
-import org.eclipse.wst.common.frameworks.datamodel.DataModelFactory;
-import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
-import org.eclipse.wst.common.project.facet.core.IFacetedProject;
-import org.eclipse.wst.common.project.facet.core.IFacetedProjectWorkingCopy;
-import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
-import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
-import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
-import org.eclipse.wst.common.project.facet.core.runtime.RuntimeManager;
-import org.eclipse.wst.server.core.IRuntimeType;
-import org.eclipse.wst.server.core.IRuntimeWorkingCopy;
-import org.eclipse.wst.server.core.ServerCore;
-
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class FacetInstallDelegate implements IDelegate {
   private final static String APPENGINE_WEB_XML = "appengine-web.xml";
@@ -103,15 +76,15 @@ public class FacetInstallDelegate implements IDelegate {
     }
 
     IFolder configDir = project.getFolder(APPENGINE_WEB_XML_DIR);
-    if(!configDir.exists()) {
+    if (!configDir.exists()) {
       Path configDirPath = new Path(APPENGINE_WEB_XML_DIR);
       IContainer current = project;
-      for( int i = 0, n = configDirPath.segmentCount(); i < n; i++ )
+      for ( int i = 0, n = configDirPath.segmentCount(); i < n; i++ )
       {
         final String name = configDirPath.segment( i );
         IFolder folder = current.getFolder( new Path( name ) );
 
-        if(!folder.exists()) {
+        if (!folder.exists()) {
           folder.create( true, true, null );
         }
         current = folder;

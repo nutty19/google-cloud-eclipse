@@ -34,7 +34,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
       return;
     }
 
-    if (!AppEngineStandardFacet.isAppEngineRunime(newRuntime)) {
+    if (!AppEngineStandardFacet.isAppEngineRuntime(newRuntime)) {
       return;
     }
 

@@ -67,7 +67,7 @@ public class FacetUninstallDelegate implements IDelegate {
           Set<IRuntime> targetedRuntimes = facetedProject.getTargetedRuntimes();
 
           for (IRuntime targetedRuntime : targetedRuntimes) {
-            if (AppEngineStandardFacet.isAppEngineRunime(targetedRuntime)) {
+            if (AppEngineStandardFacet.isAppEngineRuntime(targetedRuntime)) {
               facetedProject.removeTargetedRuntime(targetedRuntime, monitor);
             }
           }
