@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -32,8 +33,9 @@ public class FacetInstallDelegate implements IDelegate {
                       Object config,
                       IProgressMonitor monitor) throws CoreException {
     if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
-      addAppEngineJarsToClasspath(project, monitor);
-      createConfigFiles(project, monitor);
+      SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+      addAppEngineJarsToClasspath(project, subMonitor.newChild(50));
+      createConfigFiles(project, subMonitor.newChild(50));
     }
   }
 
@@ -45,7 +47,8 @@ public class FacetInstallDelegate implements IDelegate {
       throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
     IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
-    IClasspathEntry appEngineContainer = JavaCore.newContainerEntry(new Path(AppEngineSdkClasspathContainer.CONTAINER_ID),
+    IClasspathEntry appEngineContainer = JavaCore.newContainerEntry(
+        new Path(AppEngineSdkClasspathContainer.CONTAINER_ID),
         new IAccessRule[0],
         new IClasspathAttribute[]{
             UpdateClasspathAttributeUtil.createDependencyAttribute(true /*isWebApp */)
@@ -85,7 +88,7 @@ public class FacetInstallDelegate implements IDelegate {
         IFolder folder = current.getFolder( new Path( name ) );
 
         if (!folder.exists()) {
-          folder.create( true, true, null );
+          folder.create( true, true, monitor );
         }
         current = folder;
       }

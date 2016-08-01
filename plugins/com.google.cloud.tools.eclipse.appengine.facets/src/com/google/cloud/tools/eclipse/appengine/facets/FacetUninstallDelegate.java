@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jst.server.core.FacetUtil;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
@@ -25,7 +24,7 @@ public class FacetUninstallDelegate implements IDelegate {
   @Override
   public void execute(IProject project, IProjectFacetVersion version, Object config,
       IProgressMonitor monitor) throws CoreException {
-    // TODO: what is the complete scenerio for maven project?
+    // TODO: what is the complete scenario for maven project?
     if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
       SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
       removeAppEngineJarsFromClasspath(project, subMonitor.newChild(50));
