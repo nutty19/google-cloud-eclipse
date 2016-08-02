@@ -101,7 +101,7 @@ public class AppEngineStandardFacet {
    * Checks to see if <code>facetedProject</code> has the App Engine facet installed. If not, it installs
    * the App Engine facet.
    *
-   * @param facetedProject the workspace faceted project
+   * @param facetedProject the faceted project receiving the App Engine facet
    * @param monitor the progress monitor
    * @throws CoreException if anything goes wrong during install
    */
@@ -126,7 +126,7 @@ public class AppEngineStandardFacet {
    * of <code>project</code>, otherwise create a new App Engine runtime and add it to the list
    * of targeted runtimes.
    *
-   * @param project the workspace faceted project
+   * @param project the faceted project receiving the App Engine runtime(s)
    * @param force true if all runtime instances should be added to the <code>project</code> even if targeted list of
    *  <code>project</code> already includes App Engine runtime instances and false otherwise
    * @param monitor the progress monitor

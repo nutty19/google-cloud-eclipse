@@ -139,7 +139,6 @@
       <consolePageParticipant
             class="com.google.cloud.tools.eclipse.appengine.localserver.ui.LocalAppEngineConsolePageParticipant"
             id="com.google.appengine.consolePageParticipant">
-         <enablement></enablement>
       </consolePageParticipant>
    </extension>
    <extension
