@@ -51,10 +51,8 @@ public class AppEngineStandardFacet {
   public static final String ID = "com.google.cloud.tools.eclipse.appengine.facet";
 
   static final String VERSION = "1";
-  static final String DEFAULT_RUNTIME_ID = "com.google.appengine.standard.runtime";
+  static final String DEFAULT_RUNTIME_ID = "com.google.cloud.tools.eclipse.appengine.standard.runtime";
   static final String DEFAULT_RUNTIME_NAME = "App Engine Standard";
-  static final String INSTALL_ACTION_ID = "com.google.cloud.tools.eclipse.appengine.facet.install.action";
-  static final String UNINSTALL_ACTION_ID = "com.google.cloud.tools.eclipse.appengine.facet.uninstall.action";
 
   /**
    * Returns true if project has the App Engine Standard facet and false otherwise.

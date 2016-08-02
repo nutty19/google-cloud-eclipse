@@ -6,7 +6,7 @@
       <runtimeType
             class="com.google.cloud.tools.eclipse.appengine.localserver.server.AppToolsRuntime"
             description="%runtimeTypeDescription"
-            id="com.google.appengine.standard.runtime"
+            id="com.google.cloud.tools.eclipse.appengine.standard.runtime"
             name="%apptoolsRuntimeTypeName"
             vendor="%runtimeTypeVendor"
             version="1">
@@ -26,13 +26,13 @@
             behaviourClass="com.google.cloud.tools.eclipse.appengine.localserver.server.LocalAppEngineServerBehaviour"
             class="com.google.cloud.tools.eclipse.appengine.localserver.server.LocalAppEngineServerDelegate"
             description="%runtimeTypeDescription"
-            id="com.google.appengine.server"
+            id="com.google.cloud.tools.eclipse.appengine.standard.server"
             initialState="stopped"
             launchConfigId="com.google.appengine.AppToolsLaunchConfigurationType"
             launchModes="run,debug,profile"
             name="%apptoolsTypeName"
             runtime="true"
-            runtimeTypeId="com.google.appengine.standard.runtime"
+            runtimeTypeId="com.google.cloud.tools.eclipse.appengine.standard.runtime"
             startBeforePublish="false"
             supportsRemoteHosts="false">
       </serverType>
@@ -41,22 +41,22 @@
          point="org.eclipse.jst.server.core.runtimeClasspathProviders">
       <runtimeClasspathProvider
             class="com.google.cloud.tools.eclipse.appengine.localserver.ServletClasspathProvider"
-            id="com.google.appengine.standard.runtimeClasspathProvider"
-            runtimeTypeIds="com.google.appengine.standard.runtime">
+            id="com.google.cloud.tools.eclipse.appengine.standard.runtimeClasspathProvider"
+            runtimeTypeIds="com.google.cloud.tools.eclipse.appengine.standard.runtime">
       </runtimeClasspathProvider>
    </extension>
    <extension
          point="org.eclipse.wst.common.project.facet.core.runtimes">
       <runtime-component-type
-            id="com.google.appengine.standard.runtime">
+            id="com.google.cloud.tools.eclipse.appengine.standard.runtime">
       </runtime-component-type>
       <runtime-component-version
-            type="com.google.appengine.standard.runtime"
+            type="com.google.cloud.tools.eclipse.appengine.standard.runtime"
             version="1">
       </runtime-component-version>
       <supported>
          <runtime-component
-               id="com.google.appengine.standard.runtime"
+               id="com.google.cloud.tools.eclipse.appengine.standard.runtime"
                version="1"></runtime-component>
          <facet
                id="com.google.cloud.tools.eclipse.appengine.facet"
@@ -73,7 +73,7 @@
       </supported>
       <adapter>
          <runtime-component
-               id="com.google.appengine.standard.runtime">
+               id="com.google.cloud.tools.eclipse.appengine.standard.runtime">
          </runtime-component>
          <!-- TODO non-internal class to use here for factory -->
          <factory
@@ -88,8 +88,8 @@
          point="org.eclipse.jst.server.core.runtimeFacetMappings">
       <runtimeFacetMapping
             id="com.google.appengine.runtimeFacetMapping"
-            runtime-component="com.google.appengine.standard.runtime"
-            runtimeTypeId="com.google.appengine.standard.runtime"
+            runtime-component="com.google.cloud.tools.eclipse.appengine.standard.runtime"
+            runtimeTypeId="com.google.cloud.tools.eclipse.appengine.standard.runtime"
             version="1">
       </runtimeFacetMapping>
    </extension>
@@ -97,8 +97,8 @@
          point="org.eclipse.wst.server.ui.serverImages">
       <image
             icon="platform:/plugin/com.google.cloud.tools.eclipse.appengine.ui/icons/gcp-16x16.png"
-            id="com.google.appengine.serverImage"
-            typeIds="com.google.appengine.standard.runtime, com.google.appengine.server">
+            id="com.google.cloud.tools.eclipse.appengine.standard.serverImage"
+            typeIds="com.google.cloud.tools.eclipse.appengine.standard.runtime, com.google.cloud.tools.eclipse.appengine.standard.server">
       </image>
    </extension>
    <extension
@@ -106,7 +106,7 @@
       <publishTask
             class="com.google.cloud.tools.eclipse.appengine.localserver.server.CloudSdkPublishTaskDelegate"
             id="com.google.appengine.publishTask"
-            typeIds="com.google.appengine.server">
+            typeIds="com.google.cloud.tools.eclipse.appengine.standard.server">
       </publishTask>
    </extension>
    <extension
@@ -151,7 +151,7 @@
                version="1">
          </facet>
          <runtime-component
-               id="com.google.appengine.standard.runtime"
+               id="com.google.cloud.tools.eclipse.appengine.standard.runtime"
                version="1">
          </runtime-component>
       </default-facets>
