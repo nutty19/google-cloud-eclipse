@@ -202,6 +202,7 @@ public class AppEngineStandardFacet {
       return;
     }
 
+    // TODO use "src/main/java" for only maven projects
     JavaFacetInstallConfig javaConfig = new JavaFacetInstallConfig();
     List<IPath> sourcePaths = new ArrayList<>();
     sourcePaths.add(new Path("src/main/java"));
