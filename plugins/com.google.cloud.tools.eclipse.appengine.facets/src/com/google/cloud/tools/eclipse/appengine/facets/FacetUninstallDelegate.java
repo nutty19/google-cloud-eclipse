@@ -85,10 +85,10 @@ public class FacetUninstallDelegate implements IDelegate {
               facetedProject.removeTargetedRuntime(targetedRuntime, monitor);
             }
           }
+          return Status.OK_STATUS;
         } catch (CoreException e) {
           return e.getStatus();
         }
-        return Status.OK_STATUS;
       }
     };
     uninstallJob.schedule();
