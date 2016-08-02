@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * All rights reserved. This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License v1.0 which
+ * accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
+
 package com.google.cloud.tools.eclipse.appengine.facets;
 
 import java.util.ArrayList;
@@ -75,8 +90,8 @@ public class AppEngineStandardFacet {
   /**
    * Returns true is <code>serverRuntime</code> is an App Engine Standard runtime and false otherwise
    *
-   * @param serverRuntime the server runtime; runtime should not be null
-   * @return true is <code>serverRuntime</code> is an App Engine Standard runtime and false otherwise
+   * @param serverRuntime the server runtime, runtime should not be null
+   * @return true if <code>serverRuntime</code> is an App Engine Standard runtime and false otherwise
    */
   public static boolean isAppEngineRuntime(org.eclipse.wst.server.core.IRuntime serverRuntime) {
     Preconditions.checkNotNull(serverRuntime, "runtime is null");
@@ -90,11 +105,11 @@ public class AppEngineStandardFacet {
    *
    * @param facetedProject the workspace faceted project
    * @param monitor the progress monitor
-   * @throws CoreException
+   * @throws CoreException if anything goes wrong during install
    */
   public static void installAppEngineFacet(IFacetedProject facetedProject, boolean installDependentFacets, IProgressMonitor monitor)
       throws CoreException {
-    // Install required App Engine facets Java 1.7 and Dynamic Web Module 2.5
+    // Install required App Engine facets i.e. Java 1.7 and Dynamic Web Module 2.5
     if (installDependentFacets) {
       installJavaFacet(facetedProject, monitor);
       installWebFacet(facetedProject, monitor);
@@ -104,7 +119,7 @@ public class AppEngineStandardFacet {
     IProjectFacetVersion appEngineFacetVersion = appEngineFacet.getVersion(AppEngineStandardFacet.VERSION);
 
     if (!facetedProject.hasProjectFacet(appEngineFacet)) {
-      facetedProject.installProjectFacet(appEngineFacetVersion, null, monitor);
+      facetedProject.installProjectFacet(appEngineFacetVersion, null /* config */, monitor);
     }
   }
 
@@ -132,7 +147,7 @@ public class AppEngineStandardFacet {
       }
     }
 
-    org.eclipse.wst.server.core.IRuntime[] appEngineRuntimes = getAppEngineRuntime();
+    org.eclipse.wst.server.core.IRuntime[] appEngineRuntimes = getAppEngineRuntimes();
     if (appEngineRuntimes.length > 0) {
       IRuntime appEngineFacetRuntime = null;
       for(int index = 0; index < appEngineRuntimes.length; index++) {
@@ -141,26 +156,7 @@ public class AppEngineStandardFacet {
       }
       project.setPrimaryRuntime(appEngineFacetRuntime, monitor);
     } else { // Create a new App Engine runtime
-      IRuntimeType appEngineRuntimeType =
-          ServerCore.findRuntimeType(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
-      if (appEngineRuntimeType == null) {
-        throw new NullPointerException("Could not find " + AppEngineStandardFacet.DEFAULT_RUNTIME_NAME + " runtime type");
-      }
-
-      IRuntimeWorkingCopy appEngineRuntimeWorkingCopy
-          = appEngineRuntimeType.createRuntime(null, monitor);
-      CloudSdk cloudSdk = new CloudSdk.Builder().build();
-      if (cloudSdk != null) {
-        java.nio.file.Path sdkLocation = cloudSdk.getJavaAppEngineSdkPath();
-        if (sdkLocation != null) {
-          IPath sdkPath = Path.fromOSString(sdkLocation.toAbsolutePath().toString());
-          appEngineRuntimeWorkingCopy.setLocation(sdkPath);
-        }
-      }
-
-      org.eclipse.wst.server.core.IRuntime appEngineServerRuntime =
-          appEngineRuntimeWorkingCopy.save(true, monitor);
-      IRuntime appEngineFacetRuntime = FacetUtil.getRuntime(appEngineServerRuntime);
+      IRuntime appEngineFacetRuntime = createAppEngineFacetRuntime(monitor);
       if (appEngineFacetRuntime == null) {
         throw new NullPointerException("Could not locate App Engine facet runtime");
       }
@@ -168,6 +164,35 @@ public class AppEngineStandardFacet {
       project.addTargetedRuntime(appEngineFacetRuntime, monitor);
       project.setPrimaryRuntime(appEngineFacetRuntime, monitor);
     }
+  }
+
+  public static org.eclipse.wst.server.core.IRuntime createAppEngineServerRuntime(IProgressMonitor monitor)
+      throws CoreException {
+    IRuntimeType appEngineRuntimeType =
+        ServerCore.findRuntimeType(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
+    if (appEngineRuntimeType == null) {
+      throw new NullPointerException("Could not find " + AppEngineStandardFacet.DEFAULT_RUNTIME_NAME + " runtime type");
+    }
+
+    IRuntimeWorkingCopy appEngineRuntimeWorkingCopy
+        = appEngineRuntimeType.createRuntime(null /* id */, monitor);
+
+    CloudSdk cloudSdk = new CloudSdk.Builder().build();
+    if (cloudSdk != null) {
+      java.nio.file.Path sdkLocation = cloudSdk.getJavaAppEngineSdkPath();
+      if (sdkLocation != null) {
+        IPath sdkPath = Path.fromOSString(sdkLocation.toAbsolutePath().toString());
+        appEngineRuntimeWorkingCopy.setLocation(sdkPath);
+      }
+    }
+
+    return appEngineRuntimeWorkingCopy.save(true, monitor);
+  }
+
+  public static IRuntime createAppEngineFacetRuntime(IProgressMonitor monitor)
+      throws CoreException {
+    org.eclipse.wst.server.core.IRuntime appEngineServerRuntime = createAppEngineServerRuntime(monitor);
+    return FacetUtil.getRuntime(appEngineServerRuntime);
   }
 
   /**
@@ -205,7 +230,7 @@ public class AppEngineStandardFacet {
   }
 
   // TODO: find a more general form of this method
-  private static org.eclipse.wst.server.core.IRuntime[] getAppEngineRuntime() {
+  private static org.eclipse.wst.server.core.IRuntime[] getAppEngineRuntimes() {
     org.eclipse.wst.server.core.IRuntime[] allRuntimes = ServerCore.getRuntimes();
     List<org.eclipse.wst.server.core.IRuntime> appEngineRuntimes = new ArrayList<>();
 

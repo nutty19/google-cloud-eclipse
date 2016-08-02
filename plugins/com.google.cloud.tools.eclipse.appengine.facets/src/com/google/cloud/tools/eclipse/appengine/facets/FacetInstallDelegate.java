@@ -1,6 +1,22 @@
+/*******************************************************************************
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * All rights reserved. This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License v1.0 which
+ * accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
+
 package com.google.cloud.tools.eclipse.appengine.facets;
 
 import com.google.cloud.tools.eclipse.util.MavenUtils;
+import com.google.cloud.tools.eclipse.util.status.StatusUtil;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -82,10 +98,9 @@ public class FacetInstallDelegate implements IDelegate {
     if (!configDir.exists()) {
       Path configDirPath = new Path(APPENGINE_WEB_XML_DIR);
       IContainer current = project;
-      for ( int i = 0, n = configDirPath.segmentCount(); i < n; i++ )
-      {
-        final String name = configDirPath.segment( i );
-        IFolder folder = current.getFolder( new Path( name ) );
+      for (int i = 0; i < configDirPath.segmentCount(); i++) {
+        final String segment = configDirPath.segment( i );
+        IFolder folder = current.getFolder(new Path(segment));
 
         if (!folder.exists()) {
           folder.create( true, true, monitor );
@@ -97,8 +112,8 @@ public class FacetInstallDelegate implements IDelegate {
 
     InputStream in = FacetInstallDelegate.class.getResourceAsStream("templates/" + APPENGINE_WEB_XML + ".ftl");
     if (in == null) {
-      IStatus status = new Status(Status.ERROR, "todo plugin ID",
-          "Could not load template for " + APPENGINE_WEB_XML, null);
+      IStatus status = StatusUtil.error(FacetInstallDelegate.class,
+          "Could not load template for " + APPENGINE_WEB_XML);
       throw new CoreException(status);
     }
 
