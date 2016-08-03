@@ -15,13 +15,39 @@
 
 package com.google.cloud.tools.eclipse.appengine.facets;
 
+import static org.mockito.Mockito.when;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jst.server.core.FacetUtil;
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
+import org.eclipse.wst.server.core.IRuntimeType;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AppEngineStandardFacetTest {
+  @Mock private org.eclipse.wst.server.core.IRuntime serverRuntime;
+  @Mock private IRuntimeType runtimeType;
+
+  @Test
+  public void testIsAppEngineRuntime_appEngineRuntime() {
+    when(runtimeType.getId()).thenReturn(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
+    when(serverRuntime.getRuntimeType()).thenReturn(runtimeType);
+
+    Assert.assertTrue(AppEngineStandardFacet.isAppEngineRuntime(serverRuntime));
+  }
+
+  @Test
+  public void testIsAppEngineRuntime_nonAppEngineRuntime() {
+    when(runtimeType.getId()).thenReturn("some id");
+    when(serverRuntime.getRuntimeType()).thenReturn(runtimeType);
+
+    Assert.assertFalse(AppEngineStandardFacet.isAppEngineRuntime(serverRuntime));
+  }
+
   @Test
   public void testCreateAppEngineServerRuntime() throws CoreException {
     org.eclipse.wst.server.core.IRuntime runtime =
@@ -29,7 +55,7 @@ public class AppEngineStandardFacetTest {
     Assert.assertNotNull(runtime);
     Assert.assertEquals(AppEngineStandardFacet.DEFAULT_RUNTIME_ID, runtime.getRuntimeType().getId());
   }
-  
+
   @Test
   public void testCreateAppEngineFacetRuntime() throws CoreException {
     IRuntime facetRuntime = AppEngineStandardFacet.createAppEngineFacetRuntime(null);
