@@ -15,6 +15,7 @@
 
 package com.google.cloud.tools.eclipse.appengine.facets;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -54,13 +55,14 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
     }
 
     // Check if the App Engine facet has been installed in the project
-    final IFacetedProject project = runtimeChangeEvent.getProject();
-    if (AppEngineStandardFacet.hasAppEngineFacet(project)) {
+    final IFacetedProject facetedProject = runtimeChangeEvent.getProject();
+    if (AppEngineStandardFacet.hasAppEngineFacet(facetedProject)) {
       return;
     }
 
     // Add the App Engine facet
-    Job addFacetJob = new Job("Add App Engine facet to " + project.getProject().getName()) {
+    IProject project = facetedProject.getProject();
+    Job addFacetJob = new Job("Add App Engine facet to " + project.getName()) {
 
       @Override
       protected IStatus run(IProgressMonitor monitor) {
@@ -68,7 +70,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
         IStatus installStatus = Status.OK_STATUS;
 
         try {
-          AppEngineStandardFacet.installAppEngineFacet(project, false /* installDependentFacets */, monitor);
+          AppEngineStandardFacet.installAppEngineFacet(facetedProject, false /* installDependentFacets */, monitor);
           return installStatus;
         } catch (CoreException e) {
           // Displays missing constraints that prevented facet installation
@@ -77,7 +79,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
 
         // Remove App Engine as primary runtime
         try {
-          project.removeTargetedRuntime(newRuntime, monitor);
+          facetedProject.removeTargetedRuntime(newRuntime, monitor);
           return installStatus;
         } catch (CoreException e) {
           MultiStatus multi;
@@ -93,6 +95,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
       }
 
     };
+    addFacetJob.setRule(project);
     addFacetJob.schedule();
   }
 
