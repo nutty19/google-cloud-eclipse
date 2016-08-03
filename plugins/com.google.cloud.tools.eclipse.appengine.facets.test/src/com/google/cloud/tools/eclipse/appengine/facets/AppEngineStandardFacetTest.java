@@ -47,21 +47,4 @@ public class AppEngineStandardFacetTest {
 
     Assert.assertFalse(AppEngineStandardFacet.isAppEngineRuntime(serverRuntime));
   }
-
-  @Test
-  public void testCreateAppEngineServerRuntime() throws CoreException {
-    org.eclipse.wst.server.core.IRuntime runtime =
-        AppEngineStandardFacet.createAppEngineServerRuntime(null);
-    Assert.assertNotNull(runtime);
-    Assert.assertEquals(AppEngineStandardFacet.DEFAULT_RUNTIME_ID, runtime.getRuntimeType().getId());
-  }
-
-  @Test
-  public void testCreateAppEngineFacetRuntime() throws CoreException {
-    IRuntime facetRuntime = AppEngineStandardFacet.createAppEngineFacetRuntime(null);
-    org.eclipse.wst.server.core.IRuntime serverRuntime =
-        FacetUtil.getRuntime(facetRuntime);
-    Assert.assertNotNull(serverRuntime);
-    Assert.assertEquals(AppEngineStandardFacet.DEFAULT_RUNTIME_ID, serverRuntime.getRuntimeType().getId());    
-  }
 }
