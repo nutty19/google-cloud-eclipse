@@ -68,33 +68,39 @@ public class AppEngineStandardFacet {
   }
 
   /**
-   * Returns true is <code>facetRuntime</code> is an App Engine Standard runtime and false otherwise
+   * Returns true if <code>facetRuntime</code> is an App Engine Standard runtime and false otherwise
    *
    * @param facetRuntime the facet runtime; runtime should not be null
    * @return true is <code>facetRuntime</code> is an App Engine Standard runtime and false otherwise
    */
-  public static boolean isAppEngineRuntime(IRuntime facetRuntime) {
+  public static boolean isAppEngineStandardRuntime(IRuntime facetRuntime) {
     Preconditions.checkNotNull(facetRuntime, "runtime is null");
 
     org.eclipse.wst.server.core.IRuntime serverRuntime = FacetUtil.getRuntime(facetRuntime);
     if (serverRuntime != null) {
       IRuntimeType runtimeType = serverRuntime.getRuntimeType();
-      return runtimeType.getId().equals(DEFAULT_RUNTIME_ID);
+      if (runtimeType == null) {
+        return false;
+      }
+      return DEFAULT_RUNTIME_ID.equals(runtimeType.getId());
     } else {
       return false;
     }
   }
 
   /**
-   * Returns true is <code>serverRuntime</code> is an App Engine Standard runtime and false otherwise
+   * Returns true if <code>serverRuntime</code> is an App Engine Standard runtime and false otherwise
    *
    * @param serverRuntime the server runtime, runtime should not be null
    * @return true if <code>serverRuntime</code> is an App Engine Standard runtime and false otherwise
    */
-  public static boolean isAppEngineRuntime(org.eclipse.wst.server.core.IRuntime serverRuntime) {
+  public static boolean isAppEngineStandardRuntime(org.eclipse.wst.server.core.IRuntime serverRuntime) {
     Preconditions.checkNotNull(serverRuntime, "runtime is null");
     IRuntimeType runtimeType = serverRuntime.getRuntimeType();
-    return runtimeType.getId().equals(DEFAULT_RUNTIME_ID);
+    if (runtimeType == null) {
+      return false;
+    }
+    return DEFAULT_RUNTIME_ID.equals(runtimeType.getId());
   }
 
   /**
@@ -123,7 +129,7 @@ public class AppEngineStandardFacet {
 
   /**
    * If App Engine runtimes exist in the workspace, add them to the list of targeted runtimes
-   * of <code>project</code>, otherwise create a new App Engine runtime and add it to the list
+   * of <code>project</code>. Otherwise create a new App Engine runtime and add it to the list
    * of targeted runtimes.
    *
    * @param project the faceted project receiving the App Engine runtime(s)
@@ -135,11 +141,11 @@ public class AppEngineStandardFacet {
   public static void installAllAppEngineRuntimes(IFacetedProject project, boolean force, IProgressMonitor monitor)
       throws CoreException {
     // If the project already has an App Engine runtime instance and force is false
-    // do not add any other App Engine runtime instance to the list of targeted runtimes
+    // do not add any other App Engine runtime instances to the list of targeted runtimes
     Set<IRuntime> existingTargetedRuntimes = project.getTargetedRuntimes();
     if (!existingTargetedRuntimes.isEmpty()) {
       for (IRuntime existingTargetedRuntime : existingTargetedRuntimes) {
-        if (AppEngineStandardFacet.isAppEngineRuntime(existingTargetedRuntime) && !force) {
+        if (AppEngineStandardFacet.isAppEngineStandardRuntime(existingTargetedRuntime) && !force) {
           return;
         }
       }
@@ -234,7 +240,7 @@ public class AppEngineStandardFacet {
     List<org.eclipse.wst.server.core.IRuntime> appEngineRuntimes = new ArrayList<>();
 
     for (int i = 0; i < allRuntimes.length; i++) {
-      if (isAppEngineRuntime(allRuntimes[i])) {
+      if (isAppEngineStandardRuntime(allRuntimes[i])) {
         appEngineRuntimes.add(allRuntimes[i]);
       }
     }

@@ -29,15 +29,14 @@ import org.eclipse.wst.common.project.facet.core.events.IPrimaryRuntimeChangedEv
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
 
 /**
- * Parses for events where the App Engine runtime has been made the primary
- * runtime for a project. If this project does not have the App Engine facet
- * installed the App Engine facet will be installed.
+ * Listens for events where the App Engine runtime has been made the primary
+ * runtime for a project. Installs the App Engine facet if necessary.
  */
 public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
 
   @Override
   public void handleEvent(IFacetedProjectEvent event) {
-    // PRIMARY_RUNTIME_CHANGED occurs in scenarios including when you select runtimes on the
+    // PRIMARY_RUNTIME_CHANGED occurs in scenarios such as selecting runtimes on the
     // "New Faceted Project" wizard and the "New Dynamic Web Project" wizard.
     // IFacetedProjectEvent.Type.TARGETED_RUNTIMES_CHANGED does not happen
     if (event.getType() != IFacetedProjectEvent.Type.PRIMARY_RUNTIME_CHANGED) {
@@ -50,7 +49,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
       return;
     }
 
-    if (!AppEngineStandardFacet.isAppEngineRuntime(newRuntime)) {
+    if (!AppEngineStandardFacet.isAppEngineStandardRuntime(newRuntime)) {
       return;
     }
 
@@ -72,16 +71,16 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
         try {
           AppEngineStandardFacet.installAppEngineFacet(facetedProject, false /* installDependentFacets */, monitor);
           return installStatus;
-        } catch (CoreException e) {
+        } catch (CoreException ex) {
           // Displays missing constraints that prevented facet installation
-          installStatus = e.getStatus();
+          installStatus = ex.getStatus();
         }
 
         // Remove App Engine as primary runtime
         try {
           facetedProject.removeTargetedRuntime(newRuntime, monitor);
           return installStatus;
-        } catch (CoreException e) {
+        } catch (CoreException ex) {
           MultiStatus multi;
           if (installStatus instanceof MultiStatus) {
             multi = (MultiStatus) installStatus;
@@ -89,7 +88,7 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
             multi = new MultiStatus(installStatus.getPlugin(), installStatus.getCode(),
                 installStatus.getMessage(), installStatus.getException());
           }
-          multi.merge(e.getStatus());
+          multi.merge(ex.getStatus());
           return multi;
         }
       }

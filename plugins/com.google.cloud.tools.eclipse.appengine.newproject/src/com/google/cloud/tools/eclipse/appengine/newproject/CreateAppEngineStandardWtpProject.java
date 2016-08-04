@@ -66,8 +66,8 @@ class CreateAppEngineStandardWtpProject extends WorkspaceModifyOperation {
               facetedProject, true /* installDependentFacets */, monitor);
           AppEngineStandardFacet.installAllAppEngineRuntimes(facetedProject, true, monitor);
           return Status.OK_STATUS;
-        } catch (CoreException e) {
-          return e.getStatus();
+        } catch (CoreException ex) {
+          return ex.getStatus();
         }
       }
 

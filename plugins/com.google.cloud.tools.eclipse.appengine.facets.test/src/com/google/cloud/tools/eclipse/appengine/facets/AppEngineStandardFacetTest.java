@@ -17,9 +17,6 @@ package com.google.cloud.tools.eclipse.appengine.facets;
 
 import static org.mockito.Mockito.when;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jst.server.core.FacetUtil;
-import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
 import org.eclipse.wst.server.core.IRuntimeType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,18 +30,18 @@ public class AppEngineStandardFacetTest {
   @Mock private IRuntimeType runtimeType;
 
   @Test
-  public void testIsAppEngineRuntime_appEngineRuntime() {
+  public void testIsAppEngineStandardRuntime_appEngineRuntime() {
     when(runtimeType.getId()).thenReturn(AppEngineStandardFacet.DEFAULT_RUNTIME_ID);
     when(serverRuntime.getRuntimeType()).thenReturn(runtimeType);
 
-    Assert.assertTrue(AppEngineStandardFacet.isAppEngineRuntime(serverRuntime));
+    Assert.assertTrue(AppEngineStandardFacet.isAppEngineStandardRuntime(serverRuntime));
   }
 
   @Test
-  public void testIsAppEngineRuntime_nonAppEngineRuntime() {
+  public void testIsAppEngineStandardRuntime_nonAppEngineRuntime() {
     when(runtimeType.getId()).thenReturn("some id");
     when(serverRuntime.getRuntimeType()).thenReturn(runtimeType);
 
-    Assert.assertFalse(AppEngineStandardFacet.isAppEngineRuntime(serverRuntime));
+    Assert.assertFalse(AppEngineStandardFacet.isAppEngineStandardRuntime(serverRuntime));
   }
 }
