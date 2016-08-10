@@ -40,6 +40,8 @@ import java.io.InputStream;
 public class FacetInstallDelegate implements IDelegate {
   private final static String APPENGINE_WEB_XML = "appengine-web.xml";
   private final static String APPENGINE_WEB_XML_PATH = "src/main/webapp/WEB-INF/appengine-web.xml";
+  // TODO Change directory for dynamic web module.
+  // Differentiate between project with web facets vs 'true' dynamic web modules?
   private final static String APPENGINE_WEB_XML_DIR = "src/main/webapp/WEB-INF/";
 
   @Override
