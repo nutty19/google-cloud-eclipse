@@ -45,7 +45,6 @@ import org.eclipse.wst.server.core.ServerCore;
 import com.google.cloud.tools.appengine.cloudsdk.CloudSdk;
 import com.google.common.base.Preconditions;
 
-// TODO: add tests
 public class AppEngineStandardFacet {
 
   public static final String ID = "com.google.cloud.tools.eclipse.appengine.facet";
@@ -57,7 +56,7 @@ public class AppEngineStandardFacet {
   /**
    * Returns true if project has the App Engine Standard facet and false otherwise.
    *
-   * @param project the project; project should not be null
+   * @param project should not be null
    * @return true if project has the App Engine Standard facet and false otherwise
    */
   public static boolean hasAppEngineFacet(IFacetedProject project) {
@@ -108,6 +107,8 @@ public class AppEngineStandardFacet {
    * the App Engine facet.
    *
    * @param facetedProject the faceted project receiving the App Engine facet
+   * @param installDependentFacets true if the facets required by the App Engine facet should be installed,
+   *   false otherwise
    * @param monitor the progress monitor
    * @throws CoreException if anything goes wrong during install
    */
