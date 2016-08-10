@@ -55,25 +55,11 @@ class CreateAppEngineStandardWtpProject extends WorkspaceModifyOperation {
       throw new InvocationTargetException(ex, ex.getMessage());
     }
 
-    Job facetInstallJob = new Job("Install App Engine Facet and runtimes in " + newProject.getName()) {
-
-      @Override
-      protected IStatus run(IProgressMonitor monitor) {
-        try {
-          final IFacetedProject facetedProject = ProjectFacetsManager.create(
-              newProject, true, monitor);
-          AppEngineStandardFacet.installAppEngineFacet(
-              facetedProject, true /* installDependentFacets */, monitor);
-          AppEngineStandardFacet.installAllAppEngineRuntimes(facetedProject, true, monitor);
-          return Status.OK_STATUS;
-        } catch (CoreException ex) {
-          return ex.getStatus();
-        }
-      }
-
-    };
-    facetInstallJob.setRule(newProject);
-    facetInstallJob.schedule();
+    IFacetedProject facetedProject = ProjectFacetsManager.create(
+        newProject, true, monitor);
+    AppEngineStandardFacet.installAppEngineFacet(
+        facetedProject, true /* installDependentFacets */, monitor);
+    AppEngineStandardFacet.installAllAppEngineRuntimes(facetedProject, true /* force */, monitor);
   }
 
 }

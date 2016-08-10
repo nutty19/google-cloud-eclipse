@@ -94,7 +94,6 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
       }
 
     };
-    addFacetJob.setRule(project);
     addFacetJob.schedule();
   }
 

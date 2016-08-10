@@ -91,7 +91,6 @@ public class FacetUninstallDelegate implements IDelegate {
         }
       }
     };
-    uninstallJob.setRule(project);
     uninstallJob.schedule();
 
   }

@@ -136,7 +136,8 @@ public class AppEngineStandardFacet {
    * @param force true if all runtime instances should be added to the <code>project</code> even if targeted list of
    *  <code>project</code> already includes App Engine runtime instances and false otherwise
    * @param monitor the progress monitor
-   * @throws CoreException if method fails for any reason
+   * @throws CoreException if the project contains one or more facets that are not supported by this runtime; if
+   *   failed for any other reason
    */
   public static void installAllAppEngineRuntimes(IFacetedProject project, boolean force, IProgressMonitor monitor)
       throws CoreException {
