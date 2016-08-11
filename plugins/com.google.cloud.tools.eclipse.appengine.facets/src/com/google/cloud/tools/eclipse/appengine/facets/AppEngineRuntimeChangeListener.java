@@ -71,26 +71,27 @@ public class AppEngineRuntimeChangeListener implements IFacetedProjectListener {
         try {
           AppEngineStandardFacet.installAppEngineFacet(facetedProject, false /* installDependentFacets */, monitor);
           return installStatus;
-        } catch (CoreException ex) {
+        } catch (CoreException ex1) {
           // Displays missing constraints that prevented facet installation
-          installStatus = ex.getStatus();
+          installStatus = ex1.getStatus();
+
+          // Remove App Engine as primary runtime
+          try {
+            facetedProject.removeTargetedRuntime(newRuntime, monitor);
+            return installStatus;
+          } catch (CoreException ex2) {
+            MultiStatus multiStatus;
+            if (installStatus instanceof MultiStatus) {
+              multiStatus = (MultiStatus) installStatus;
+            } else {
+              multiStatus = new MultiStatus(installStatus.getPlugin(), installStatus.getCode(),
+                  installStatus.getMessage(), installStatus.getException());
+            }
+            multiStatus.merge(ex2.getStatus());
+            return multiStatus;
+          }
         }
 
-        // Remove App Engine as primary runtime
-        try {
-          facetedProject.removeTargetedRuntime(newRuntime, monitor);
-          return installStatus;
-        } catch (CoreException ex) {
-          MultiStatus multi;
-          if (installStatus instanceof MultiStatus) {
-            multi = (MultiStatus) installStatus;
-          } else {
-            multi = new MultiStatus(installStatus.getPlugin(), installStatus.getCode(),
-                installStatus.getMessage(), installStatus.getException());
-          }
-          multi.merge(ex.getStatus());
-          return multi;
-        }
       }
 
     };
