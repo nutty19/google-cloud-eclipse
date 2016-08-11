@@ -15,38 +15,73 @@
 
 package com.google.cloud.tools.eclipse.appengine.login;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.gson.Gson;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.google.cloud.tools.eclipse.appengine.login.ui.LoginServiceUi;
+import com.google.cloud.tools.ide.login.LoggerFacade;
+import com.google.cloud.tools.ide.login.OAuthData;
+import com.google.cloud.tools.ide.login.OAuthDataStore;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+@RunWith(MockitoJUnitRunner.class)
 public class GoogleLoginServiceTest {
 
-  @Test
-  public void testCreateCredential() {
-    Credential credential = new GoogleLoginService().createCredentialHelper(
-        "fake_access_token", "fake_refresh_token");
+  @Mock private OAuthDataStore dataStore;
+  @Mock private OAuthData savedOAuthData;
+  @Mock private LoginServiceUi uiFacade;
+  @Mock private LoggerFacade loggerFacade;
 
-    Assert.assertEquals("fake_access_token", credential.getAccessToken());
-    Assert.assertEquals("fake_refresh_token", credential.getRefreshToken());
+  private static final SortedSet<String> OAUTH_SCOPES = Collections.unmodifiableSortedSet(
+      new TreeSet<>(Arrays.asList(
+          "email",
+          "https://www.googleapis.com/auth/cloud-platform"
+      )));
+
+  @Before
+  public void setUp() {
+    when(dataStore.loadOAuthData()).thenReturn(savedOAuthData);
   }
 
   @Test
-  public void testGetJsonCredential() {
-    String jsonCredential = GoogleLoginService.getJsonCredentialHelper("fake_refresh_token");
+  public void testGoogleLoginService_clearSavedCredentialIfNullRefreshToken() {
+    when(savedOAuthData.getRefreshToken()).thenReturn(null);
 
-    CredentialType credentialType = new Gson().fromJson(jsonCredential, CredentialType.class);
-    Assert.assertEquals(Constants.getOAuthClientId(), credentialType.client_id);
-    Assert.assertEquals(Constants.getOAuthClientSecret(), credentialType.client_secret);
-    Assert.assertEquals("fake_refresh_token", credentialType.refresh_token);
-    Assert.assertEquals("authorized_user", credentialType.type);
+    GoogleLoginService loginService = new GoogleLoginService(dataStore, uiFacade, loggerFacade);
+    Assert.assertNull(loginService.getCachedActiveCredential());
   }
 
-  private class CredentialType {
-    private String client_id;
-    private String client_secret;
-    private String refresh_token;
-    private String type;
-  };
+  @Test
+  public void testGoogleLoginService_clearSavedCredentialIfScopesChanged() {
+    // Persisted credential in the data store has an out-dated scopes.
+    SortedSet<String> newScope = new TreeSet<String>(Arrays.asList("new scope"));
+    when(savedOAuthData.getStoredScopes()).thenReturn(newScope);
+    when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
+
+    GoogleLoginService loginService = new GoogleLoginService(dataStore, uiFacade, loggerFacade);
+    Assert.assertNull(loginService.getCachedActiveCredential());
+  }
+
+  @Test
+  public void testGoogleLoginService_restoreSavedCredential() {
+    // Persisted credential in the data store is valid.
+    when(savedOAuthData.getStoredScopes()).thenReturn(OAUTH_SCOPES);
+    when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
+
+    GoogleLoginService loginService = new GoogleLoginService(dataStore, uiFacade, loggerFacade);
+    verify(dataStore, never()).clearStoredOAuthData();
+    Assert.assertNotNull(loginService.getCachedActiveCredential());
+  }
 }

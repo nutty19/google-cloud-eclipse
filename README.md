@@ -170,7 +170,29 @@ described below.
   1. Right-click the `gcloud-eclipse-tools.launch` file under the `trunk` module in the
   `Package Explorer`.
 
-  1. Select `Run As/1 gcloud-eclipse-tools` from the context menu.
+  1. Select `Run Configurations...`
+
+  1. Go to the second tab for `Arguments`
+
+  1. Click the `Variables...` button
+
+  1. Click the `Edit variables...` button
+
+  1. Click `New...`
+
+  1. Set the name to `oauth_id`, and the value to the value you want to use, description optional
+
+  1. Click `OK`, the variable will appear in the list
+
+  1. Repeat steps 6-8 but use `oauth_secret` as the name and use the corresponding value
+
+  1. Click `OK` to close the edit variables dialog
+
+  1. Click `Cancel` to close the variable selection dialog
+
+  1. Click `Apply` to apply the changes to the run config
+  
+  1. Click to `Run` button
 
   1. A new instance of Eclipse should be launched with the plugin installed.
 
@@ -225,32 +247,3 @@ the version should be specified as `"0.0.0"` to indicate that the
 current version found should be used.  Unlike the `.tpd` file,
 the identifiers are not p2 identifiers, and so features do not
 require the `.feature.group` suffix.
-
-
-# Release
-
-## Compile-time Constant Injection
-
-We plug a few constants into code at compile-time.  We do this to avoid
-hard-coding these values and hamper their public visibilty.
-
-| Constant                     | Bundle        | System Property       |
-| ---------------------------- | ------------- | --------------------- |
-| OAuth client ID              | login         | `oauth.client.id`     |
-| OAuth client secret          | login         | `oauth.client.secret` |
-| Google Analytics Tracking ID | usagetracking | `ga.tracking.id`      |
-
-The Java classes that hold these constant values are auto-generated
-from template Java source files, using [templating-maven-plugin]
-(http://www.mojohaus.org/templating-maven-plugin/).  The values are
-populated from system properties in the auto-gen process. That is, for
-example, `mvn -Doauth.client.id=id1234 templating:filter-sources` or
-`mvn -Doauth.client.id=id1234 package` will result in injecting `id1234`
-as an OAuth client ID.
-
-### Injecting Constants for Debugging
-
-You can also easily inject values for an Eclipse debug session, since Eclipse
-auto-generates the Java classes (if configured to do auto-build).  Providing
-relevant system properties when launching a dev instance of Eclipse and deleting
-a file to re-generate will do the job.

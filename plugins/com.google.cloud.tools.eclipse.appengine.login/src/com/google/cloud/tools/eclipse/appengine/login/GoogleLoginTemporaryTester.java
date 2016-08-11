@@ -27,16 +27,21 @@ import com.google.api.client.auth.oauth2.Credential;
 // FIXME This class is for manual integration login test. Remove it in the final product.
 public class GoogleLoginTemporaryTester {
 
-  public boolean testLogin(Credential credential) throws IOException {
-    File credentialFile = getCredentialFile(credential);
-    return credentialFile != null && testCredentialWithGcloud(credentialFile);
+  public boolean testLogin(Credential credential) {
+    try {
+      File credentialFile = getCredentialFile(credential);
+      return credentialFile != null && testCredentialWithGcloud(credentialFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
   }
 
   private File getCredentialFile(Credential credential) throws IOException {
     File credentialFile = File.createTempFile("tmp_eclipse_login_test_cred", ".json");
     credentialFile.deleteOnExit();
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(credentialFile))) {
-      String jsonCredential = GoogleLoginService.getJsonCredential(credential);
+      String jsonCredential = new CredentialHelper().toJson(credential);
       writer.write(jsonCredential);
     }
     return credentialFile;
