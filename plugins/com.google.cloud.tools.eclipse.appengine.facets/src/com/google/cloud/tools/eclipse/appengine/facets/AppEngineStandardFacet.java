@@ -70,7 +70,7 @@ public class AppEngineStandardFacet {
    * Returns true if <code>facetRuntime</code> is an App Engine Standard runtime and false otherwise
    *
    * @param facetRuntime the facet runtime; runtime should not be null
-   * @return true is <code>facetRuntime</code> is an App Engine Standard runtime and false otherwise
+   * @return true if <code>facetRuntime</code> is an App Engine Standard runtime and false otherwise
    */
   public static boolean isAppEngineStandardRuntime(IRuntime facetRuntime) {
     Preconditions.checkNotNull(facetRuntime, "runtime is null");
