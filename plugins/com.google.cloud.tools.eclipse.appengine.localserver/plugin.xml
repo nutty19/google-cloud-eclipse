@@ -28,7 +28,7 @@
             description="%runtimeTypeDescription"
             id="com.google.cloud.tools.eclipse.appengine.standard.server"
             initialState="stopped"
-            launchConfigId="com.google.appengine.AppToolsLaunchConfigurationType"
+            launchConfigId="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationTyp"
             launchModes="run,debug,profile"
             name="%apptoolsTypeName"
             runtime="true"
@@ -105,7 +105,7 @@
          point="org.eclipse.wst.server.core.publishTasks">
       <publishTask
             class="com.google.cloud.tools.eclipse.appengine.localserver.server.CloudSdkPublishTaskDelegate"
-            id="com.google.appengine.publishTask"
+            id="com.google.cloud.tools.eclipse.appengine.publishTask"
             typeIds="com.google.cloud.tools.eclipse.appengine.standard.server">
       </publishTask>
    </extension>
@@ -113,7 +113,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="com.google.cloud.tools.eclipse.appengine.localserver.server.LocalAppEngineServerLaunchConfigurationDelegate"
-            id="com.google.appengine.AppToolsLaunchConfigurationType"
+            id="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationTyp"
             modes="run, debug, profile"
             name="%apptoolsServerTypeName">
       </launchConfigurationType>
@@ -121,9 +121,9 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="com.google.appengine.AppToolsLaunchConfigurationType"
+            configTypeID="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationTyp"
             icon="platform:/plugin/com.google.cloud.tools.eclipse.appengine.ui/icons/gcp-16x16.png"
-            id="com.google.appengine.launchConfigurationTypeImages">
+            id="com.google.cloud.tools.eclipse.appengine.launchConfigurationTypeImages">
       </launchConfigurationTypeImage>
    </extension>
    <extension
@@ -131,14 +131,14 @@
       <launchConfigurationTabGroup
             class="com.google.cloud.tools.eclipse.appengine.localserver.ui.AppEngineTabGroup"
             id="com.google.cloud.tools.eclipse.appengine.localserver.ui.AppEngineTabGroup"
-            type="com.google.appengine.AppToolsLaunchConfigurationType">
+            type="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationTyp">
       </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.ui.console.consolePageParticipants">
       <consolePageParticipant
             class="com.google.cloud.tools.eclipse.appengine.localserver.ui.LocalAppEngineConsolePageParticipant"
-            id="com.google.appengine.consolePageParticipant">
+            id="com.google.cloud.tools.eclipse.appengine.consolePageParticipant">
       </consolePageParticipant>
    </extension>
    <extension

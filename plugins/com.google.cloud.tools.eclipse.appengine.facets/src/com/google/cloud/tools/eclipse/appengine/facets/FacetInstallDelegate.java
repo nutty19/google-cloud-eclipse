@@ -73,7 +73,7 @@ public class FacetInstallDelegate implements IDelegate {
         true /* isExported */);
 
     // Check if App Engine container entry already exists
-    for (int i = 0, length = rawClasspath.length; i < length; i++) {
+    for (int i = 0; i < rawClasspath.length; i++) {
       if (rawClasspath[i].equals(appEngineContainer)) {
         return;
       }
