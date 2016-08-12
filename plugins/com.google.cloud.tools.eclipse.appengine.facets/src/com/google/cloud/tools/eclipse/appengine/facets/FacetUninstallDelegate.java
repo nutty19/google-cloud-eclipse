@@ -40,6 +40,7 @@ public class FacetUninstallDelegate implements IDelegate {
   public void execute(IProject project, IProjectFacetVersion version, Object config,
       IProgressMonitor monitor) throws CoreException {
     // TODO: what is the complete scenario for maven project?
+    // https://github.com/GoogleCloudPlatform/gcloud-eclipse-tools/issues/504
     if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
       SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
       removeAppEngineJarsFromClasspath(project, subMonitor.newChild(50));
