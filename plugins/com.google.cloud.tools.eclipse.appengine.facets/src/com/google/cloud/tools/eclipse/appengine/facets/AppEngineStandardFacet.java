@@ -43,6 +43,7 @@ import org.eclipse.wst.server.core.IRuntimeWorkingCopy;
 import org.eclipse.wst.server.core.ServerCore;
 
 import com.google.cloud.tools.appengine.cloudsdk.CloudSdk;
+import com.google.cloud.tools.eclipse.util.FacetedProjectHelper;
 import com.google.common.base.Preconditions;
 
 public class AppEngineStandardFacet {
@@ -60,10 +61,8 @@ public class AppEngineStandardFacet {
    * @return true if project has the App Engine Standard facet and false otherwise
    */
   public static boolean hasAppEngineFacet(IFacetedProject project) {
-    Preconditions.checkNotNull(project, "project is null");
-
-    IProjectFacet appEngineFacet = ProjectFacetsManager.getProjectFacet(ID);
-    return project.hasProjectFacet(appEngineFacet);
+    FacetedProjectHelper facetedProjectHelper = new FacetedProjectHelper();
+    return facetedProjectHelper.projectHasFacet(project, ID);
   }
 
   /**

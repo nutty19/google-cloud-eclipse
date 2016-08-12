@@ -28,7 +28,7 @@
             description="%runtimeTypeDescription"
             id="com.google.cloud.tools.eclipse.appengine.standard.server"
             initialState="stopped"
-            launchConfigId="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationTyp"
+            launchConfigId="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationType"
             launchModes="run,debug,profile"
             name="%apptoolsTypeName"
             runtime="true"
@@ -113,7 +113,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="com.google.cloud.tools.eclipse.appengine.localserver.server.LocalAppEngineServerLaunchConfigurationDelegate"
-            id="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationTyp"
+            id="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationType"
             modes="run, debug, profile"
             name="%apptoolsServerTypeName">
       </launchConfigurationType>
@@ -121,7 +121,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationTyp"
+            configTypeID="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationType"
             icon="platform:/plugin/com.google.cloud.tools.eclipse.appengine.ui/icons/gcp-16x16.png"
             id="com.google.cloud.tools.eclipse.appengine.launchConfigurationTypeImages">
       </launchConfigurationTypeImage>
@@ -131,7 +131,7 @@
       <launchConfigurationTabGroup
             class="com.google.cloud.tools.eclipse.appengine.localserver.ui.AppEngineTabGroup"
             id="com.google.cloud.tools.eclipse.appengine.localserver.ui.AppEngineTabGroup"
-            type="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationTyp">
+            type="com.google.cloud.tools.eclipse.appengine.AppToolsLaunchConfigurationType">
       </launchConfigurationTabGroup>
    </extension>
    <extension
