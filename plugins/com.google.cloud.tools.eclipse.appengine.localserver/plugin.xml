@@ -87,7 +87,7 @@
    <extension
          point="org.eclipse.jst.server.core.runtimeFacetMappings">
       <runtimeFacetMapping
-            id="com.google.appengine.runtimeFacetMapping"
+            id="com.google.cloud.tools.eclipse.appengineruntimeFacetMapping"
             runtime-component="com.google.cloud.tools.eclipse.appengine.standard.runtime"
             runtimeTypeId="com.google.cloud.tools.eclipse.appengine.standard.runtime"
             version="1">
@@ -142,7 +142,7 @@
       </consolePageParticipant>
    </extension>
    <extension
-         id="com.google.appengine.defaultFacet"
+         id="com.google.cloud.tools.eclipse.appenginedefaultFacet"
          point="org.eclipse.wst.common.project.facet.core.defaultFacets">
       <default-facets>
          <facet
