@@ -235,7 +235,6 @@ public class AppEngineStandardFacet {
     facetedProject.installProjectFacet(WebFacetUtils.WEB_25, webModel, monitor);
   }
 
-  // TODO: find a more general form of this method
   private static org.eclipse.wst.server.core.IRuntime[] getAppEngineRuntimes() {
     org.eclipse.wst.server.core.IRuntime[] allRuntimes = ServerCore.getRuntimes();
     List<org.eclipse.wst.server.core.IRuntime> appEngineRuntimes = new ArrayList<>();
