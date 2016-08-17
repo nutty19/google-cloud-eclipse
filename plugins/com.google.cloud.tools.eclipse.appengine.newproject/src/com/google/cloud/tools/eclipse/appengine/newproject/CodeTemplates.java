@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
+import com.google.cloud.tools.eclipse.ui.util.templates.appengine.AppEngineStandardProjectConfig;
+
 public class CodeTemplates {
 
   /**

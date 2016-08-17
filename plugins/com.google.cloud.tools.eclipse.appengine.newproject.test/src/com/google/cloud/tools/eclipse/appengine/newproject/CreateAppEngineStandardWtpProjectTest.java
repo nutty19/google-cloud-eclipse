@@ -14,6 +14,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.google.cloud.tools.eclipse.ui.util.templates.appengine.AppEngineStandardProjectConfig;
+
 import java.lang.reflect.InvocationTargetException;;
 
 @RunWith(MockitoJUnitRunner.class)

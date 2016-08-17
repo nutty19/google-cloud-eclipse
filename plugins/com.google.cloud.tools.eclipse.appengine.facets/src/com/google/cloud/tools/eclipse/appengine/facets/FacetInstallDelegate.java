@@ -15,16 +15,20 @@
 
 package com.google.cloud.tools.eclipse.appengine.facets;
 
+import com.google.cloud.tools.eclipse.ui.util.templates.appengine.AppEngineStandardProjectConfig;
+import com.google.cloud.tools.eclipse.ui.util.templates.appengine.AppEngineTemplateConfiguration;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 import com.google.cloud.tools.eclipse.util.status.StatusUtil;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IAccessRule;
@@ -35,7 +39,11 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jst.j2ee.classpathdep.UpdateClasspathAttributeUtil;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
-import java.io.InputStream;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 
 public class FacetInstallDelegate implements IDelegate {
   private final static String APPENGINE_WEB_XML = "appengine-web.xml";
@@ -111,16 +119,23 @@ public class FacetInstallDelegate implements IDelegate {
       configDir = (IFolder) current;
     }
 
-    InputStream in = FacetInstallDelegate.class.getResourceAsStream("templates/" + APPENGINE_WEB_XML + ".ftl");
-    if (in == null) {
-      IStatus status = StatusUtil.error(FacetInstallDelegate.class,
-          "Could not load template for " + APPENGINE_WEB_XML);
-      throw new CoreException(status);
-    }
+    File configFile = new File(APPENGINE_WEB_XML_PATH);
+    createConfigFileContent(configFile);
+  }
 
-    IFile configFile = configDir.getFile(APPENGINE_WEB_XML);
-    if (!configFile.exists()) {
-      configFile.create(in, true, monitor);
+  private static void createConfigFileContent(File configFile) throws CoreException {
+    AppEngineStandardProjectConfig dataModel = new AppEngineStandardProjectConfig();
+    Configuration cfg = AppEngineTemplateConfiguration.getConfiguration();
+
+    try {
+      Template template = cfg.getTemplate("appengine-web.xml.ftl");
+      Writer fileWriter = new FileWriter(configFile);
+      template.process(dataModel, fileWriter);
+    } catch (IOException e) {
+      throw new CoreException(StatusUtil.error(FacetInstallDelegate.class, e.getMessage()));
+    } catch (TemplateException e) {
+      throw new CoreException(StatusUtil.error(FacetInstallDelegate.class, e.getMessage()));
     }
   }
+
 }

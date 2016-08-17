@@ -1,4 +1,4 @@
-package com.google.cloud.tools.eclipse.appengine.newproject;
+package com.google.cloud.tools.eclipse.ui.util.templates.appengine;
 
 import org.eclipse.core.resources.IProject;
 
@@ -8,7 +8,7 @@ import java.net.URI;
 /**
  * Collects all data needed to create and configure an App Engine Standard Project.
  */
-class AppEngineStandardProjectConfig {
+public class AppEngineStandardProjectConfig {
   private File cloudSdkLocation = null;
   private URI eclipseProjectLocationUri = null;
   private String appEngineProjectId = "";

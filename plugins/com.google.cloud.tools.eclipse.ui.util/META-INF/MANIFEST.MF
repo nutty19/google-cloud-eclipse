@@ -27,4 +27,8 @@ Import-Package: com.google.cloud.tools.eclipse.ui.util,
  org.eclipse.ui.handlers,
  org.eclipse.wst.common.project.facet.core
 Export-Package: com.google.cloud.tools.eclipse.ui.util,
- com.google.cloud.tools.eclipse.ui.util.console
+ com.google.cloud.tools.eclipse.ui.util.console,
+ com.google.cloud.tools.eclipse.ui.util.templates.appengine,
+ freemarker.template
+Bundle-ClassPath: lib/freemarker.jar,
+ .

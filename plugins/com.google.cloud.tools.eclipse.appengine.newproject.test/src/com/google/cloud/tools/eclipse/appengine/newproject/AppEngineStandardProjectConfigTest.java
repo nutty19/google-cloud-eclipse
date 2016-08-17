@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.cloud.tools.eclipse.ui.util.templates.appengine.AppEngineStandardProjectConfig;
+
 public class AppEngineStandardProjectConfigTest {
 
   private AppEngineStandardProjectConfig config = new AppEngineStandardProjectConfig();
