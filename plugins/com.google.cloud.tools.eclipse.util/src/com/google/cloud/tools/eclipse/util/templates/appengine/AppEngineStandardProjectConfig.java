@@ -4,11 +4,13 @@ import org.eclipse.core.resources.IProject;
 
 import java.io.File;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Collects all data needed to create and configure an App Engine Standard Project.
  */
-public class AppEngineStandardProjectConfig {
+public class AppEngineStandardProjectConfig extends TemplateDataModel {
   private File cloudSdkLocation = null;
   private URI eclipseProjectLocationUri = null;
   private String appEngineProjectId = "";
@@ -58,6 +60,13 @@ public class AppEngineStandardProjectConfig {
 
   public void setEclipseProjectLocationUri(URI uri) {
     this.eclipseProjectLocationUri = uri;
+  }
+
+  @Override
+  public Map<String, Object> getDataMap() {
+    Map<String, Object> root = new HashMap<>();
+    root.put("project", this);
+    return root;
   }
 
 }

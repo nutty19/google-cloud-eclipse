@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-  <application>${ProjectID! "_your_app_id_"}</application>
+  <application>${project.appEngineProjectId}</application>
   <version>1</version>
 
   <threadsafe>true</threadsafe>

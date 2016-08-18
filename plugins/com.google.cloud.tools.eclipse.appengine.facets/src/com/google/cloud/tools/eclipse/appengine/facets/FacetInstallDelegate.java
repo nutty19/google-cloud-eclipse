@@ -132,7 +132,7 @@ public class FacetInstallDelegate implements IDelegate {
       File configFile = new File(configFileLocation);
       Template template = cfg.getTemplate("appengine-web.xml.ftl");
       Writer fileWriter = new FileWriter(configFile);
-      template.process(dataModel, fileWriter);
+      template.process(dataModel.getDataMap(), fileWriter);
     } catch (IOException e) {
       throw new CoreException(StatusUtil.error(FacetInstallDelegate.class, e.getMessage()));
     } catch (TemplateException e) {
