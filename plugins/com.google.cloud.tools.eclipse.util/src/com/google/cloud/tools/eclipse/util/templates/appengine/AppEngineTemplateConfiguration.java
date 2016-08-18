@@ -1,4 +1,4 @@
-package com.google.cloud.tools.eclipse.ui.util.templates.appengine;
+package com.google.cloud.tools.eclipse.util.templates.appengine;
 
 import java.io.File;
 import java.io.IOException;

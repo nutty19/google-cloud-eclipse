@@ -1,9 +1,9 @@
 package com.google.cloud.tools.eclipse.appengine.newproject;
 
 import com.google.cloud.tools.eclipse.sdk.ui.preferences.CloudSdkPrompter;
-import com.google.cloud.tools.eclipse.ui.util.templates.appengine.AppEngineStandardProjectConfig;
 import com.google.cloud.tools.eclipse.usagetracker.AnalyticsEvents;
 import com.google.cloud.tools.eclipse.usagetracker.AnalyticsPingManager;
+import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineStandardProjectConfig;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;

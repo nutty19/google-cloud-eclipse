@@ -28,8 +28,4 @@ Import-Package: com.google.cloud.tools.eclipse.ui.util,
  org.eclipse.wst.common.project.facet.core,
  org.osgi.framework;version="1.8.0"
 Export-Package: com.google.cloud.tools.eclipse.ui.util,
- com.google.cloud.tools.eclipse.ui.util.console,
- com.google.cloud.tools.eclipse.ui.util.templates.appengine,
- freemarker.template
-Bundle-ClassPath: lib/freemarker.jar,
- .
+ com.google.cloud.tools.eclipse.ui.util.console

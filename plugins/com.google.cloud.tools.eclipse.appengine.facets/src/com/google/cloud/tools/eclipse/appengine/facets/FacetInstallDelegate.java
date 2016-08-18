@@ -15,10 +15,10 @@
 
 package com.google.cloud.tools.eclipse.appengine.facets;
 
-import com.google.cloud.tools.eclipse.ui.util.templates.appengine.AppEngineStandardProjectConfig;
-import com.google.cloud.tools.eclipse.ui.util.templates.appengine.AppEngineTemplateConfiguration;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 import com.google.cloud.tools.eclipse.util.status.StatusUtil;
+import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineStandardProjectConfig;
+import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplateConfiguration;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
