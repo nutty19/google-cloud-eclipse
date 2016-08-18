@@ -25,7 +25,8 @@ Import-Package: com.google.cloud.tools.eclipse.ui.util,
  org.eclipse.ui.browser;ui.workbench=split,
  org.eclipse.ui.console,
  org.eclipse.ui.handlers,
- org.eclipse.wst.common.project.facet.core
+ org.eclipse.wst.common.project.facet.core,
+ org.osgi.framework;version="1.8.0"
 Export-Package: com.google.cloud.tools.eclipse.ui.util,
  com.google.cloud.tools.eclipse.ui.util.console,
  com.google.cloud.tools.eclipse.ui.util.templates.appengine,

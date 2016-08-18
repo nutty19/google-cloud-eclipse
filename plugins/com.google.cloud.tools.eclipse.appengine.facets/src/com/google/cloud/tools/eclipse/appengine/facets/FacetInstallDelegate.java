@@ -40,6 +40,7 @@ import org.eclipse.jst.j2ee.classpathdep.UpdateClasspathAttributeUtil;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -119,15 +120,16 @@ public class FacetInstallDelegate implements IDelegate {
       configDir = (IFolder) current;
     }
 
-    File configFile = new File(APPENGINE_WEB_XML_PATH);
-    createConfigFileContent(configFile);
+    appEngineWebXml.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+    createConfigFileContent(appEngineWebXml.getLocation().toString());
   }
 
-  private static void createConfigFileContent(File configFile) throws CoreException {
+  private static void createConfigFileContent(String configFileLocation) throws CoreException {
     AppEngineStandardProjectConfig dataModel = new AppEngineStandardProjectConfig();
     Configuration cfg = AppEngineTemplateConfiguration.getConfiguration();
 
     try {
+      File configFile = new File(configFileLocation);
       Template template = cfg.getTemplate("appengine-web.xml.ftl");
       Writer fileWriter = new FileWriter(configFile);
       template.process(dataModel, fileWriter);
