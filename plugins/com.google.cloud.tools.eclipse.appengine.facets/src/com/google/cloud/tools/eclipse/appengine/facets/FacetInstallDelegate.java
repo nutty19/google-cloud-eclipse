@@ -16,13 +16,8 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
 import com.google.cloud.tools.eclipse.util.MavenUtils;
-import com.google.cloud.tools.eclipse.util.status.StatusUtil;
-import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineStandardProjectConfig;
-import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplateConfiguration;
+import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplateUtility;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -41,10 +36,7 @@ import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.util.HashMap;
 
 public class FacetInstallDelegate implements IDelegate {
   private final static String APPENGINE_WEB_XML = "appengine-web.xml";
@@ -121,23 +113,10 @@ public class FacetInstallDelegate implements IDelegate {
     }
 
     appEngineWebXml.create(new ByteArrayInputStream(new byte[0]), true, monitor);
-    createConfigFileContent(appEngineWebXml.getLocation().toString());
+    String configFileLocation = appEngineWebXml.getLocation().toString();
+    AppEngineTemplateUtility.createFileContent(
+        configFileLocation, AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, new HashMap<String, Object>());
   }
 
-  private static void createConfigFileContent(String configFileLocation) throws CoreException {
-    AppEngineStandardProjectConfig dataModel = new AppEngineStandardProjectConfig();
-    Configuration cfg = AppEngineTemplateConfiguration.getConfiguration();
-
-    try {
-      File configFile = new File(configFileLocation);
-      Template template = cfg.getTemplate("appengine-web.xml.ftl");
-      Writer fileWriter = new FileWriter(configFile);
-      template.process(dataModel.getDataMap(), fileWriter);
-    } catch (IOException e) {
-      throw new CoreException(StatusUtil.error(FacetInstallDelegate.class, e.getMessage()));
-    } catch (TemplateException e) {
-      throw new CoreException(StatusUtil.error(FacetInstallDelegate.class, e.getMessage()));
-    }
-  }
 
 }
