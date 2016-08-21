@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * All rights reserved. This program and the accompanying materials are made
@@ -11,22 +11,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *******************************************************************************/
+ */
 
-package com.google.cloud.tools.eclipse.util;
+package com.google.cloud.tools.eclipse.appengine.localserver.ui;
 
-import org.junit.Assert;
-import org.junit.Test;
+import com.google.cloud.tools.eclipse.appengine.localserver.PreferencesInitializer;
+import com.google.cloud.tools.eclipse.preferences.areas.FieldEditorWrapper;
 
-public class CloudToolsInfoTest {
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.swt.widgets.Composite;
 
-  @Test
-  public void testGetToolsVersion() {
-    Assert.assertTrue(CloudToolsInfo.getToolsVersion().startsWith("0.1.0."));
-  }
-
-  @Test
-  public void testUserAgent() {
-    Assert.assertTrue(CloudToolsInfo.USER_AGENT.startsWith("gcloud-eclipse-tools/0.1.0"));
+public class LaunchBehaviorsArea extends FieldEditorWrapper<BooleanFieldEditor> {
+  @Override
+  protected BooleanFieldEditor createFieldEditor(Composite container) {
+    return new BooleanFieldEditor(PreferencesInitializer.LAUNCH_BROWSER,
+        "Open start page on launch", container);
   }
 }

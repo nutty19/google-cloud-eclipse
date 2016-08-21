@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * All rights reserved. This program and the accompanying materials are made
@@ -11,22 +11,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *******************************************************************************/
+ */
 
-package com.google.cloud.tools.eclipse.util;
+package com.google.cloud.tools.eclipse.appengine.localserver;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 
-public class CloudToolsInfoTest {
+public class PreferencesInitializer extends AbstractPreferenceInitializer {
 
-  @Test
-  public void testGetToolsVersion() {
-    Assert.assertTrue(CloudToolsInfo.getToolsVersion().startsWith("0.1.0."));
-  }
+  public static final String LAUNCH_BROWSER = "launchBrowser";
 
-  @Test
-  public void testUserAgent() {
-    Assert.assertTrue(CloudToolsInfo.USER_AGENT.startsWith("gcloud-eclipse-tools/0.1.0"));
+  @Override
+  public void initializeDefaultPreferences() {
+    DefaultScope.INSTANCE.getNode(Activator.PLUGIN_ID).putBoolean(LAUNCH_BROWSER, true);
   }
 }
