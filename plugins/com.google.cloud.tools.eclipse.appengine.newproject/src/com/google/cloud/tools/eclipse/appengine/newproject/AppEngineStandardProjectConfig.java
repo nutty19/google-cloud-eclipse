@@ -1,6 +1,7 @@
 package com.google.cloud.tools.eclipse.appengine.newproject;
 
 import org.eclipse.core.resources.IProject;
+
 import java.io.File;
 import java.net.URI;
 

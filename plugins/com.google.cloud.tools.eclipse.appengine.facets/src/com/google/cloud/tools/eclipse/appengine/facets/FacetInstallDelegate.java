@@ -118,5 +118,4 @@ public class FacetInstallDelegate implements IDelegate {
         configFileLocation, AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, new HashMap<String, Object>());
   }
 
-
 }
