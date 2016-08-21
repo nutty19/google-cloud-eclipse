@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
+import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplateUtility;
+
 public class CodeTemplates {
 
   /**
@@ -75,7 +77,7 @@ public class CodeTemplates {
     IFolder webinf = createChildFolder("WEB-INF", webapp, subMonitor);
     
     Map<String, String> projectId = new HashMap<>();
-    projectId.put("ProjectID", config.getAppEngineProjectId());
+    projectId.put("projectId", config.getAppEngineProjectId());
     createChildFile("appengine-web.xml", webinf, subMonitor, projectId);
     
     Map<String, String> packageMap = new HashMap<>();
@@ -141,6 +143,15 @@ public class CodeTemplates {
     }
     
     if (!child.exists()) {
+      // REMOVE ------
+      if (name.equals("appengine-web.xml")) {
+        child.create(new ByteArrayInputStream(new byte[0]), force, monitor);
+        
+        AppEngineTemplateUtility.createFileContent(
+            child.getLocation().toString(), AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, values);
+        return child;
+      }
+    
       // todo total hack; lots of problems with edge conditions and performance;
       // replace this with FreeMarker or better
       try {

@@ -115,7 +115,7 @@ public class FacetInstallDelegate implements IDelegate {
     appEngineWebXml.create(new ByteArrayInputStream(new byte[0]), true, monitor);
     String configFileLocation = appEngineWebXml.getLocation().toString();
     AppEngineTemplateUtility.createFileContent(
-        configFileLocation, AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, new HashMap<String, Object>());
+        configFileLocation, AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, new HashMap<String, String>());
   }
 
 }
