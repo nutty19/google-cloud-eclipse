@@ -14,7 +14,6 @@ import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 
 import com.google.cloud.tools.eclipse.appengine.facets.AppEngineStandardFacet;
-import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineStandardProjectConfig;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
