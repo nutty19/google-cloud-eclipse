@@ -79,7 +79,7 @@ public class AppEngineTemplateUtilityTest {
       throws CoreException, IOException {
     String fileLocation = testFile.getLocation().toString();
     Map<String, String> dataMap = new HashMap<String, String>();
-    dataMap.put("package", "package com.test");    
+    dataMap.put("package", "package com.example");
     AppEngineTemplateUtility.createFileContent(
         fileLocation, AppEngineTemplateUtility.HELLO_APPENGINE_TEMPLATE, dataMap);
 
@@ -104,7 +104,7 @@ public class AppEngineTemplateUtilityTest {
   public void testCreateFileContent_web() throws CoreException, IOException {
     String fileLocation = testFile.getLocation().toString();
     Map<String, String> dataMap = new HashMap<String, String>();
-    dataMap.put("package", "com.test.");    
+    dataMap.put("package", "com.example.");
     AppEngineTemplateUtility.createFileContent(
         fileLocation, AppEngineTemplateUtility.WEB_XML_TEMPLATE, dataMap);
 
