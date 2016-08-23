@@ -20,8 +20,6 @@ import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplate
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.project.MavenProject;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -29,7 +27,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -58,10 +55,12 @@ public class FacetInstallDelegate implements IDelegate {
                       IProjectFacetVersion version,
                       Object config,
                       IProgressMonitor monitor) throws CoreException {
-    if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
+    if (MavenUtils.hasMavenNature(project)) { 
+      addAppEngineJarsToMavenProject(project, monitor);
+    } else {
       addAppEngineJarsToClasspath(project, monitor);
-      createConfigFiles(project, monitor);
     }
+    createConfigFiles(project, monitor);
   }
 
   /**
@@ -133,9 +132,6 @@ public class FacetInstallDelegate implements IDelegate {
     for (Dependency dependency : dependencies) {
       pom.addDependency(dependency);
     }
-    
-    
-    
   }
 
   private static List<Dependency> createMavenDependecies() {
