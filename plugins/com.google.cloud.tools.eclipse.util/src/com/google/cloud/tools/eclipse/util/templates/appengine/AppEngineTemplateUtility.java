@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -49,7 +50,7 @@ public class AppEngineTemplateUtility {
   private static Configuration createConfiguration() throws IOException, URISyntaxException{
     Configuration cfg = new Configuration(Configuration.VERSION_2_3_25);
     cfg.setClassForTemplateLoading(AppEngineTemplateUtility.class, "/templates/appengine");
-    cfg.setDefaultEncoding("UTF-8");
+    cfg.setDefaultEncoding(StandardCharsets.UTF_8.name());
     cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     cfg.setLogTemplateExceptions(false);
     return cfg;

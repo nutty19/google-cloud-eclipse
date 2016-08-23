@@ -130,7 +130,7 @@ public class CodeTemplatesTest {
   @Test
   public void testCreateChildFile() throws CoreException, IOException {
     Map<String, String> values = new HashMap<>();
-    values.put("package", "package com.google.foo.bar;");
+    values.put("package", "com.google.foo.bar");
     
     IFile child = CodeTemplates.createChildFile("HelloAppEngine.java", AppEngineTemplateUtility.HELLO_APPENGINE_TEMPLATE, parent, monitor, values);
     Assert.assertTrue(child.exists());
