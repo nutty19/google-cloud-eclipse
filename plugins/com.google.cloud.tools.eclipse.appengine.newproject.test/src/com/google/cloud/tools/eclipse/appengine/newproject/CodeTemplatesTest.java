@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -130,13 +131,13 @@ public class CodeTemplatesTest {
   @Test
   public void testCreateChildFile() throws CoreException, IOException {
     Map<String, String> values = new HashMap<>();
-    values.put("package", "package com.google.foo.bar;");
+    values.put("package", "com.google.foo.bar");
     
     IFile child = CodeTemplates.createChildFile("HelloAppEngine.java", AppEngineTemplateUtility.HELLO_APPENGINE_TEMPLATE, parent, monitor, values);
     Assert.assertTrue(child.exists());
     Assert.assertEquals("HelloAppEngine.java", child.getName());
     InputStream in = child.getContents(true);
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"))) {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8.name()))) {
       Assert.assertEquals("package com.google.foo.bar;", reader.readLine());
       Assert.assertEquals("", reader.readLine());
     }

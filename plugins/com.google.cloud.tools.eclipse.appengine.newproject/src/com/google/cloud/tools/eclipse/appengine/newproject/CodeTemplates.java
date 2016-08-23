@@ -26,8 +26,6 @@ public class CodeTemplates {
    */
   public static void materialize(IProject project, AppEngineStandardProjectConfig config,
       IProgressMonitor monitor) throws CoreException {
-    // todo replace with something that simply copies from a file system while replacing tokens
-    
     SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
     subMonitor.setTaskName("Generating code");
     boolean force = true;
@@ -48,7 +46,7 @@ public class CodeTemplates {
       for (int i = 0; i < packages.length; i++) {
         java = createChildFolder(packages[i], java, subMonitor);
       }
-      values.put("package", "package " + packageName + ";");
+      values.put("package", packageName);
     } else {
       values.put("package", "");
     }

@@ -75,16 +75,30 @@ public class AppEngineTemplateUtilityTest {
   }
 
   @Test
-  public void testCreateFileContent_helloAppEngine()
+  public void testCreateFileContent_helloAppEngineWithPackage()
       throws CoreException, IOException {
     String fileLocation = testFile.getLocation().toString();
     Map<String, String> dataMap = new HashMap<String, String>();
-    dataMap.put("package", "package com.example;");
+    dataMap.put("package", "com.example");
     AppEngineTemplateUtility.createFileContent(
         fileLocation, AppEngineTemplateUtility.HELLO_APPENGINE_TEMPLATE, dataMap);
 
     InputStream testFileStream = testFile.getContents(true);
-    InputStream expectedFileStream = getDataFile("helloAppEngine.txt");
+    InputStream expectedFileStream = getDataFile("helloAppEngineWithPackage.txt");
+    compareFileContent(expectedFileStream, testFileStream);
+  }
+
+  @Test
+  public void testCreateFileContent_helloAppEngineWithoutPackage()
+      throws CoreException, IOException {
+    String fileLocation = testFile.getLocation().toString();
+    Map<String, String> dataMap = new HashMap<String, String>();
+    dataMap.put("package", "");
+    AppEngineTemplateUtility.createFileContent(
+        fileLocation, AppEngineTemplateUtility.HELLO_APPENGINE_TEMPLATE, dataMap);
+
+    InputStream testFileStream = testFile.getContents(true);
+    InputStream expectedFileStream = getDataFile("helloAppEngineWithoutPackage.txt");
     compareFileContent(expectedFileStream, testFileStream);
   }
 

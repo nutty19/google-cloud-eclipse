@@ -1,4 +1,4 @@
-${package}
+<#if package != "">package ${package};</#if>
 
 import java.io.IOException;
 
