@@ -48,7 +48,7 @@ public class CodeTemplates {
       for (int i = 0; i < packages.length; i++) {
         java = createChildFolder(packages[i], java, subMonitor);
       }
-      values.put("package", packageName);
+      values.put("package", "package " + packageName + ";");
     } else {
       values.put("package", "");
     }
