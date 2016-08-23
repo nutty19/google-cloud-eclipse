@@ -18,6 +18,10 @@ package com.google.cloud.tools.eclipse.appengine.facets;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplateUtility;
 
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -32,11 +36,15 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jst.j2ee.classpathdep.UpdateClasspathAttributeUtil;
+import org.eclipse.m2e.core.MavenPlugin;
+import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FacetInstallDelegate implements IDelegate {
   private final static String APPENGINE_WEB_XML = "appengine-web.xml";
@@ -51,9 +59,8 @@ public class FacetInstallDelegate implements IDelegate {
                       Object config,
                       IProgressMonitor monitor) throws CoreException {
     if (!MavenUtils.hasMavenNature(project)) { // Maven handles classpath in maven projects.
-      SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
-      addAppEngineJarsToClasspath(project, subMonitor.newChild(50));
-      createConfigFiles(project, subMonitor.newChild(50));
+      addAppEngineJarsToClasspath(project, monitor);
+      createConfigFiles(project, monitor);
     }
   }
 
@@ -116,6 +123,59 @@ public class FacetInstallDelegate implements IDelegate {
     String configFileLocation = appEngineWebXml.getLocation().toString();
     AppEngineTemplateUtility.createFileContent(
         configFileLocation, AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, new HashMap<String, String>());
+  }
+
+  private static void addAppEngineJarsToMavenProject(IProject project, IProgressMonitor monitor) throws CoreException {
+    IMavenProjectFacade facade = MavenPlugin.getMavenProjectRegistry().getProject(project);
+    Model pom = facade.getMavenProject(monitor).getModel();
+
+    List<Dependency> dependencies = createMavenDependecies();
+    for (Dependency dependency : dependencies) {
+      pom.addDependency(dependency);
+    }
+    
+    
+    
+  }
+
+  private static List<Dependency> createMavenDependecies() {
+    List<Dependency> dependencies = new ArrayList<Dependency>();
+
+    Dependency appEngineApiDependency = new Dependency();
+    appEngineApiDependency.setGroupId("com.google.appengine");
+    appEngineApiDependency.setArtifactId("appengine-api-1.0-sdk");
+    //d1.setVersion("${appengine.version}");
+    appEngineApiDependency.setScope("");
+    dependencies.add(appEngineApiDependency);
+
+    Dependency servletApiDependency = new Dependency();
+    servletApiDependency.setGroupId("javax.servlet");
+    servletApiDependency.setArtifactId("servlet-api");
+    servletApiDependency.setVersion("2.5");
+    servletApiDependency.setScope("provided");
+    dependencies.add(servletApiDependency);
+
+    Dependency jstlDependecy = new Dependency();
+    jstlDependecy.setGroupId("jstl");
+    jstlDependecy.setArtifactId("jstl");
+    jstlDependecy.setVersion("1.2");
+    dependencies.add(jstlDependecy);
+
+    Dependency appEngineTestingDependency = new Dependency();
+    appEngineTestingDependency.setGroupId("com.google.appengine");
+    appEngineTestingDependency.setArtifactId("appengine-testing");
+    //appEngineTestingDependency.setVersion("${appengine.version}");
+    appEngineTestingDependency.setScope("test");
+    dependencies.add(appEngineTestingDependency);
+
+    Dependency appEngineApiStubsDependency = new Dependency();
+    appEngineApiStubsDependency.setGroupId("com.google.appengine");
+    appEngineApiStubsDependency.setArtifactId("appengine-api-stubsk");
+    appEngineApiStubsDependency.setVersion("${appengine.version}");
+    appEngineApiStubsDependency.setScope("test");
+    dependencies.add(appEngineApiStubsDependency);
+
+    return dependencies;
   }
 
 }
