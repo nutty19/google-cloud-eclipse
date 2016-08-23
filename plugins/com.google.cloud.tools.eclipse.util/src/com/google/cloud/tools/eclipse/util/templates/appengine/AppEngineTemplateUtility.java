@@ -5,14 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-
 import com.google.cloud.tools.eclipse.util.status.StatusUtil;
 import com.google.common.base.Preconditions;
 
@@ -53,10 +48,7 @@ public class AppEngineTemplateUtility {
 
   private static Configuration createConfiguration() throws IOException, URISyntaxException{
     Configuration cfg = new Configuration(Configuration.VERSION_2_3_25);
-    Bundle bundle = FrameworkUtil.getBundle(AppEngineTemplateUtility.class);
-    URL templatesUrl = bundle.getEntry("/templates/appengine");
-    File appengineTemplatesDir = new File(FileLocator.resolve(templatesUrl).toURI());
-    cfg.setDirectoryForTemplateLoading(appengineTemplatesDir);
+    cfg.setClassForTemplateLoading(AppEngineTemplateUtility.class, "/templates/appengine");
     cfg.setDefaultEncoding("UTF-8");
     cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
     cfg.setLogTemplateExceptions(false);
