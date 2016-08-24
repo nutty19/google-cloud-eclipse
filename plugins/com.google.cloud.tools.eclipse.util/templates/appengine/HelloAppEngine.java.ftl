@@ -1,6 +1,6 @@
-<#if package != "">package ${package};</#if>
+<#if package != "">package ${package};
 
-import java.io.IOException;
+</#if>import java.io.IOException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
