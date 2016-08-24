@@ -137,8 +137,7 @@ public class FacetInstallDelegate implements IDelegate {
     pom.setDependencies(dependencies);
 
     Properties properties = pom.getProperties();
-    updatePomProperties(properties); // <--------------------NEXT STEP
-    // TODO: Do we need to explicitly write this to the file
+    updatePomProperties(properties, pom.getArtifactId());
 
     DefaultModelWriter writer = new DefaultModelWriter();
     try {
@@ -214,9 +213,9 @@ public class FacetInstallDelegate implements IDelegate {
     return finalDepList;
   }
 
-  private static void updatePomProperties(Properties properties) {
+  private static void updatePomProperties(Properties properties, String artifactId) {
     if(!properties.containsKey("app.id")) {
-      properties.setProperty("app.id", "");
+      properties.setProperty("app.id", artifactId);
     }
 
     if(!properties.containsKey("app.version")) {
@@ -225,6 +224,10 @@ public class FacetInstallDelegate implements IDelegate {
 
     if(!properties.containsKey("appengine.version")) {
       properties.setProperty("appengine.version", "1.9.38");
+    }
+
+    if(!properties.containsKey("gcloud.plugin.version")) {
+      properties.setProperty("gcloud.plugin.version", "2.0.9.111.v20160527");
     }
   }
 

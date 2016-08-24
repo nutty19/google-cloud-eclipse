@@ -34,7 +34,7 @@ public class FacetInstallDelegateTest {
     List<Dependency> aList = new ArrayList<Dependency>();
     aList.add(appEngineApiDependency);
 
-    List<Dependency> bList = FacetInstallDelegate.createMavenDependecies(aList);
+    List<Dependency> bList = FacetInstallDelegate.updateMavenDependecies(aList);
     Assert.assertEquals(6, bList.size());
   }
 
@@ -49,7 +49,7 @@ public class FacetInstallDelegateTest {
     List<Dependency> aList = new ArrayList<Dependency>();
     aList.add(appEngineApiStubsDependency);
 
-    List<Dependency> bList = FacetInstallDelegate.createMavenDependecies(aList);
+    List<Dependency> bList = FacetInstallDelegate.updateMavenDependecies(aList);
 
     System.out.println(bList.toString());
     Assert.assertEquals(5, bList.size());
@@ -58,7 +58,7 @@ public class FacetInstallDelegateTest {
   @Test
   public void testSomething_2() {
     List<Dependency> aList = new ArrayList<Dependency>();
-    List<Dependency> bList = FacetInstallDelegate.createMavenDependecies(aList);
+    List<Dependency> bList = FacetInstallDelegate.updateMavenDependecies(aList);
 
     System.out.println(bList.toString());
     Assert.assertEquals(5, bList.size());
