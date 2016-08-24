@@ -20,6 +20,7 @@ import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplate
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.io.DefaultModelWriter;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -39,9 +40,12 @@ import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class FacetInstallDelegate implements IDelegate {
   private final static String APPENGINE_WEB_XML = "appengine-web.xml";
@@ -128,50 +132,100 @@ public class FacetInstallDelegate implements IDelegate {
     IMavenProjectFacade facade = MavenPlugin.getMavenProjectRegistry().getProject(project);
     Model pom = facade.getMavenProject(monitor).getModel();
 
-    List<Dependency> dependencies = createMavenDependecies();
-    for (Dependency dependency : dependencies) {
-      pom.addDependency(dependency);
+    List<Dependency> currentDependecies = pom.getDependencies();
+    List<Dependency> dependencies = createMavenDependecies(currentDependecies);
+    pom.setDependencies(dependencies);
+
+    Properties properties = pom.getProperties();
+    updatePomProperties(properties); // <--------------------NEXT STEP
+    // TODO: Do we need to explicitly write this to the file
+
+    DefaultModelWriter writer = new DefaultModelWriter();
+    try {
+      writer.write(pom.getPomFile(), null, pom);
+    } catch (IOException e) {
+      //throw new CoreException(e.getMessage());
     }
   }
 
-  private static List<Dependency> createMavenDependecies() {
-    List<Dependency> dependencies = new ArrayList<Dependency>();
+  // TODO: move to maven util
+  public static List<Dependency> createMavenDependecies(List<Dependency> currentDependecies) {
+    Map<String, Dependency> dep = new HashMap<String, Dependency>();
+    for (Dependency dependency : currentDependecies) {
+      dep.put(dependency.toString(), dependency);
+    }
 
     Dependency appEngineApiDependency = new Dependency();
     appEngineApiDependency.setGroupId("com.google.appengine");
     appEngineApiDependency.setArtifactId("appengine-api-1.0-sdk");
-    //d1.setVersion("${appengine.version}");
+    appEngineApiDependency.setVersion("${appengine.version}");
     appEngineApiDependency.setScope("");
-    dependencies.add(appEngineApiDependency);
+
+    String appEngineApiString = appEngineApiDependency.toString();
+    if (!dep.containsKey(appEngineApiString)) {
+      dep.put(appEngineApiString, appEngineApiDependency);
+    }
 
     Dependency servletApiDependency = new Dependency();
     servletApiDependency.setGroupId("javax.servlet");
     servletApiDependency.setArtifactId("servlet-api");
     servletApiDependency.setVersion("2.5");
     servletApiDependency.setScope("provided");
-    dependencies.add(servletApiDependency);
+
+    String servletApiString = servletApiDependency.toString();
+    if (!dep.containsKey(servletApiString)) {
+      dep.put(servletApiString, servletApiDependency);
+    }
 
     Dependency jstlDependecy = new Dependency();
     jstlDependecy.setGroupId("jstl");
     jstlDependecy.setArtifactId("jstl");
     jstlDependecy.setVersion("1.2");
-    dependencies.add(jstlDependecy);
+
+    String jstlString = jstlDependecy.toString();
+    if (!dep.containsKey(jstlString)) {
+      dep.put(jstlString, jstlDependecy);
+    }
 
     Dependency appEngineTestingDependency = new Dependency();
     appEngineTestingDependency.setGroupId("com.google.appengine");
     appEngineTestingDependency.setArtifactId("appengine-testing");
-    //appEngineTestingDependency.setVersion("${appengine.version}");
+    appEngineTestingDependency.setVersion("${appengine.version}");
     appEngineTestingDependency.setScope("test");
-    dependencies.add(appEngineTestingDependency);
+
+    String appEngineTestingString = appEngineTestingDependency.toString();
+    if (!dep.containsKey(appEngineTestingString)) {
+      dep.put(appEngineTestingString, appEngineTestingDependency);
+    }
 
     Dependency appEngineApiStubsDependency = new Dependency();
     appEngineApiStubsDependency.setGroupId("com.google.appengine");
-    appEngineApiStubsDependency.setArtifactId("appengine-api-stubsk");
+    appEngineApiStubsDependency.setArtifactId("appengine-api-stubs");
     appEngineApiStubsDependency.setVersion("${appengine.version}");
     appEngineApiStubsDependency.setScope("test");
-    dependencies.add(appEngineApiStubsDependency);
 
-    return dependencies;
+    String appEngineApiStubsString = appEngineApiStubsDependency.toString();
+    if (!dep.containsKey(appEngineApiStubsString)) {
+      dep.put(appEngineApiStubsString, appEngineApiStubsDependency);
+    }
+
+    List<Dependency> finalDepList = new ArrayList<Dependency>();
+    finalDepList.addAll(dep.values());
+    return finalDepList;
+  }
+
+  private static void updatePomProperties(Properties properties) {
+    if(!properties.containsKey("app.id")) {
+      properties.setProperty("app.id", "");
+    }
+
+    if(!properties.containsKey("app.version")) {
+      properties.setProperty("app.version", "1");
+    }
+
+    if(!properties.containsKey("appengine.version")) {
+      properties.setProperty("appengine.version", "1.9.38");
+    }
   }
 
 }
