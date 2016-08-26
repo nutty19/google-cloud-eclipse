@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright 2016 Google Inc. All Rights Reserved.
- *
- * All rights reserved. This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License v1.0 which
- * accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- *******************************************************************************/
-
 package com.google.cloud.tools.eclipse.appengine.facets;
 
 import java.io.IOException;
@@ -22,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -125,86 +111,31 @@ public class FacetUninstallDelegate implements IDelegate {
     }
   }
 
-  private List<Dependency> updateMavenDependecies(List<Dependency> currentDependecies) {
-    Map<String, Dependency> dep = new HashMap<String, Dependency>();
-    for (Dependency dependency : currentDependecies) {
-      dep.put(dependency.toString(), dependency);
+  private List<Dependency> updateMavenDependecies(List<Dependency> initialDependecies) {
+    Map<String, Dependency> dependencies = new HashMap<String, Dependency>();
+    for (Dependency dependency : initialDependecies) {
+      dependencies.put(dependency.toString(), dependency);
+    }
+    
+    Map<String, Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
+    for (Entry<String, Dependency> appEngineDependency : allAppEngineDependencies.entrySet()) {
+      if (!dependencies.containsKey(appEngineDependency.getKey())) {
+        dependencies.remove(appEngineDependency.getKey());
+      }
     }
 
-    Dependency appEngineApiDependency = new Dependency();
-    appEngineApiDependency.setGroupId("com.google.appengine");
-    appEngineApiDependency.setArtifactId("appengine-api-1.0-sdk");
-    appEngineApiDependency.setVersion("${appengine.version}");
-    appEngineApiDependency.setScope("");
-
-    String appEngineApiString = appEngineApiDependency.toString();
-    if (!dep.containsKey(appEngineApiString)) {
-      dep.remove(appEngineApiString);
-    }
-
-    Dependency servletApiDependency = new Dependency();
-    servletApiDependency.setGroupId("javax.servlet");
-    servletApiDependency.setArtifactId("servlet-api");
-    servletApiDependency.setVersion("2.5");
-    servletApiDependency.setScope("provided");
-
-    String servletApiString = servletApiDependency.toString();
-    if (!dep.containsKey(servletApiString)) {
-      dep.remove(servletApiString);
-    }
-
-    Dependency jstlDependecy = new Dependency();
-    jstlDependecy.setGroupId("jstl");
-    jstlDependecy.setArtifactId("jstl");
-    jstlDependecy.setVersion("1.2");
-
-    String jstlString = jstlDependecy.toString();
-    if (!dep.containsKey(jstlString)) {
-      dep.remove(jstlString);
-    }
-
-    Dependency appEngineTestingDependency = new Dependency();
-    appEngineTestingDependency.setGroupId("com.google.appengine");
-    appEngineTestingDependency.setArtifactId("appengine-testing");
-    appEngineTestingDependency.setVersion("${appengine.version}");
-    appEngineTestingDependency.setScope("test");
-
-    String appEngineTestingString = appEngineTestingDependency.toString();
-    if (!dep.containsKey(appEngineTestingString)) {
-      dep.remove(appEngineTestingString);
-    }
-
-    Dependency appEngineApiStubsDependency = new Dependency();
-    appEngineApiStubsDependency.setGroupId("com.google.appengine");
-    appEngineApiStubsDependency.setArtifactId("appengine-api-stubs");
-    appEngineApiStubsDependency.setVersion("${appengine.version}");
-    appEngineApiStubsDependency.setScope("test");
-    String appEngineApiStubsString = appEngineApiStubsDependency.toString();
-    if (!dep.containsKey(appEngineApiStubsString)) {
-      dep.remove(appEngineApiStubsString);
-    }
-
-    List<Dependency> finalDepList = new ArrayList<Dependency>();
-    finalDepList.addAll(dep.values());
-    return finalDepList;
+    List<Dependency> finalDependencies = new ArrayList<Dependency>();
+    finalDependencies.addAll(dependencies.values());
+    return finalDependencies;
   }
 
   //visible for testing
-  public static void updatePomProperties(Properties properties, String artifactId) {
-    if (!properties.containsKey("app.id")) {
-      properties.remove("app.id");
-    }
-
-    if (!properties.containsKey("app.version")) {
-      properties.remove("app.version");
-    }
-
-    if (!properties.containsKey("appengine.version")) {
-      properties.remove("appengine.version");
-    }
-
-    if (!properties.containsKey("gcloud.plugin.version")) {
-      properties.remove("gcloud.plugin.version");
+  public static void updatePomProperties(Properties projectProperties, String artifactId) {
+    Map<String, String> allProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
+    for (Entry<String, String> property : allProperties.entrySet()) {
+      if(projectProperties.containsKey(property.getKey())) {
+        projectProperties.remove(property.getKey());
+      }
     }
   }
 }

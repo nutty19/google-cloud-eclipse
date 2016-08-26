@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 public class FacetInstallDelegate implements IDelegate {
@@ -133,11 +134,10 @@ public class FacetInstallDelegate implements IDelegate {
     Model pom = facade.getMavenProject(monitor).getModel();
 
     List<Dependency> currentDependecies = pom.getDependencies();
-    List<Dependency> dependencies = createMavenDependecies(currentDependecies);
+    List<Dependency> dependencies = createMavenProjectDependecies(currentDependecies);
     pom.setDependencies(dependencies);
 
-    Properties properties = pom.getProperties();
-    updatePomProperties(properties, pom.getArtifactId());
+    updatePomProperties(pom.getProperties());
 
     DefaultModelWriter writer = new DefaultModelWriter();
     try {
@@ -147,87 +147,32 @@ public class FacetInstallDelegate implements IDelegate {
     }
   }
 
-  // TODO: move to maven util
-  public static List<Dependency> createMavenDependecies(List<Dependency> currentDependecies) {
-    Map<String, Dependency> dep = new HashMap<String, Dependency>();
-    for (Dependency dependency : currentDependecies) {
-      dep.put(dependency.toString(), dependency);
+  // visible for testing
+  public static List<Dependency> createMavenProjectDependecies(List<Dependency> initialDependecies) {
+    Map<String, Dependency> dependecies = new HashMap<String, Dependency>();
+    for (Dependency dependency : initialDependecies) {
+      dependecies.put(dependency.toString(), dependency);
     }
 
-    Dependency appEngineApiDependency = new Dependency();
-    appEngineApiDependency.setGroupId("com.google.appengine");
-    appEngineApiDependency.setArtifactId("appengine-api-1.0-sdk");
-    appEngineApiDependency.setVersion("${appengine.version}");
-    appEngineApiDependency.setScope("");
-
-    String appEngineApiString = appEngineApiDependency.toString();
-    if (!dep.containsKey(appEngineApiString)) {
-      dep.put(appEngineApiString, appEngineApiDependency);
+    Map<String, Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
+    for (Entry<String, Dependency> appEngineDependency : allAppEngineDependencies.entrySet()) {
+      if (!dependecies.containsKey(appEngineDependency.getKey())) {
+        dependecies.put(appEngineDependency.getKey(), appEngineDependency.getValue());
+      }
     }
 
-    Dependency servletApiDependency = new Dependency();
-    servletApiDependency.setGroupId("javax.servlet");
-    servletApiDependency.setArtifactId("servlet-api");
-    servletApiDependency.setVersion("2.5");
-    servletApiDependency.setScope("provided");
-
-    String servletApiString = servletApiDependency.toString();
-    if (!dep.containsKey(servletApiString)) {
-      dep.put(servletApiString, servletApiDependency);
-    }
-
-    Dependency jstlDependecy = new Dependency();
-    jstlDependecy.setGroupId("jstl");
-    jstlDependecy.setArtifactId("jstl");
-    jstlDependecy.setVersion("1.2");
-
-    String jstlString = jstlDependecy.toString();
-    if (!dep.containsKey(jstlString)) {
-      dep.put(jstlString, jstlDependecy);
-    }
-
-    Dependency appEngineTestingDependency = new Dependency();
-    appEngineTestingDependency.setGroupId("com.google.appengine");
-    appEngineTestingDependency.setArtifactId("appengine-testing");
-    appEngineTestingDependency.setVersion("${appengine.version}");
-    appEngineTestingDependency.setScope("test");
-
-    String appEngineTestingString = appEngineTestingDependency.toString();
-    if (!dep.containsKey(appEngineTestingString)) {
-      dep.put(appEngineTestingString, appEngineTestingDependency);
-    }
-
-    Dependency appEngineApiStubsDependency = new Dependency();
-    appEngineApiStubsDependency.setGroupId("com.google.appengine");
-    appEngineApiStubsDependency.setArtifactId("appengine-api-stubs");
-    appEngineApiStubsDependency.setVersion("${appengine.version}");
-    appEngineApiStubsDependency.setScope("test");
-
-    String appEngineApiStubsString = appEngineApiStubsDependency.toString();
-    if (!dep.containsKey(appEngineApiStubsString)) {
-      dep.put(appEngineApiStubsString, appEngineApiStubsDependency);
-    }
-
-    List<Dependency> finalDepList = new ArrayList<Dependency>();
-    finalDepList.addAll(dep.values());
-    return finalDepList;
+    List<Dependency> finalDependencies = new ArrayList<Dependency>();
+    finalDependencies.addAll(dependecies.values());
+    return finalDependencies;
   }
 
-  private static void updatePomProperties(Properties properties, String artifactId) {
-    if(!properties.containsKey("app.id")) {
-      properties.setProperty("app.id", artifactId);
-    }
-
-    if(!properties.containsKey("app.version")) {
-      properties.setProperty("app.version", "1");
-    }
-
-    if(!properties.containsKey("appengine.version")) {
-      properties.setProperty("appengine.version", "1.9.38");
-    }
-
-    if(!properties.containsKey("gcloud.plugin.version")) {
-      properties.setProperty("gcloud.plugin.version", "2.0.9.111.v20160527");
+  //visible for testing
+  public static void updatePomProperties(Properties projectProperties) {
+    Map<String, String> allProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
+    for (Entry<String, String> property : allProperties.entrySet()) {
+      if(!projectProperties.containsKey(property.getKey())) {
+        projectProperties.setProperty(property.getKey(), property.getValue());
+      }
     }
   }
 
