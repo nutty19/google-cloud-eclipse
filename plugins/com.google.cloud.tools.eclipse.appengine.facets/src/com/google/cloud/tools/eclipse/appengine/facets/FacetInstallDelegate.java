@@ -42,6 +42,7 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +127,7 @@ public class FacetInstallDelegate implements IDelegate {
     appEngineWebXml.create(new ByteArrayInputStream(new byte[0]), true, monitor);
     String configFileLocation = appEngineWebXml.getLocation().toString();
     AppEngineTemplateUtility.createFileContent(
-        configFileLocation, AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, new HashMap<String, String>());
+        configFileLocation, AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, Collections.<String, String> emptyMap());
   }
 
   private static void addAppEngineJarsToMavenProject(IProject project, IProgressMonitor monitor) throws CoreException {
