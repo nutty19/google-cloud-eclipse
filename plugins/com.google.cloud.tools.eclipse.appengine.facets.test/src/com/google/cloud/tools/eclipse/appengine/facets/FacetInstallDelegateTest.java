@@ -4,24 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.model.Dependency;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class FacetInstallDelegateTest {
-  private FacetInstallDelegate delegate = new FacetInstallDelegate();
-
-  @Test
-  public void testMavenNature() throws CoreException {
-    IProject project = Mockito.mock(IProject.class);
-    Mockito.when(project.hasNature("org.eclipse.m2e.core.maven2Nature")).thenReturn(true);
-    Mockito.when(project.isAccessible()).thenReturn(true);
-
-    delegate.execute(project, null, null, null);
-  }
-
   @Test
   public void testCreateMavenProjectDependecies_initialNonAppEngineDependency() {
     Dependency nonAppEngineDependency = new Dependency();
