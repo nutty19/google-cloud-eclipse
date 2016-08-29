@@ -1,7 +1,5 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.model.Dependency;
@@ -12,6 +10,8 @@ public class MavenAppEngineFacetUtilTest {
   @Test
   public void testGetAppEngineDependecies() {
     Map<String, Dependency> dependecies = MavenAppEngineFacetUtil.getAppEngineDependecies();
+
+    Assert.assertNotNull(dependecies);
     Assert.assertEquals(5, dependecies.size());
     Assert.assertTrue(dependecies.containsKey("Dependency {groupId=com.google.appengine, " 
         + "artifactId=appengine-api-1.0-sdk, version=${appengine.version}, type=jar}"));
@@ -26,43 +26,19 @@ public class MavenAppEngineFacetUtilTest {
   }
 
   @Test
-  public void testSomething() {
-    Dependency appEngineApiDependency = new Dependency();
-    appEngineApiDependency.setGroupId("groupId");
-    appEngineApiDependency.setArtifactId("artifactId");
-    appEngineApiDependency.setVersion("version");
-    appEngineApiDependency.setScope("scope");
+  public void testGetAppEnginePomProperties() {
+    Map<String, String> properties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
 
-    List<Dependency> aList = new ArrayList<Dependency>();
-    aList.add(appEngineApiDependency);
-
-    List<Dependency> bList = FacetInstallDelegate.createMavenProjectDependecies(aList);
-    Assert.assertEquals(6, bList.size());
+    Assert.assertNotNull(properties);
+    Assert.assertEquals(4, properties.size());
+    Assert.assertTrue(properties.containsKey("app.id"));
+    Assert.assertEquals("", properties.get("app.id"));
+    Assert.assertTrue(properties.containsKey("app.version"));
+    Assert.assertEquals(1, properties.get("app.version"));
+    Assert.assertTrue(properties.containsKey("appengine.version"));
+    Assert.assertEquals(AppEngineStandardFacet.DEFAULT_APPENGINE_SDK_VERSION, properties.get("appengine.version"));
+    Assert.assertTrue(properties.containsKey("gcloud.plugin.version"));
+    Assert.assertEquals(AppEngineStandardFacet.DEFAULT_GCLOUD_PLUGIN_VERSION, properties.get("gcloud.plugin.version"));
   }
 
-  @Test
-  public void testSomething_1() {
-    Dependency appEngineApiStubsDependency = new Dependency();
-    appEngineApiStubsDependency.setGroupId("com.google.appengine");
-    appEngineApiStubsDependency.setArtifactId("appengine-api-stubsk");
-    appEngineApiStubsDependency.setVersion("${appengine.version}");
-    appEngineApiStubsDependency.setScope("test");
-
-    List<Dependency> aList = new ArrayList<Dependency>();
-    aList.add(appEngineApiStubsDependency);
-
-    List<Dependency> bList = FacetInstallDelegate.createMavenProjectDependecies(aList);
-
-    System.out.println(bList.toString());
-    Assert.assertEquals(5, bList.size());
-  }
-
-  @Test
-  public void testSomething_2() {
-    List<Dependency> aList = new ArrayList<Dependency>();
-    List<Dependency> bList = FacetInstallDelegate.createMavenProjectDependecies(aList);
-
-    System.out.println(bList.toString());
-    Assert.assertEquals(5, bList.size());
-  }
 }

@@ -63,8 +63,8 @@ public class MavenAppEngineFacetUtil {
     Map<String, String> allProperties = new HashMap<String, String>();
     allProperties.put("app.id", "");
     allProperties.put("app.version", "1");
-    allProperties.put("appengine.version", "1.9.38");
-    allProperties.put("gcloud.plugin.version", "2.0.9.111.v20160527");
+    allProperties.put("appengine.version", AppEngineStandardFacet.DEFAULT_APPENGINE_SDK_VERSION);
+    allProperties.put("gcloud.plugin.version", AppEngineStandardFacet.DEFAULT_GCLOUD_PLUGIN_VERSION);
     return allProperties;
   }
 }
