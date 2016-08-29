@@ -16,4 +16,12 @@ public class MavenUtilsTest {
 
     Assert.assertTrue(MavenUtils.hasMavenNature(project));
   }
+
+  @Test
+  public void testMavenNature_nonMavenProject() throws CoreException {
+    IProject project = Mockito.mock(IProject.class);
+    Mockito.when(project.isAccessible()).thenReturn(true);
+
+    Assert.assertFalse(MavenUtils.hasMavenNature(project));
+  }
 }
