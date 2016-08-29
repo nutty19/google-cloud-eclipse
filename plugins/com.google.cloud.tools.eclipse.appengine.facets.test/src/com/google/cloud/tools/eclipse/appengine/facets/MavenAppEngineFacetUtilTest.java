@@ -13,10 +13,16 @@ public class MavenAppEngineFacetUtilTest {
   public void testGetAppEngineDependecies() {
     Map<String, Dependency> dependecies = MavenAppEngineFacetUtil.getAppEngineDependecies();
     Assert.assertEquals(5, dependecies.size());
-    Assert.assertTrue(dependecies.containsKey(""));
-    Assert.assertTrue(dependecies.containsKey(""));
-    Assert.assertTrue(dependecies.containsKey(""));
-    Assert.assertTrue(dependecies.containsKey(""));
+    Assert.assertTrue(dependecies.containsKey("Dependency {groupId=com.google.appengine, " 
+        + "artifactId=appengine-api-1.0-sdk, version=${appengine.version}, type=jar}"));
+    Assert.assertTrue(dependecies.containsKey("Dependency {groupId=com.google.appengine, "
+        + "artifactId=appengine-testing, version=${appengine.version}, type=jar}"));
+    Assert.assertTrue(dependecies.containsKey("Dependency {groupId=com.google.appengine, "
+        + "artifactId=appengine-api-stubs, version=${appengine.version}, type=jar}"));
+    Assert.assertTrue(dependecies.containsKey("Dependency {groupId=jstl, artifactId=jstl, "
+        + "version=1.2, type=jar}"));
+    Assert.assertTrue(dependecies.containsKey("Dependency {groupId=javax.servlet, "
+        + "artifactId=servlet-api, version=2.5, type=jar}"));
   }
 
   @Test
