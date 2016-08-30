@@ -70,9 +70,10 @@ public class MavenAppEngineFacetUtil {
   }
 
   /**
-   * Returns true if the group ids and artifact ids of <code>dependency1</code> and
+   * Returns true if the group IDs and artifact IDs of <code>dependency1</code> and
    * <@code>dependency1</@code> are equal. Returns false otherwise.
    */
+  // visible for testing
   public static boolean areDependenciesEqual(Dependency dependency1, Dependency dependency2) {
     if ((dependency1 == null) || (dependency2 == null)) {
       return false;
@@ -98,7 +99,7 @@ public class MavenAppEngineFacetUtil {
   }
 
   /**
-   * Returns true if a dependency with the same group id and artifact id as <code>targetDependency</code>
+   * Returns true if a dependency with the same group ID and artifact ID as <code>targetDependency</code>
    * exists in <code>dependencies</code>. Returns false otherwise.
    */
   public static boolean doesListContainDependency(List<Dependency> dependencies, Dependency targetDependency) {
