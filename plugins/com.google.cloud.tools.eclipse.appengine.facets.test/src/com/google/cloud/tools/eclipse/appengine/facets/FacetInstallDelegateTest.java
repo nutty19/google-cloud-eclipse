@@ -2,6 +2,7 @@ package com.google.cloud.tools.eclipse.appengine.facets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.model.Dependency;
 import org.junit.Assert;
@@ -9,7 +10,7 @@ import org.junit.Test;
 
 public class FacetInstallDelegateTest {
   @Test
-  public void testCreateMavenProjectDependecies_initialNonAppEngineDependency() {
+  public void testCreateMavenProjectDependecies_nonAppEngineInitialDependency() {
     Dependency nonAppEngineDependency = new Dependency();
     nonAppEngineDependency.setGroupId("groupId");
     nonAppEngineDependency.setArtifactId("artifactId");
@@ -24,7 +25,7 @@ public class FacetInstallDelegateTest {
   }
 
   @Test
-  public void testCreateMavenProjectDependecies_initialAppEngineDependency() {
+  public void testCreateMavenProjectDependecies_appEngineInitialDependency() {
     Dependency appEngineApiStubsDependency = new Dependency();
     appEngineApiStubsDependency.setGroupId("com.google.appengine");
     appEngineApiStubsDependency.setArtifactId("appengine-api-stubs");
@@ -43,5 +44,33 @@ public class FacetInstallDelegateTest {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     List<Dependency> finalDependencies = FacetInstallDelegate.createMavenProjectDependecies(intialDependencies);
     Assert.assertEquals(5, finalDependencies.size());
+  }
+
+  @Test
+  public void testUpdatePomProperties_nonAppEngineInitialPropertery() {
+    Properties properties = new Properties();
+    properties.setProperty("a", "b");
+
+    FacetInstallDelegate.updatePomProperties(properties);
+    Assert.assertEquals(5, properties.size());
+    Assert.assertTrue(properties.containsKey("a"));
+  }
+
+  @Test
+  public void testUpdatePomProperties_appEngineInitialPropertery() {
+    Properties properties = new Properties();
+    properties.setProperty("app.version", "1");
+
+    FacetInstallDelegate.updatePomProperties(properties);
+    Assert.assertEquals(4, properties.size());
+    Assert.assertTrue(properties.containsKey("app.version"));
+  }
+ 
+  @Test
+  public void testUpdatePomProperties_noInitialPropertery() {
+    Properties properties = new Properties();
+
+    FacetInstallDelegate.updatePomProperties(properties);
+    Assert.assertEquals(4, properties.size());
   }
 }

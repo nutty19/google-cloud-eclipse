@@ -1,6 +1,8 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.maven.model.Dependency;
 
@@ -12,43 +14,42 @@ public class MavenAppEngineFacetUtil {
    * @return a map where the key entries are the {@link Dependency#toString()} result of
    *   the Dependency values
    */
-  public static Map<String, Dependency> getAppEngineDependecies() {
-    // TODO: should map be immutable
-    Map<String, Dependency> dependencies = new HashMap<String, Dependency>();
+  public static List<Dependency> getAppEngineDependecies() {
+    List<Dependency> dependencies = new ArrayList<Dependency>();
 
     Dependency appEngineApiDependency = new Dependency();
     appEngineApiDependency.setGroupId("com.google.appengine");
     appEngineApiDependency.setArtifactId("appengine-api-1.0-sdk");
     appEngineApiDependency.setVersion("${appengine.version}");
     appEngineApiDependency.setScope("");
-    dependencies.put(appEngineApiDependency.toString(), appEngineApiDependency);
+    dependencies.add(appEngineApiDependency);
 
     Dependency servletApiDependency = new Dependency();
     servletApiDependency.setGroupId("javax.servlet");
     servletApiDependency.setArtifactId("servlet-api");
     servletApiDependency.setVersion("2.5");
     servletApiDependency.setScope("provided");
-    dependencies.put(servletApiDependency.toString(), servletApiDependency);
+    dependencies.add(servletApiDependency);
 
     Dependency jstlDependecy = new Dependency();
     jstlDependecy.setGroupId("jstl");
     jstlDependecy.setArtifactId("jstl");
     jstlDependecy.setVersion("1.2");
-    dependencies.put(jstlDependecy.toString(), jstlDependecy);
+    dependencies.add(jstlDependecy);
 
     Dependency appEngineTestingDependency = new Dependency();
     appEngineTestingDependency.setGroupId("com.google.appengine");
     appEngineTestingDependency.setArtifactId("appengine-testing");
     appEngineTestingDependency.setVersion("${appengine.version}");
     appEngineTestingDependency.setScope("test");
-    dependencies.put(appEngineTestingDependency.toString(), appEngineTestingDependency);
+    dependencies.add(appEngineTestingDependency);
 
     Dependency appEngineApiStubsDependency = new Dependency();
     appEngineApiStubsDependency.setGroupId("com.google.appengine");
     appEngineApiStubsDependency.setArtifactId("appengine-api-stubs");
     appEngineApiStubsDependency.setVersion("${appengine.version}");
     appEngineApiStubsDependency.setScope("test");
-    dependencies.put(appEngineApiStubsDependency.toString(), appEngineApiStubsDependency);
+    dependencies.add(appEngineApiStubsDependency);
 
     return dependencies;
   }
@@ -67,4 +68,51 @@ public class MavenAppEngineFacetUtil {
     allProperties.put("gcloud.plugin.version", AppEngineStandardFacet.DEFAULT_GCLOUD_PLUGIN_VERSION);
     return allProperties;
   }
+
+  /**
+   * Returns true if the group ids and artifact ids of <code>dependency1</code> and
+   * <@code>dependency1</@code> are equal. Returns false otherwise.
+   */
+  public static boolean areDependenciesEqual(Dependency dependency1, Dependency dependency2) {
+    if ((dependency1 == null) || (dependency2 == null)) {
+      return false;
+    }
+
+    if (dependency1.getGroupId() == null) {
+      if (dependency2.getGroupId() != null) {
+        return false;
+      }
+    } else if (!dependency1.getGroupId().equals(dependency2.getGroupId())) {
+      return false;
+    }
+
+    if (dependency1.getArtifactId() == null) {
+      if (dependency2.getArtifactId() != null) {
+        return false;
+      }
+    } else if (!dependency1.getArtifactId().equals(dependency2.getArtifactId())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Returns true if a dependency with the same group id and artifact id as <code>targetDependency</code>
+   * exists in <code>dependencies</code>. Returns false otherwise.
+   */
+  public static boolean doesListContainDependency(List<Dependency> dependencies, Dependency targetDependency) {
+    if((dependencies == null) || (targetDependency == null)) {
+      return false;
+    }
+
+    for (Dependency dependency : dependencies) {
+      if (areDependenciesEqual(dependency, targetDependency)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 }

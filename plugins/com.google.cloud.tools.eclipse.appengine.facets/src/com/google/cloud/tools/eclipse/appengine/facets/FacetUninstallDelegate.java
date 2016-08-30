@@ -2,7 +2,6 @@ package com.google.cloud.tools.eclipse.appengine.facets;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -30,6 +29,7 @@ import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
 
 import com.google.cloud.tools.eclipse.util.MavenUtils;
+import com.google.cloud.tools.eclipse.util.status.StatusUtil;
 
 public class FacetUninstallDelegate implements IDelegate {
 
@@ -97,40 +97,40 @@ public class FacetUninstallDelegate implements IDelegate {
     Model pom = facade.getMavenProject(monitor).getModel();
 
     List<Dependency> currentDependecies = pom.getDependencies();
-    List<Dependency> dependencies = updateMavenDependecies(currentDependecies);
+    List<Dependency> dependencies = createMavenProjectDependecies(currentDependecies);
     pom.setDependencies(dependencies);
 
     Properties properties = pom.getProperties();
-    updatePomProperties(properties, pom.getArtifactId());
+    updatePomProperties(properties);
 
     DefaultModelWriter writer = new DefaultModelWriter();
     try {
       writer.write(pom.getPomFile(), null, pom);
     } catch (IOException e) {
-      // throw new CoreException(e.getMessage());
+      throw new CoreException(StatusUtil.error(FacetUninstallDelegate.class, e.getMessage()));
     }
-  }
-
-  private List<Dependency> updateMavenDependecies(List<Dependency> initialDependecies) {
-    Map<String, Dependency> dependencies = new HashMap<String, Dependency>();
-    for (Dependency dependency : initialDependecies) {
-      dependencies.put(dependency.toString(), dependency);
-    }
-    
-    Map<String, Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
-    for (Entry<String, Dependency> appEngineDependency : allAppEngineDependencies.entrySet()) {
-      if (!dependencies.containsKey(appEngineDependency.getKey())) {
-        dependencies.remove(appEngineDependency.getKey());
-      }
-    }
-
-    List<Dependency> finalDependencies = new ArrayList<Dependency>();
-    finalDependencies.addAll(dependencies.values());
-    return finalDependencies;
   }
 
   //visible for testing
-  public static void updatePomProperties(Properties projectProperties, String artifactId) {
+  public static List<Dependency> createMavenProjectDependecies(List<Dependency> initialDependecies) {
+    List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
+    List<Dependency> dependenciesToRemove = new ArrayList<Dependency>();
+
+    for (Dependency dependency : initialDependecies) {
+      if(MavenAppEngineFacetUtil.doesListContainDependency(allAppEngineDependencies, dependency)) {
+        dependenciesToRemove.add(dependency);
+      }
+    }
+
+    for (Dependency dependency : dependenciesToRemove) {
+      initialDependecies.remove(dependency);
+    }
+
+    return initialDependecies;
+  }
+
+  //visible for testing
+  public static void updatePomProperties(Properties projectProperties) {
     Map<String, String> allProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
     for (Entry<String, String> property : allProperties.entrySet()) {
       if(projectProperties.containsKey(property.getKey())) {

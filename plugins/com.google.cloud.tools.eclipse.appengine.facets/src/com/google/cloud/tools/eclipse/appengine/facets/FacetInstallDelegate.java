@@ -16,6 +16,7 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
 import com.google.cloud.tools.eclipse.util.MavenUtils;
+import com.google.cloud.tools.eclipse.util.status.StatusUtil;
 import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplateUtility;
 
 import org.apache.maven.model.Dependency;
@@ -25,6 +26,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -41,9 +43,7 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -67,6 +67,7 @@ public class FacetInstallDelegate implements IDelegate {
       addAppEngineJarsToClasspath(project, monitor);
     }
     createConfigFiles(project, monitor);
+    project.refreshLocal(IResource.DEPTH_ZERO, monitor);
   }
 
   /**
@@ -142,29 +143,30 @@ public class FacetInstallDelegate implements IDelegate {
 
     DefaultModelWriter writer = new DefaultModelWriter();
     try {
-      writer.write(pom.getPomFile(), null, pom);
+      writer.write(pom.getPomFile(), null /* options */, pom);
     } catch (IOException e) {
-      //throw new CoreException(e.getMessage());
+      throw new CoreException(StatusUtil.error(FacetInstallDelegate.class, e.getMessage()));
     }
   }
 
   // visible for testing
   public static List<Dependency> createMavenProjectDependecies(List<Dependency> initialDependecies) {
-    Map<String, Dependency> dependecies = new HashMap<String, Dependency>();
-    for (Dependency dependency : initialDependecies) {
-      dependecies.put(dependency.toString(), dependency);
+    List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
+    if (initialDependecies == null) {
+      return allAppEngineDependencies;
     }
 
-    Map<String, Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
-    for (Entry<String, Dependency> appEngineDependency : allAppEngineDependencies.entrySet()) {
-      if (!dependecies.containsKey(appEngineDependency.getKey())) {
-        dependecies.put(appEngineDependency.getKey(), appEngineDependency.getValue());
+    if (initialDependecies.size() == 0) {
+      return allAppEngineDependencies;
+    }
+
+    for (Dependency appEngineDependency : allAppEngineDependencies) {
+      if(!MavenAppEngineFacetUtil.doesListContainDependency(initialDependecies, appEngineDependency)) {
+        initialDependecies.add(appEngineDependency);
       }
     }
 
-    List<Dependency> finalDependencies = new ArrayList<Dependency>();
-    finalDependencies.addAll(dependecies.values());
-    return finalDependencies;
+    return initialDependecies;
   }
 
   //visible for testing
