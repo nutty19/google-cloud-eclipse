@@ -129,7 +129,7 @@ public class MavenAppEngineFacetUtil {
     return false;
   }
 
-  private static String resolveLatestReleasedArtifact(IProgressMonitor monitor, String groupId,
+  public static String resolveLatestReleasedArtifact(IProgressMonitor monitor, String groupId,
       String artifactId, String type, String defaultVersion) {
     try {
       Artifact artifact = MavenPlugin.getMaven().resolve(groupId, artifactId, "LATEST", type,
