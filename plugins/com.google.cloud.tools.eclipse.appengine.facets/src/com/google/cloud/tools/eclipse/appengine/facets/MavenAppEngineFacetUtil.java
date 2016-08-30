@@ -21,7 +21,7 @@ public class MavenAppEngineFacetUtil {
    * Returns a list of all the App Engine dependencies that should exist in the pom.xml
    * of a maven project that has the App Engine facet installed
    */
-  public static List<Dependency> getAppEngineDependecies() {
+  public static List<Dependency> getAppEngineDependencies() {
     List<Dependency> dependencies = new ArrayList<Dependency>();
 
     Dependency appEngineApiDependency = new Dependency();
@@ -84,7 +84,7 @@ public class MavenAppEngineFacetUtil {
 
   /**
    * Returns true if the group IDs and artifact IDs of <code>dependency1</code> and
-   * <@code>dependency1</@code> are equal. Returns false otherwise.
+   * <@code>dependency2</@code> are equal. Returns false otherwise.
    */
   // visible for testing
   public static boolean areDependenciesEqual(Dependency dependency1, Dependency dependency2) {

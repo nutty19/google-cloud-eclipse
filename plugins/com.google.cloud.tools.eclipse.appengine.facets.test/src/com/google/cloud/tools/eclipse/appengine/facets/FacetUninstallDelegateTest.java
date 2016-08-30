@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class FacetUninstallDelegateTest {
   @Test
-  public void testUpdateMavenProjectDependecies_nonAppEngineInitialDependency() {
+  public void testUpdateMavenProjectDependencies_nonAppEngineInitialDependency() {
     Dependency nonAppEngineDependency = new Dependency();
     nonAppEngineDependency.setGroupId("groupId");
     nonAppEngineDependency.setArtifactId("artifactId");
@@ -20,12 +20,12 @@ public class FacetUninstallDelegateTest {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     intialDependencies.add(nonAppEngineDependency);
 
-    List<Dependency> finalDependencies = FacetUninstallDelegate.updateMavenProjectDependecies(intialDependencies);
+    List<Dependency> finalDependencies = FacetUninstallDelegate.updateMavenProjectDependencies(intialDependencies);
     Assert.assertEquals(1, finalDependencies.size());
   }
 
   @Test
-  public void testUpdateMavenProjectDependecies_appEngineInitialDependency() {
+  public void testUpdateMavenProjectDependencies_appEngineInitialDependency() {
     Dependency appEngineApiStubsDependency = new Dependency();
     appEngineApiStubsDependency.setGroupId("com.google.appengine");
     appEngineApiStubsDependency.setArtifactId("appengine-api-stubs");
@@ -35,15 +35,15 @@ public class FacetUninstallDelegateTest {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     intialDependencies.add(appEngineApiStubsDependency);
 
-    List<Dependency> finalDependencies = FacetUninstallDelegate.updateMavenProjectDependecies(intialDependencies);
+    List<Dependency> finalDependencies = FacetUninstallDelegate.updateMavenProjectDependencies(intialDependencies);
     Assert.assertTrue(finalDependencies.isEmpty());
   }
 
   @Test
-  public void testUpdateMavenProjectDependecies_noInitialDependency() {
+  public void testUpdateMavenProjectDependencies_noInitialDependency() {
     List<Dependency> initialDependencies = new ArrayList<Dependency>();
-    List<Dependency> finalDependencies1 = FacetUninstallDelegate.updateMavenProjectDependecies(initialDependencies);
-    List<Dependency> finalDependencies2 = FacetUninstallDelegate.updateMavenProjectDependecies(null);
+    List<Dependency> finalDependencies1 = FacetUninstallDelegate.updateMavenProjectDependencies(initialDependencies);
+    List<Dependency> finalDependencies2 = FacetUninstallDelegate.updateMavenProjectDependencies(null);
 
     Assert.assertTrue(finalDependencies1.isEmpty());
     Assert.assertTrue(finalDependencies2.isEmpty());

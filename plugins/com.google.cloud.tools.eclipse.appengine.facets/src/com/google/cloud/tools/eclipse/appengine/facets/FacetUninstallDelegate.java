@@ -97,8 +97,8 @@ public class FacetUninstallDelegate implements IDelegate {
     IMavenProjectFacade facade = MavenPlugin.getMavenProjectRegistry().getProject(project);
     Model pom = facade.getMavenProject(monitor).getModel();
 
-    List<Dependency> currentDependecies = pom.getDependencies();
-    List<Dependency> updatedDependencies = updateMavenProjectDependecies(currentDependecies);
+    List<Dependency> currentDependencies = pom.getDependencies();
+    List<Dependency> updatedDependencies = updateMavenProjectDependencies(currentDependencies);
     pom.setDependencies(updatedDependencies);
 
     Properties properties = pom.getProperties();
@@ -113,14 +113,14 @@ public class FacetUninstallDelegate implements IDelegate {
   }
 
   //visible for testing
-  public static List<Dependency> updateMavenProjectDependecies(List<Dependency> initialDependecies) {
+  public static List<Dependency> updateMavenProjectDependencies(List<Dependency> initialDependencies) {
     List<Dependency> finalDependencies = new ArrayList<Dependency>();
-    if ((initialDependecies == null) || (initialDependecies.isEmpty())) {
+    if ((initialDependencies == null) || (initialDependencies.isEmpty())) {
       return finalDependencies;
     }
 
-    List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
-    for (Dependency dependency : initialDependecies) {
+    List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependencies();
+    for (Dependency dependency : initialDependencies) {
       if(!MavenAppEngineFacetUtil.doesListContainDependency(allAppEngineDependencies, dependency)) {
         finalDependencies.add(dependency);
       }

@@ -10,11 +10,11 @@ import org.junit.Test;
 
 public class MavenAppEngineFacetUtilTest {
   @Test
-  public void testGetAppEngineDependecies() {
-    List<Dependency> dependecies = MavenAppEngineFacetUtil.getAppEngineDependecies();
+  public void testGetAppEngineDependencies() {
+    List<Dependency> dependencies = MavenAppEngineFacetUtil.getAppEngineDependencies();
 
-    Assert.assertNotNull(dependecies);
-    Assert.assertEquals(5, dependecies.size());
+    Assert.assertNotNull(dependencies);
+    Assert.assertEquals(5, dependencies.size());
   }
 
   @Test
@@ -32,7 +32,7 @@ public class MavenAppEngineFacetUtilTest {
   }
 
   @Test
-  public void testAreDependenciesEqual_nullDependecies() {
+  public void testAreDependenciesEqual_nullDependencies() {
     Assert.assertFalse(MavenAppEngineFacetUtil.areDependenciesEqual(null, null));
     Assert.assertFalse(MavenAppEngineFacetUtil.areDependenciesEqual(new Dependency(), null));
     Assert.assertFalse(MavenAppEngineFacetUtil.areDependenciesEqual(null, new Dependency()));
@@ -54,7 +54,7 @@ public class MavenAppEngineFacetUtilTest {
   }
 
   @Test
-  public void testAreDependenciesEqual_unEqualDependecies() {
+  public void testAreDependenciesEqual_unEqualDependencies() {
     Dependency dependency1 = new Dependency();
     Dependency dependency2 = new Dependency();
     dependency2.setGroupId("groupId1");

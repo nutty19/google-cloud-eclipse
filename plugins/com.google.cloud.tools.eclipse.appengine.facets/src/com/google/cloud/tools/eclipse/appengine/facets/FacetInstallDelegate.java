@@ -136,8 +136,8 @@ public class FacetInstallDelegate implements IDelegate {
     IMavenProjectFacade facade = MavenPlugin.getMavenProjectRegistry().getProject(project);
     Model pom = facade.getMavenProject(monitor).getModel();
 
-    List<Dependency> currentDependecies = pom.getDependencies();
-    List<Dependency> updatedDependencies = updateMavenProjectDependecies(currentDependecies);
+    List<Dependency> currentDependencies = pom.getDependencies();
+    List<Dependency> updatedDependencies = updateMavenProjectDependencies(currentDependencies);
     pom.setDependencies(updatedDependencies);
     updatePomProperties(pom.getProperties(), monitor);
 
@@ -150,23 +150,23 @@ public class FacetInstallDelegate implements IDelegate {
   }
 
   // visible for testing
-  public static List<Dependency> updateMavenProjectDependecies(List<Dependency> initialDependecies) {
-    List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
-    if (initialDependecies == null) {
+  public static List<Dependency> updateMavenProjectDependencies(List<Dependency> initialDependencies) {
+    List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependencies();
+    if (initialDependencies == null) {
       return allAppEngineDependencies;
     }
 
-    if (initialDependecies.size() == 0) {
+    if (initialDependencies.size() == 0) {
       return allAppEngineDependencies;
     }
 
     for (Dependency appEngineDependency : allAppEngineDependencies) {
-      if(!MavenAppEngineFacetUtil.doesListContainDependency(initialDependecies, appEngineDependency)) {
-        initialDependecies.add(appEngineDependency);
+      if(!MavenAppEngineFacetUtil.doesListContainDependency(initialDependencies, appEngineDependency)) {
+        initialDependencies.add(appEngineDependency);
       }
     }
 
-    return initialDependecies;
+    return initialDependencies;
   }
 
   //visible for testing
