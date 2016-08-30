@@ -50,29 +50,29 @@ public class FacetUninstallDelegateTest {
   }
   
   @Test
-  public void testUpdatePomProperties_nonAppEngineInitialPropertery() {
+  public void testUpdatePomProperties_nonAppEngineInitialProperty() {
     Properties properties = new Properties();
     properties.setProperty("a", "b");
 
-    FacetUninstallDelegate.updatePomProperties(properties);
+    FacetUninstallDelegate.updatePomProperties(properties, null /* monitor */);
     Assert.assertEquals(1, properties.size());
     Assert.assertTrue(properties.containsKey("a"));
   }
   
   @Test
-  public void testUpdatePomProperties_appEngineInitialPropertery() {
+  public void testUpdatePomProperties_appEngineInitialProperty() {
     Properties properties = new Properties();
     properties.setProperty("app.version", "1");
 
-    FacetUninstallDelegate.updatePomProperties(properties);
+    FacetUninstallDelegate.updatePomProperties(properties, null /* monitor */);
     Assert.assertTrue(properties.isEmpty());
   }
   
   @Test
-  public void testUpdatePomProperties_noInitialPropertery() {
+  public void testUpdatePomProperties_noInitialProperty() {
     Properties properties = new Properties();
 
-    FacetUninstallDelegate.updatePomProperties(properties);
+    FacetUninstallDelegate.updatePomProperties(properties, null /* monitor */);
     Assert.assertTrue(properties.isEmpty());
   }
 }

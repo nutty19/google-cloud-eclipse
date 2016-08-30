@@ -19,7 +19,7 @@ public class MavenAppEngineFacetUtilTest {
 
   @Test
   public void testGetAppEnginePomProperties() {
-    Map<String, String> properties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
+    Map<String, String> properties = MavenAppEngineFacetUtil.getAppEnginePomProperties(null /* monitor */);
 
     Assert.assertNotNull(properties);
     Assert.assertEquals(4, properties.size());
@@ -28,9 +28,7 @@ public class MavenAppEngineFacetUtilTest {
     Assert.assertTrue(properties.containsKey("app.version"));
     Assert.assertEquals("1", properties.get("app.version"));
     Assert.assertTrue(properties.containsKey("appengine.version"));
-    Assert.assertEquals(AppEngineStandardFacet.DEFAULT_APPENGINE_SDK_VERSION, properties.get("appengine.version"));
     Assert.assertTrue(properties.containsKey("gcloud.plugin.version"));
-    Assert.assertEquals(AppEngineStandardFacet.DEFAULT_GCLOUD_PLUGIN_VERSION, properties.get("gcloud.plugin.version"));
   }
 
   @Test

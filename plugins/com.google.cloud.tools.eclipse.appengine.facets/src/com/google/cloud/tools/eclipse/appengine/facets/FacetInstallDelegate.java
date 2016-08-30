@@ -139,7 +139,7 @@ public class FacetInstallDelegate implements IDelegate {
     List<Dependency> currentDependecies = pom.getDependencies();
     List<Dependency> updatedDependencies = updateMavenProjectDependecies(currentDependecies);
     pom.setDependencies(updatedDependencies);
-    updatePomProperties(pom.getProperties());
+    updatePomProperties(pom.getProperties(), monitor);
 
     DefaultModelWriter writer = new DefaultModelWriter();
     try {
@@ -170,9 +170,9 @@ public class FacetInstallDelegate implements IDelegate {
   }
 
   //visible for testing
-  public static void updatePomProperties(Properties projectProperties) {
+  public static void updatePomProperties(Properties projectProperties, IProgressMonitor monitor) {
     Preconditions.checkNotNull(projectProperties, "project properties is null");
-    Map<String, String> allAppEngineProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
+    Map<String, String> allAppEngineProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties(monitor);
     for (Entry<String, String> property : allAppEngineProperties.entrySet()) {
       if(!projectProperties.containsKey(property.getKey())) {
         projectProperties.setProperty(property.getKey(), property.getValue());

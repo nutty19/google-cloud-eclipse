@@ -102,7 +102,7 @@ public class FacetUninstallDelegate implements IDelegate {
     pom.setDependencies(updatedDependencies);
 
     Properties properties = pom.getProperties();
-    updatePomProperties(properties);
+    updatePomProperties(properties, monitor);
 
     DefaultModelWriter writer = new DefaultModelWriter();
     try {
@@ -130,9 +130,9 @@ public class FacetUninstallDelegate implements IDelegate {
   }
 
   //visible for testing
-  public static void updatePomProperties(Properties projectProperties) {
+  public static void updatePomProperties(Properties projectProperties, IProgressMonitor monitor) {
     Preconditions.checkNotNull(projectProperties, "project properties is null");
-    Map<String, String> allProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
+    Map<String, String> allProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties(monitor);
     for (Entry<String, String> property : allProperties.entrySet()) {
       if(projectProperties.containsKey(property.getKey())) {
         projectProperties.remove(property.getKey());

@@ -51,7 +51,7 @@ public class FacetInstallDelegateTest {
     Properties properties = new Properties();
     properties.setProperty("a", "b");
 
-    FacetInstallDelegate.updatePomProperties(properties);
+    FacetInstallDelegate.updatePomProperties(properties, null /* monitor */);
     Assert.assertEquals(5, properties.size());
     Assert.assertTrue(properties.containsKey("a"));
   }
@@ -61,7 +61,7 @@ public class FacetInstallDelegateTest {
     Properties properties = new Properties();
     properties.setProperty("app.version", "1");
 
-    FacetInstallDelegate.updatePomProperties(properties);
+    FacetInstallDelegate.updatePomProperties(properties, null /* monitor */);
     Assert.assertEquals(4, properties.size());
     Assert.assertTrue(properties.containsKey("app.version"));
   }
@@ -70,7 +70,7 @@ public class FacetInstallDelegateTest {
   public void testUpdatePomProperties_noInitialPropertery() {
     Properties properties = new Properties();
 
-    FacetInstallDelegate.updatePomProperties(properties);
+    FacetInstallDelegate.updatePomProperties(properties, null /* monitor */);
     Assert.assertEquals(4, properties.size());
   }
 }
