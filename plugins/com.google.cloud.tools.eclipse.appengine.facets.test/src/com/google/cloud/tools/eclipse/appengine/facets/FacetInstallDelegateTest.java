@@ -20,7 +20,7 @@ public class FacetInstallDelegateTest {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     intialDependencies.add(nonAppEngineDependency);
 
-    List<Dependency> finalDependencies = FacetInstallDelegate.createMavenProjectDependecies(intialDependencies);
+    List<Dependency> finalDependencies = FacetInstallDelegate.updateMavenProjectDependecies(intialDependencies);
     Assert.assertEquals(6, finalDependencies.size());
   }
 
@@ -35,14 +35,14 @@ public class FacetInstallDelegateTest {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     intialDependencies.add(appEngineApiStubsDependency);
 
-    List<Dependency> finalDependencies = FacetInstallDelegate.createMavenProjectDependecies(intialDependencies);
+    List<Dependency> finalDependencies = FacetInstallDelegate.updateMavenProjectDependecies(intialDependencies);
     Assert.assertEquals(5, finalDependencies.size());
   }
 
   @Test
   public void testCreateMavenProjectDependecies_noInitialDependency() {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
-    List<Dependency> finalDependencies = FacetInstallDelegate.createMavenProjectDependecies(intialDependencies);
+    List<Dependency> finalDependencies = FacetInstallDelegate.updateMavenProjectDependecies(intialDependencies);
     Assert.assertEquals(5, finalDependencies.size());
   }
 

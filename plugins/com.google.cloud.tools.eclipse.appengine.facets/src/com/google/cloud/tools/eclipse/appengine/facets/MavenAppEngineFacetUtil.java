@@ -8,11 +8,8 @@ import org.apache.maven.model.Dependency;
 
 public class MavenAppEngineFacetUtil {
   /**
-   * Returns a map of all the App Engine dependencies that should exist in the pom.xml
+   * Returns a list of all the App Engine dependencies that should exist in the pom.xml
    * of a maven project that has the App Engine facet installed
-   *
-   * @return a map where the key entries are the {@link Dependency#toString()} result of
-   *   the Dependency values
    */
   public static List<Dependency> getAppEngineDependecies() {
     List<Dependency> dependencies = new ArrayList<Dependency>();

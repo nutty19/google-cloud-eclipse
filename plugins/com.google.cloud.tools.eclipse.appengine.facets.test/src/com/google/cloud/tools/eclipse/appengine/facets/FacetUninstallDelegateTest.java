@@ -20,7 +20,7 @@ public class FacetUninstallDelegateTest {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     intialDependencies.add(nonAppEngineDependency);
 
-    List<Dependency> finalDependencies = FacetUninstallDelegate.createMavenProjectDependecies(intialDependencies);
+    List<Dependency> finalDependencies = FacetUninstallDelegate.updateMavenProjectDependecies(intialDependencies);
     Assert.assertEquals(1, finalDependencies.size());
   }
 
@@ -35,15 +35,15 @@ public class FacetUninstallDelegateTest {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     intialDependencies.add(appEngineApiStubsDependency);
 
-    List<Dependency> finalDependencies = FacetUninstallDelegate.createMavenProjectDependecies(intialDependencies);
+    List<Dependency> finalDependencies = FacetUninstallDelegate.updateMavenProjectDependecies(intialDependencies);
     Assert.assertTrue(finalDependencies.isEmpty());
   }
 
   @Test
   public void testCreateMavenProjectDependecies_noInitialDependency() {
     List<Dependency> initialDependencies = new ArrayList<Dependency>();
-    List<Dependency> finalDependencies1 = FacetUninstallDelegate.createMavenProjectDependecies(initialDependencies);
-    List<Dependency> finalDependencies2 = FacetUninstallDelegate.createMavenProjectDependecies(null);
+    List<Dependency> finalDependencies1 = FacetUninstallDelegate.updateMavenProjectDependecies(initialDependencies);
+    List<Dependency> finalDependencies2 = FacetUninstallDelegate.updateMavenProjectDependecies(null);
 
     Assert.assertTrue(finalDependencies1.isEmpty());
     Assert.assertTrue(finalDependencies2.isEmpty());
