@@ -18,6 +18,7 @@ package com.google.cloud.tools.eclipse.appengine.facets;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 import com.google.cloud.tools.eclipse.util.status.StatusUtil;
 import com.google.cloud.tools.eclipse.util.templates.appengine.AppEngineTemplateUtility;
+import com.google.common.base.Preconditions;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -171,6 +172,7 @@ public class FacetInstallDelegate implements IDelegate {
 
   //visible for testing
   public static void updatePomProperties(Properties projectProperties) {
+    Preconditions.checkNotNull(projectProperties, "project properties is null");
     Map<String, String> allProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
     for (Entry<String, String> property : allProperties.entrySet()) {
       if(!projectProperties.containsKey(property.getKey())) {

@@ -30,6 +30,7 @@ import org.eclipse.wst.common.project.facet.core.runtime.IRuntime;
 
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 import com.google.cloud.tools.eclipse.util.status.StatusUtil;
+import com.google.common.base.Preconditions;
 
 public class FacetUninstallDelegate implements IDelegate {
 
@@ -113,24 +114,24 @@ public class FacetUninstallDelegate implements IDelegate {
 
   //visible for testing
   public static List<Dependency> createMavenProjectDependecies(List<Dependency> initialDependecies) {
-    List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
-    List<Dependency> dependenciesToRemove = new ArrayList<Dependency>();
+    List<Dependency> finalDependencies = new ArrayList<Dependency>();
+    if ((initialDependecies == null) || (initialDependecies.isEmpty())) {
+      return finalDependencies;
+    }
 
+    List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependecies();
     for (Dependency dependency : initialDependecies) {
-      if(MavenAppEngineFacetUtil.doesListContainDependency(allAppEngineDependencies, dependency)) {
-        dependenciesToRemove.add(dependency);
+      if(!MavenAppEngineFacetUtil.doesListContainDependency(allAppEngineDependencies, dependency)) {
+        finalDependencies.add(dependency);
       }
     }
 
-    for (Dependency dependency : dependenciesToRemove) {
-      initialDependecies.remove(dependency);
-    }
-
-    return initialDependecies;
+    return finalDependencies;
   }
 
   //visible for testing
   public static void updatePomProperties(Properties projectProperties) {
+    Preconditions.checkNotNull(projectProperties, "project properties is null");
     Map<String, String> allProperties = MavenAppEngineFacetUtil.getAppEnginePomProperties();
     for (Entry<String, String> property : allProperties.entrySet()) {
       if(projectProperties.containsKey(property.getKey())) {
