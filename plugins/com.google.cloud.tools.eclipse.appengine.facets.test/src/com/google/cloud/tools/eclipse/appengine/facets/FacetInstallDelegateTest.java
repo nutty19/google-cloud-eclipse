@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class FacetInstallDelegateTest {
   @Test
-  public void testCreateMavenProjectDependecies_nonAppEngineInitialDependency() {
+  public void testUpdateMavenProjectDependecies_nonAppEngineInitialDependency() {
     Dependency nonAppEngineDependency = new Dependency();
     nonAppEngineDependency.setGroupId("groupId");
     nonAppEngineDependency.setArtifactId("artifactId");
@@ -25,7 +25,7 @@ public class FacetInstallDelegateTest {
   }
 
   @Test
-  public void testCreateMavenProjectDependecies_appEngineInitialDependency() {
+  public void testUpdateMavenProjectDependecies_appEngineInitialDependency() {
     Dependency appEngineApiStubsDependency = new Dependency();
     appEngineApiStubsDependency.setGroupId("com.google.appengine");
     appEngineApiStubsDependency.setArtifactId("appengine-api-stubs");
@@ -40,7 +40,7 @@ public class FacetInstallDelegateTest {
   }
 
   @Test
-  public void testCreateMavenProjectDependecies_noInitialDependency() {
+  public void testUpdateMavenProjectDependecies_noInitialDependency() {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     List<Dependency> finalDependencies = FacetInstallDelegate.updateMavenProjectDependecies(intialDependencies);
     Assert.assertEquals(5, finalDependencies.size());
