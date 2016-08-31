@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.m2e.core.MavenPlugin;
 
+import com.google.common.base.Objects;
+
 public class MavenAppEngineFacetUtil {
   private static final Logger LOGGER = Logger.getLogger(MavenAppEngineFacetUtil.class.getName());
 
@@ -92,19 +94,8 @@ public class MavenAppEngineFacetUtil {
       return false;
     }
 
-    if (dependency1.getGroupId() == null) {
-      if (dependency2.getGroupId() != null) {
-        return false;
-      }
-    } else if (!dependency1.getGroupId().equals(dependency2.getGroupId())) {
-      return false;
-    }
-
-    if (dependency1.getArtifactId() == null) {
-      if (dependency2.getArtifactId() != null) {
-        return false;
-      }
-    } else if (!dependency1.getArtifactId().equals(dependency2.getArtifactId())) {
+    if (!Objects.equal(dependency1.getGroupId(), dependency2.getGroupId())||
+        !Objects.equal(dependency1.getGroupId(), dependency2.getGroupId())) {
       return false;
     }
 
