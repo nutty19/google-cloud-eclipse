@@ -51,7 +51,7 @@ public class FacetInstallDelegateTest {
   }
 
   @Test
-  public void testUpdatePomProperties_nonAppEngineInitialPropertery() {
+  public void testUpdatePomProperties_nonAppEngineInitialProperty() {
     Properties properties = new Properties();
     properties.setProperty("a", "b");
 
@@ -61,7 +61,7 @@ public class FacetInstallDelegateTest {
   }
 
   @Test
-  public void testUpdatePomProperties_appEngineInitialPropertery() {
+  public void testUpdatePomProperties_appEngineInitialProperty() {
     Properties properties = new Properties();
     properties.setProperty("app.version", "1");
 
@@ -71,7 +71,7 @@ public class FacetInstallDelegateTest {
   }
  
   @Test
-  public void testUpdatePomProperties_noInitialPropertery() {
+  public void testUpdatePomProperties_noInitialProperty() {
     Properties properties = new Properties();
 
     FacetInstallDelegate.updatePomProperties(properties, null /* monitor */);
