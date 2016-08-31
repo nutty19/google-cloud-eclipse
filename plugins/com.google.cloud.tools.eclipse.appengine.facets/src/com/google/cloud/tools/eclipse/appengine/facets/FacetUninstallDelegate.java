@@ -1,5 +1,6 @@
 package com.google.cloud.tools.eclipse.appengine.facets;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.DefaultModelWriter;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -105,11 +107,13 @@ public class FacetUninstallDelegate implements IDelegate {
     updatePomProperties(properties, monitor);
 
     DefaultModelWriter writer = new DefaultModelWriter();
+    File pomFile = pom.getPomFile();
     try {
-      writer.write(pom.getPomFile(), null, pom);
+      writer.write(pomFile, null /* options */, pom);
     } catch (IOException e) {
       throw new CoreException(StatusUtil.error(FacetUninstallDelegate.class, e.getMessage()));
     }
+    project.getFile(pomFile.getName()).refreshLocal(IResource.DEPTH_ZERO, monitor);
   }
 
   //visible for testing

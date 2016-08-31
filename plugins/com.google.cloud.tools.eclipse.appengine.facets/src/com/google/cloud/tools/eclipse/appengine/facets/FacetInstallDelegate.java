@@ -43,6 +43,7 @@ import org.eclipse.wst.common.project.facet.core.IDelegate;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +69,6 @@ public class FacetInstallDelegate implements IDelegate {
       addAppEngineJarsToClasspath(project, monitor);
     }
     createConfigFiles(project, monitor);
-    project.refreshLocal(IResource.DEPTH_ZERO, monitor);
   }
 
   /**
@@ -142,11 +142,13 @@ public class FacetInstallDelegate implements IDelegate {
     updatePomProperties(pom.getProperties(), monitor);
 
     DefaultModelWriter writer = new DefaultModelWriter();
+    File pomFile = pom.getPomFile();
     try {
-      writer.write(pom.getPomFile(), null /* options */, pom);
+      writer.write(pomFile, null /* options */, pom);
     } catch (IOException e) {
       throw new CoreException(StatusUtil.error(FacetInstallDelegate.class, e.getMessage()));
     }
+    project.getFile(pomFile.getName()).refreshLocal(IResource.DEPTH_ZERO, monitor);
   }
 
   // visible for testing
