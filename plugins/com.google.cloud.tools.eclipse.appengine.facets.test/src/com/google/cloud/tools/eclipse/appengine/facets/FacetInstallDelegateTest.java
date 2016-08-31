@@ -8,6 +8,8 @@ import org.apache.maven.model.Dependency;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.common.base.Preconditions;
+
 public class FacetInstallDelegateTest {
   @Test
   public void testUpdateMavenProjectDependencies_nonAppEngineInitialDependency() {
@@ -19,9 +21,10 @@ public class FacetInstallDelegateTest {
 
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     intialDependencies.add(nonAppEngineDependency);
-
     List<Dependency> finalDependencies = FacetInstallDelegate.updateMavenProjectDependencies(intialDependencies);
-    Assert.assertEquals(6, finalDependencies.size());
+    List<Dependency> expectedDependencies = MavenAppEngineFacetUtil.getAppEngineDependencies();
+    expectedDependencies.add(nonAppEngineDependency);
+    assertDependecyListEquals(expectedDependencies, finalDependencies);
   }
 
   @Test
@@ -34,16 +37,17 @@ public class FacetInstallDelegateTest {
 
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     intialDependencies.add(appEngineApiStubsDependency);
-
     List<Dependency> finalDependencies = FacetInstallDelegate.updateMavenProjectDependencies(intialDependencies);
-    Assert.assertEquals(5, finalDependencies.size());
+    List<Dependency> expectedDependencies = MavenAppEngineFacetUtil.getAppEngineDependencies();
+    assertDependecyListEquals(expectedDependencies, finalDependencies);
   }
 
   @Test
   public void testUpdateMavenProjectDependencies_noInitialDependency() {
     List<Dependency> intialDependencies = new ArrayList<Dependency>();
     List<Dependency> finalDependencies = FacetInstallDelegate.updateMavenProjectDependencies(intialDependencies);
-    Assert.assertEquals(5, finalDependencies.size());
+    List<Dependency> expectedDependencies = MavenAppEngineFacetUtil.getAppEngineDependencies();
+    assertDependecyListEquals(expectedDependencies, finalDependencies);
   }
 
   @Test
@@ -72,5 +76,16 @@ public class FacetInstallDelegateTest {
 
     FacetInstallDelegate.updatePomProperties(properties, null /* monitor */);
     Assert.assertEquals(4, properties.size());
+  }
+
+  private void assertDependecyListEquals(List<Dependency> expectedDependencies,
+      List<Dependency> actualDependencies) {
+    Preconditions.checkNotNull(expectedDependencies);
+    Preconditions.checkNotNull(actualDependencies);
+
+    Assert.assertEquals(expectedDependencies.size(), actualDependencies.size());
+    for (Dependency dependency : actualDependencies) {
+      Assert.assertTrue(MavenAppEngineFacetUtil.doesListContainDependency(expectedDependencies, dependency));
+    }
   }
 }
