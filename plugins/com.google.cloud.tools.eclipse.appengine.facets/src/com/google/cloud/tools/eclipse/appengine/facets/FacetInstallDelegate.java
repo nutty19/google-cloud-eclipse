@@ -103,7 +103,7 @@ public class FacetInstallDelegate implements IDelegate {
   /**
    * Creates an appengine-web.xml file in the WEB-INF folder if it doesn't exist
    */
-  private static void createConfigFiles(IProject project, IProgressMonitor monitor)
+  private void createConfigFiles(IProject project, IProgressMonitor monitor)
       throws CoreException {
     IFile appEngineWebXml = project.getFile(APPENGINE_WEB_XML_PATH);
     if (appEngineWebXml.exists()) {
@@ -132,7 +132,7 @@ public class FacetInstallDelegate implements IDelegate {
         configFileLocation, AppEngineTemplateUtility.APPENGINE_WEB_XML_TEMPLATE, Collections.<String, String> emptyMap());
   }
 
-  private static void addAppEngineJarsToMavenProject(IProject project, IProgressMonitor monitor) throws CoreException {
+  private void addAppEngineJarsToMavenProject(IProject project, IProgressMonitor monitor) throws CoreException {
     IMavenProjectFacade facade = MavenPlugin.getMavenProjectRegistry().getProject(project);
     Model pom = facade.getMavenProject(monitor).getModel();
 
@@ -146,7 +146,7 @@ public class FacetInstallDelegate implements IDelegate {
     try {
       writer.write(pomFile, null /* options */, pom);
     } catch (IOException e) {
-      throw new CoreException(StatusUtil.error(FacetInstallDelegate.class, e.getMessage()));
+      throw new CoreException(StatusUtil.error(this, e.getMessage()));
     }
     project.getFile(pomFile.getName()).refreshLocal(IResource.DEPTH_ZERO, monitor);
   }
@@ -163,7 +163,7 @@ public class FacetInstallDelegate implements IDelegate {
     }
 
     for (Dependency appEngineDependency : allAppEngineDependencies) {
-      if(!MavenAppEngineFacetUtil.doesListContainDependency(initialDependencies, appEngineDependency)) {
+      if(!MavenUtils.doesListContainDependency(initialDependencies, appEngineDependency)) {
         initialDependencies.add(appEngineDependency);
       }
     }

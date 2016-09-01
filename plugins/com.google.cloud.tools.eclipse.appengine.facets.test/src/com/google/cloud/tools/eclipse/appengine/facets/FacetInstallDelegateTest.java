@@ -8,6 +8,7 @@ import org.apache.maven.model.Dependency;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.cloud.tools.eclipse.util.MavenUtils;
 import com.google.common.base.Preconditions;
 
 public class FacetInstallDelegateTest {
@@ -85,7 +86,7 @@ public class FacetInstallDelegateTest {
 
     Assert.assertEquals(expectedDependencies.size(), actualDependencies.size());
     for (Dependency dependency : actualDependencies) {
-      Assert.assertTrue(MavenAppEngineFacetUtil.doesListContainDependency(expectedDependencies, dependency));
+      Assert.assertTrue(MavenUtils.doesListContainDependency(expectedDependencies, dependency));
     }
   }
 }

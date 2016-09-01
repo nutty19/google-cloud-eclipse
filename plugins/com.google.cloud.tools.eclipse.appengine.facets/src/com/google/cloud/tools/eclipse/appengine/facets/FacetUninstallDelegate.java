@@ -111,7 +111,7 @@ public class FacetUninstallDelegate implements IDelegate {
     try {
       writer.write(pomFile, null /* options */, pom);
     } catch (IOException e) {
-      throw new CoreException(StatusUtil.error(FacetUninstallDelegate.class, e.getMessage()));
+      throw new CoreException(StatusUtil.error(this, e.getMessage()));
     }
     project.getFile(pomFile.getName()).refreshLocal(IResource.DEPTH_ZERO, monitor);
   }
@@ -125,7 +125,7 @@ public class FacetUninstallDelegate implements IDelegate {
 
     List<Dependency> allAppEngineDependencies = MavenAppEngineFacetUtil.getAppEngineDependencies();
     for (Dependency dependency : initialDependencies) {
-      if(!MavenAppEngineFacetUtil.doesListContainDependency(allAppEngineDependencies, dependency)) {
+      if(!MavenUtils.doesListContainDependency(allAppEngineDependencies, dependency)) {
         finalDependencies.add(dependency);
       }
     }
