@@ -17,13 +17,7 @@ public final class AppEngineSdkClasspathContainer implements IClasspathContainer
 
   public static final String CONTAINER_ID = "AppEngineSDK";
 
-  private static final String APPENGINE_API_JAR = "impl/appengine-api.jar";
-  private static final String APPENGINE_LABS_JAR = "impl/appengine-api-labs.jar";
-  private static final String APPENGINE_JSR107CACHE_JAR = "user/appengine-jsr107cache-0.0.0.jar";
-  private static final String JSR107CACHE_JAR = "user/jsr107cache-1.1.jar";
-
-  private static final String[] INCLUDED_JARS =
-      {APPENGINE_API_JAR, APPENGINE_LABS_JAR, APPENGINE_JSR107CACHE_JAR, JSR107CACHE_JAR};
+  private static final String[] INCLUDED_JARS = {};
   private static final String APPENGINE_API_JAVADOC_URL =
       "https://cloud.google.com/appengine/docs/java/javadoc/";
 
