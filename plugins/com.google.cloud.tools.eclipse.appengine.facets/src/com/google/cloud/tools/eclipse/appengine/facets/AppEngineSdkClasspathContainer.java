@@ -41,15 +41,12 @@ public final class AppEngineSdkClasspathContainer implements IClasspathContainer
     try {
       CloudSdk cloudSdk = new CloudSdk.Builder().build();
       if (cloudSdk != null) {
-        // todo: INCLUDED_JARS should be pulled from appengine-plugins-core
-        // https://github.com/GoogleCloudPlatform/appengine-plugins-core/issues/186
         List<IClasspathEntry> entries = new ArrayList<>(INCLUDED_JARS.length);
         for (String jarLocation : INCLUDED_JARS) {
           java.nio.file.Path jarFile = cloudSdk.getJavaAppEngineSdkPath().resolve(jarLocation);
           if (jarFile != null) {
             IClasspathAttribute javadocAttribute = JavaCore.newClasspathAttribute(
                 IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, APPENGINE_API_JAVADOC_URL);
-            //@formatter:off
             IClasspathEntry jarEntry = JavaCore.newLibraryEntry(
                 new Path(jarFile.toString()),
                 null /* sourceAttachmentPath */,
@@ -57,7 +54,6 @@ public final class AppEngineSdkClasspathContainer implements IClasspathContainer
                 null /* accessRules */,
                 new IClasspathAttribute[] { javadocAttribute },
                 false /* isExported */);
-            //@formatter:on
             entries.add(jarEntry);
           }
         }
