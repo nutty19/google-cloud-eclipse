@@ -13,9 +13,9 @@ import org.eclipse.jdt.core.JavaCore;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class AppEngineSdkClasspathContainer implements IClasspathContainer {
+final class AppEngineSdkClasspathContainer implements IClasspathContainer {
 
-  public static final String CONTAINER_ID = "AppEngineSDK";
+  static final String CONTAINER_ID = "AppEngineSDK";
 
   private static final String[] INCLUDED_JARS = {};
   private static final String APPENGINE_API_JAVADOC_URL =
