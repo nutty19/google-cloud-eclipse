@@ -71,8 +71,7 @@ public class CloudSdkContextFunction extends ContextFunction {
 
     try {
       CloudSdk instance = builder.build();
-      instance.validateCloudSdk();
-      instance.validateAppEngineJavaComponents();
+      instance.validate();
       return instance;
     } catch (AppEngineException ex) {
       return NOT_A_VALUE;
