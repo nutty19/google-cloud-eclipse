@@ -13,7 +13,7 @@
  * the License.
  *******************************************************************************/
 
-package com.google.cloud.tools.eclipse.appengine.facets;
+package com.google.cloud.tools.eclipse.appengine.facets.standard;
 
 import static org.mockito.Mockito.when;
 
