@@ -1,4 +1,4 @@
-package com.google.cloud.tools.eclipse.appengine.facets;
+package com.google.cloud.tools.eclipse.appengine.facets.standard;
 
 import java.util.Set;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.eclipse.appengine.facets;
+package com.google.cloud.tools.eclipse.appengine.facets.standard;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.eclipse.appengine.facets;
+package com.google.cloud.tools.eclipse.appengine.facets.standard;
 
 import java.util.ArrayList;
 import java.util.List;

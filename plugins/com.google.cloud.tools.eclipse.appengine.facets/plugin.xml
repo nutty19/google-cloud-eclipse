@@ -22,13 +22,13 @@
       id="com.google.cloud.tools.eclipse.appengine.facet.install.action"
       facet="com.google.cloud.tools.eclipse.appengine.facet"
       type="INSTALL">
-      <delegate class="com.google.cloud.tools.eclipse.appengine.facets.FacetInstallDelegate"/>
+      <delegate class="com.google.cloud.tools.eclipse.appengine.facets.standard.FacetInstallDelegate"/>
     </action>
     <action
       id="com.google.cloud.tools.eclipse.appengine.facet.uninstall.action"
       facet="com.google.cloud.tools.eclipse.appengine.facet"
       type="UNINSTALL">
-      <delegate class="com.google.cloud.tools.eclipse.appengine.facets.FacetUninstallDelegate"/>
+      <delegate class="com.google.cloud.tools.eclipse.appengine.facets.standard.FacetUninstallDelegate"/>
     </action>
   </extension>
   
@@ -41,7 +41,7 @@
 
   <extension point="org.eclipse.wst.common.project.facet.core.listeners">
     <listener
-      class="com.google.cloud.tools.eclipse.appengine.facets.AppEngineRuntimeChangeListener"
+      class="com.google.cloud.tools.eclipse.appengine.facets.standard.AppEngineRuntimeChangeListener"
       eventTypes="PRIMARY_RUNTIME_CHANGED">
     </listener>
   </extension>
