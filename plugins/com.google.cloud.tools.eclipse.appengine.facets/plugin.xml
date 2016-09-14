@@ -22,13 +22,13 @@
       id="com.google.cloud.tools.eclipse.appengine.facet.install.action"
       facet="com.google.cloud.tools.eclipse.appengine.facet"
       type="INSTALL">
-      <delegate class="com.google.cloud.tools.eclipse.appengine.facets.standard.FacetInstallDelegate"/>
+      <delegate class="com.google.cloud.tools.eclipse.appengine.facets.standard.StandardFacetInstallDelegate"/>
     </action>
     <action
       id="com.google.cloud.tools.eclipse.appengine.facet.uninstall.action"
       facet="com.google.cloud.tools.eclipse.appengine.facet"
       type="UNINSTALL">
-      <delegate class="com.google.cloud.tools.eclipse.appengine.facets.standard.FacetUninstallDelegate"/>
+      <delegate class="com.google.cloud.tools.eclipse.appengine.facets.standard.StandardFacetUninstallDelegate"/>
     </action>
   </extension>
   
