@@ -3,15 +3,16 @@
 <plugin>
    
    <extension point="org.eclipse.wst.common.project.facet.core.facets">        
-    <project-facet id="com.google.cloud.tools.eclipse.appengine.facet">
+    <project-facet id="com.google.cloud.tools.eclipse.appengine.facets.standard">
        <label>%standardFacetName</label>
        <description>%standardFacetDescription</description>
     </project-facet>
-    <project-facet-version facet="com.google.cloud.tools.eclipse.appengine.facet" version="1">
+    <project-facet-version facet="com.google.cloud.tools.eclipse.appengine.facets.standard" version="1">
        <constraint>
           <and>
             <requires facet="jst.web" version="2.5"/>
             <requires facet="java" version="1.7"/>
+            <conflicts facet="com.google.cloud.tools.eclipse.appengine.facets.flex"/>
           </and>
         </constraint>
     </project-facet-version>
@@ -19,14 +20,14 @@
   
   <extension point="org.eclipse.wst.common.project.facet.core.facets">
     <action
-      id="com.google.cloud.tools.eclipse.appengine.facet.install.action"
-      facet="com.google.cloud.tools.eclipse.appengine.facet"
+      id="com.google.cloud.tools.eclipse.appengine.facets.standard.install.action"
+      facet="com.google.cloud.tools.eclipse.appengine.facets.standard"
       type="INSTALL">
       <delegate class="com.google.cloud.tools.eclipse.appengine.facets.StandardFacetInstallDelegate"/>
     </action>
     <action
-      id="com.google.cloud.tools.eclipse.appengine.facet.uninstall.action"
-      facet="com.google.cloud.tools.eclipse.appengine.facet"
+      id="com.google.cloud.tools.eclipse.appengine.facets.standard.uninstall.action"
+      facet="com.google.cloud.tools.eclipse.appengine.facets.standard"
       type="UNINSTALL">
       <delegate class="com.google.cloud.tools.eclipse.appengine.facets.StandardFacetUninstallDelegate"/>
     </action>
@@ -35,7 +36,7 @@
   <extension point="org.eclipse.wst.common.project.facet.core.runtimes">
     <supported>
       <runtime-component any="true" />
-      <facet id="com.google.cloud.tools.eclipse.appengine.facet" />
+      <facet id="com.google.cloud.tools.eclipse.appengine.facets.standard" />
     </supported>
   </extension>
 
@@ -57,7 +58,7 @@
            facet="com.google.cloud.tools.eclipse.appengine.facets.flex"
            version="1">
         <constraint>
-           <requires facet="java" version="1.8"/>
+           <conflicts facet="com.google.cloud.tools.eclipse.appengine.facets.standard"/>
         </constraint>
      </project-facet-version>
   </extension>
