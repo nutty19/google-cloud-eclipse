@@ -13,10 +13,11 @@
  * the License.
  *******************************************************************************/
 
-package com.google.cloud.tools.eclipse.appengine.facets.standard;
+package com.google.cloud.tools.eclipse.appengine.facets;
 
 import static org.mockito.Mockito.when;
 
+import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.eclipse.wst.server.core.IRuntimeType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,6 +31,11 @@ import com.google.cloud.tools.eclipse.appengine.facets.AppEngineStandardFacet;
 public class AppEngineStandardFacetTest {
   @Mock private org.eclipse.wst.server.core.IRuntime serverRuntime;
   @Mock private IRuntimeType runtimeType;
+
+  @Test
+  public void testStandardFacetExists() {
+    Assert.assertTrue(ProjectFacetsManager.isProjectFacetDefined(AppEngineStandardFacet.ID));
+  }
 
   @Test
   public void testIsAppEngineStandardRuntime_appEngineRuntime() {
