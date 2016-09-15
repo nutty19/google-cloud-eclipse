@@ -25,8 +25,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.cloud.tools.eclipse.appengine.facets.AppEngineStandardFacet;
-
 @RunWith(MockitoJUnitRunner.class)
 public class AppEngineStandardFacetTest {
   @Mock private org.eclipse.wst.server.core.IRuntime serverRuntime;

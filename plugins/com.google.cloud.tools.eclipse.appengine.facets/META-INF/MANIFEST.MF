@@ -30,5 +30,4 @@ Import-Package: com.google.cloud.tools.eclipse.util,
  org.eclipse.wst.common.project.facet.core.events,
  org.eclipse.wst.common.project.facet.core.runtime,
  org.eclipse.wst.server.core
-Export-Package: com.google.cloud.tools.eclipse.appengine.facets,
- com.google.cloud.tools.eclipse.appengine.facets.standard
+Export-Package: com.google.cloud.tools.eclipse.appengine.facets

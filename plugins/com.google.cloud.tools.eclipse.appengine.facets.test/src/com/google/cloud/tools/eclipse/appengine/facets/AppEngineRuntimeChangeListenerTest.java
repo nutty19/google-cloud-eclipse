@@ -27,8 +27,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.cloud.tools.eclipse.appengine.facets.AppEngineStandardRuntimeChangeListener;
-
 @RunWith(MockitoJUnitRunner.class)
 public class AppEngineRuntimeChangeListenerTest {
   private AppEngineStandardRuntimeChangeListener listener = new AppEngineStandardRuntimeChangeListener();
