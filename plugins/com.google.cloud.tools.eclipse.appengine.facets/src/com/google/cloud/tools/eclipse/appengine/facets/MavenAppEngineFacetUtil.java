@@ -7,7 +7,6 @@ import java.util.Map;
 import org.apache.maven.model.Dependency;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.google.cloud.tools.eclipse.appengine.facets.standard.AppEngineStandardFacet;
 import com.google.cloud.tools.eclipse.util.MavenUtils;
 
 public class MavenAppEngineFacetUtil {
