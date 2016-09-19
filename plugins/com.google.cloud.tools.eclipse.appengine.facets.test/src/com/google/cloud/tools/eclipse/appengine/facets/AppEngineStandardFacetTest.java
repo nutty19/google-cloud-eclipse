@@ -32,7 +32,8 @@ public class AppEngineStandardFacetTest {
 
   @Test
   public void testStandardFacetExists() {
-    Assert.assertTrue(ProjectFacetsManager.isProjectFacetDefined(AppEngineStandardFacet.ID));
+    Assert.assertTrue(
+        ProjectFacetsManager.isProjectFacetDefined("com.google.cloud.tools.eclipse.appengine.facets.standard"));
   }
 
   @Test
