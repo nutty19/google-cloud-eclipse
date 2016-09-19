@@ -9,7 +9,7 @@ import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 public class FlexFacetInstallDelegate implements IDelegate {
 
   @Override
-  public void execute(IProject project, IProjectFacetVersion fv, Object config, IProgressMonitor monitor)
+  public void execute(IProject project, IProjectFacetVersion facetVersion, Object config, IProgressMonitor monitor)
       throws CoreException {
     
   }
