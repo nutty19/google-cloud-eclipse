@@ -32,7 +32,7 @@ public class ProjectFromSelectionHelper {
 
         IFacetedProject facetedProject = facetedProjectHelper.getFacetedProject(project);
         // TODO replace with constant from AppEngineFacet (after possibly relocating that class)
-        if (facetedProjectHelper.projectHasFacet(facetedProject, "com.google.cloud.tools.eclipse.appengine.facet")) {
+        if (facetedProjectHelper.projectHasFacet(facetedProject, "com.google.cloud.tools.eclipse.appengine.facets.standard")) {
           return project;
         }
       }
