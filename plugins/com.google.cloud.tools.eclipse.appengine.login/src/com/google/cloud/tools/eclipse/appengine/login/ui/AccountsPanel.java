@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -39,6 +38,12 @@ import org.eclipse.swt.widgets.Shell;
 
 import java.util.Set;
 
+/**
+ * A panel listing all currently logged-in accounts. The panel allows adding new accounts,
+ * switching active accounts, and logging out all accounts.
+ *
+ * TODO(chanseok): move the panel to the bottom-right corner: https://github.com/GoogleCloudPlatform/google-cloud-eclipse/issues/740
+ */
 public class AccountsPanel extends PopupDialog {
 
   private static final int DEFAULT_MARGIN = 5;
@@ -70,11 +75,6 @@ public class AccountsPanel extends PopupDialog {
   }
 
   @Override
-  protected Point getInitialLocation(Point initialSize) {
-    return super.getInitialLocation(initialSize);
-  }
-
-  @Override
   protected Control createDialogArea(Composite parent) {
     Composite container = (Composite) super.createDialogArea(parent);
     GridLayoutFactory.swtDefaults().margins(DEFAULT_MARGIN, DEFAULT_MARGIN).applyTo(container);
@@ -89,11 +89,11 @@ public class AccountsPanel extends PopupDialog {
     messageLabel.setText(Messages.MESSAGE_LABEL_ACTIVE_ACCOUNT);
     FontUtil.convertFontToBold(messageLabel);
 
-    Composite activeAccountContainer = new Composite(container, SWT.NONE);
-    GridLayoutFactory.swtDefaults().margins(EMAIL_LEFT_MARGIN, 0).applyTo(activeAccountContainer);
+    Composite activeAccountIndenter = new Composite(container, SWT.NONE);
+    GridLayoutFactory.swtDefaults().margins(EMAIL_LEFT_MARGIN, 0).applyTo(activeAccountIndenter);
 
     Account activeAccount = loginService.getActiveAccount();
-    Label accountLabel = new Label(activeAccountContainer, SWT.NONE);
+    Label accountLabel = new Label(activeAccountIndenter, SWT.NONE);
     accountLabel.setText(activeAccount.getEmail());
     FontUtil.convertFontToBold(accountLabel);
 
@@ -101,12 +101,12 @@ public class AccountsPanel extends PopupDialog {
     if (accounts.size() > 1) {
       new Label(container, SWT.NONE).setText(Messages.MESSAGE_LABEL_OTHER_ACCOUNTS);
 
-      Composite accountsContainer = new Composite(container, SWT.NONE);
-      GridLayoutFactory.swtDefaults().margins(EMAIL_LEFT_MARGIN, 0).applyTo(accountsContainer);
+      Composite accountsIndenter = new Composite(container, SWT.NONE);
+      GridLayoutFactory.swtDefaults().margins(EMAIL_LEFT_MARGIN, 0).applyTo(accountsIndenter);
 
       for (Account account : accounts) {
         if (!account.getEmail().equals(activeAccount.getEmail())) {
-          Link link = new Link(accountsContainer, SWT.NO_FOCUS);
+          Link link = new Link(accountsIndenter, SWT.NO_FOCUS);
           link.setText("<a href=\"" + account.getEmail() + "\">" + account.getEmail() + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           link.addSelectionListener(new SwitchAccountOnClick());
         }
