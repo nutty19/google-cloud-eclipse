@@ -16,6 +16,7 @@
 package com.google.cloud.tools.eclipse.appengine.login;
 
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +25,7 @@ import com.google.cloud.tools.ide.login.LoggerFacade;
 import com.google.cloud.tools.ide.login.OAuthData;
 import com.google.cloud.tools.ide.login.OAuthDataStore;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +39,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GoogleLoginServiceTest {
@@ -60,31 +64,43 @@ public class GoogleLoginServiceTest {
   }
 
   @Test
-  public void testGoogleLoginService_clearSavedCredentialIfNullRefreshToken() {
+  public void testGoogleLoginService_removeSavedCredentialIfNullRefreshToken() {
+    when(savedOAuthData.getEmail()).thenReturn("my-email@example.com");
+    when(savedOAuthData.getStoredScopes()).thenReturn(OAUTH_SCOPES);
     when(savedOAuthData.getRefreshToken()).thenReturn(null);
 
-    GoogleLoginService loginService = new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+    GoogleLoginService loginService =
+        new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+    verify(dataStore, times(1)).removeOAuthData("my-email@example.com");
     Assert.assertNull(loginService.getActiveAccount());
   }
 
   @Test
-  public void testGoogleLoginService_clearSavedCredentialIfScopesChanged() {
+  public void testGoogleLoginService_removeSavedCredentialIfScopesChanged() {
     // Persisted credential in the data store has an out-dated scopes.
     SortedSet<String> newScope = new TreeSet<>(Arrays.asList("new_scope"));
+    when(savedOAuthData.getEmail()).thenReturn("my-email@example.com");
     when(savedOAuthData.getStoredScopes()).thenReturn(newScope);
     when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
 
-    GoogleLoginService loginService = new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+    GoogleLoginService loginService =
+        new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+    verify(dataStore, times(1)).removeOAuthData("my-email@example.com");
     Assert.assertNull(loginService.getActiveAccount());
   }
 
   @Test
   public void testGoogleLoginService_restoreSavedCredential() {
+    Preferences.userRoot().node(PREFERENCE_PATH_ROOT)
+        .put("ACTIVE_ACCOUNT_EMAIL", "my-email@example.com");
     // Persisted credential in the data store is valid.
+    when(savedOAuthData.getEmail()).thenReturn("my-email@example.com");
     when(savedOAuthData.getStoredScopes()).thenReturn(OAUTH_SCOPES);
     when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
 
-    GoogleLoginService loginService = new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+    GoogleLoginService loginService =
+        new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+    verify(dataStore, never()).removeOAuthData("my-email@example.com");
     verify(dataStore, never()).clearStoredOAuthData();
     Assert.assertNotNull(loginService.getActiveAccount());
   }
@@ -96,5 +112,10 @@ public class GoogleLoginServiceTest {
     String loginUrl = GoogleLoginService.getGoogleLoginUrl(customRedirectUrl);
     Assert.assertTrue(loginUrl.startsWith("https://accounts.google.com/o/oauth2/auth?"));
     Assert.assertTrue(loginUrl.contains("redirect_uri=" + customRedirectUrl));
+  }
+
+  @After
+  public void tearDown() throws BackingStoreException {
+    Preferences.userRoot().node(PREFERENCE_PATH_ROOT).removeNode();
   }
 }
