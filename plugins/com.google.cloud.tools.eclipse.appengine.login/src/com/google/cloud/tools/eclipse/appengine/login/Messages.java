@@ -4,6 +4,8 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
   private static final String BUNDLE_NAME = "com.google.cloud.tools.eclipse.appengine.login.messages"; //$NON-NLS-1$
+  public static String BUTTON_ACCOUNTS_PANEL_ADD_ACCOUNT;
+  public static String BUTTON_ACCOUNTS_PANEL_LOGOUT;
   public static String LOGIN_ERROR_CANNOT_OPEN_BROWSER;
   public static String LOGIN_ERROR_DIALOG_MESSAGE;
   public static String LOGIN_ERROR_DIALOG_TITLE;
@@ -12,10 +14,10 @@ public class Messages extends NLS {
   public static String LOGIN_MENU_LOGGED_OUT;
   public static String LOGIN_PROGRESS_DIALOG_MESSAGE;
   public static String LOGIN_PROGRESS_DIALOG_TITLE;
-  public static String LOGIN_TOOLTIP_LOGGED_IN;
-  public static String LOGIN_TOOLTIP_LOGGED_OUT;
   public static String LOGOUT_CONFIRM_DIALOG_MESSAGE;
   public static String LOGOUT_CONFIRM_DIALOG_TITILE;
+  public static String MESSAGE_LABEL_ACTIVE_ACCOUNT;
+  public static String MESSAGE_LABEL_OTHER_ACCOUNTS;
   static {
     // initialize resource bundle
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);

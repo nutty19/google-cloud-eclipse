@@ -33,6 +33,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -44,6 +46,7 @@ public class GoogleLoginServiceTest {
   @Mock private LoginServiceUi uiFacade;
   @Mock private LoggerFacade loggerFacade;
 
+  private static final String PREFERENCE_PATH_ROOT = "google-login-service-test-preference-path";
   private static final SortedSet<String> OAUTH_SCOPES = Collections.unmodifiableSortedSet(
       new TreeSet<>(Arrays.asList(
           "email",
@@ -52,26 +55,27 @@ public class GoogleLoginServiceTest {
 
   @Before
   public void setUp() {
-    when(dataStore.loadOAuthData()).thenReturn(savedOAuthData);
+    Set<OAuthData> oAuthDataSet = new HashSet<>(Arrays.asList(savedOAuthData));
+    when(dataStore.loadOAuthData()).thenReturn(oAuthDataSet);
   }
 
   @Test
   public void testGoogleLoginService_clearSavedCredentialIfNullRefreshToken() {
     when(savedOAuthData.getRefreshToken()).thenReturn(null);
 
-    GoogleLoginService loginService = new GoogleLoginService(dataStore, uiFacade, loggerFacade);
-    Assert.assertNull(loginService.getCachedActiveCredential());
+    GoogleLoginService loginService = new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+    Assert.assertNull(loginService.getActiveAccount());
   }
 
   @Test
   public void testGoogleLoginService_clearSavedCredentialIfScopesChanged() {
     // Persisted credential in the data store has an out-dated scopes.
-    SortedSet<String> newScope = new TreeSet<String>(Arrays.asList("new scope"));
+    SortedSet<String> newScope = new TreeSet<>(Arrays.asList("new_scope"));
     when(savedOAuthData.getStoredScopes()).thenReturn(newScope);
     when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
 
-    GoogleLoginService loginService = new GoogleLoginService(dataStore, uiFacade, loggerFacade);
-    Assert.assertNull(loginService.getCachedActiveCredential());
+    GoogleLoginService loginService = new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+    Assert.assertNull(loginService.getActiveAccount());
   }
 
   @Test
@@ -80,9 +84,9 @@ public class GoogleLoginServiceTest {
     when(savedOAuthData.getStoredScopes()).thenReturn(OAUTH_SCOPES);
     when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
 
-    GoogleLoginService loginService = new GoogleLoginService(dataStore, uiFacade, loggerFacade);
+    GoogleLoginService loginService = new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
     verify(dataStore, never()).clearStoredOAuthData();
-    Assert.assertNotNull(loginService.getCachedActiveCredential());
+    Assert.assertNotNull(loginService.getActiveAccount());
   }
 
   @Test

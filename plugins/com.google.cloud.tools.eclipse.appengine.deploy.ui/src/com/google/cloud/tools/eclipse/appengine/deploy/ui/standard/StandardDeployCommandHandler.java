@@ -16,26 +16,6 @@
 
 package com.google.cloud.tools.eclipse.appengine.deploy.ui.standard;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.text.DateFormat;
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.window.Window;
-import org.eclipse.ui.console.MessageConsoleStream;
-import org.eclipse.ui.handlers.HandlerUtil;
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.cloud.tools.appengine.api.deploy.DefaultDeployConfiguration;
 import com.google.cloud.tools.eclipse.appengine.deploy.CleanupOldDeploysJob;
@@ -52,7 +32,28 @@ import com.google.cloud.tools.eclipse.ui.util.MessageConsoleUtilities;
 import com.google.cloud.tools.eclipse.ui.util.ProjectFromSelectionHelper;
 import com.google.cloud.tools.eclipse.ui.util.ServiceUtils;
 import com.google.cloud.tools.eclipse.util.FacetedProjectHelper;
+import com.google.cloud.tools.ide.login.Account;
 import com.google.common.annotations.VisibleForTesting;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.window.Window;
+import org.eclipse.ui.console.MessageConsoleStream;
+import org.eclipse.ui.handlers.HandlerUtil;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Command handler to deploy an App Engine web application project to App Engine Standard.
@@ -94,7 +95,7 @@ public class StandardDeployCommandHandler extends AbstractHandler {
     }
   }
 
-  private void launchDeployJob(IProject project, Credential credential, ExecutionEvent event) 
+  private void launchDeployJob(IProject project, Credential credential, ExecutionEvent event)
       throws IOException, ExecutionException {
     IPath workDirectory = createWorkDirectory();
 
@@ -131,7 +132,7 @@ public class StandardDeployCommandHandler extends AbstractHandler {
                                                      Credential credential,
                                                      ExecutionEvent event,
                                                      IPath workDirectory,
-                                                     final MessageConsoleStream outputStream, 
+                                                     final MessageConsoleStream outputStream,
                                                      DefaultDeployConfiguration deployConfiguration) {
     StandardDeployJobConfig config = new StandardDeployJobConfig();
     config.setProject(project)
@@ -161,13 +162,12 @@ public class StandardDeployCommandHandler extends AbstractHandler {
 
   private Credential loginIfNeeded(ExecutionEvent event) {
     IGoogleLoginService loginService = ServiceUtils.getService(event, IGoogleLoginService.class);
-    Credential credential = loginService.getCachedActiveCredential();
-    if (credential != null) {
-      return credential;
+    Account account = loginService.getActiveAccountWithAutoLogin(
+        Messages.getString("deploy.login.dialog.message"));
+    if (account != null) {
+      return account.getOAuth2Credential();
     }
-
-    // GoogleLoginService takes care of displaying error messages; no need to check errors.
-    return loginService.getActiveCredential(Messages.getString("deploy.login.dialog.message"));
+    return null;
   }
 
   private void launchCleanupJob() {

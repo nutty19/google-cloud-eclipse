@@ -1,28 +1,30 @@
 /*******************************************************************************
- * Copyright 2016 Google Inc. All Rights Reserved.
+ * Copyright 2016 Google Inc.
  *
- * All rights reserved. This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License v1.0 which
- * accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *******************************************************************************/
 
 package com.google.cloud.tools.eclipse.appengine.login;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.cloud.tools.eclipse.appengine.login.ui.LoginServiceUi;
+import com.google.cloud.tools.ide.login.Account;
 import com.google.cloud.tools.ide.login.GoogleLoginState;
 import com.google.cloud.tools.ide.login.JavaPreferenceOAuthDataStore;
 import com.google.cloud.tools.ide.login.LoggerFacade;
 import com.google.cloud.tools.ide.login.OAuthDataStore;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -31,10 +33,14 @@ import org.eclipse.ui.PlatformUI;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /**
  * Provides service related to login, e.g., account management, getting a credential of a
@@ -42,8 +48,10 @@ import java.util.logging.Logger;
  */
 public class GoogleLoginService implements IGoogleLoginService {
 
-  private static final String OAUTH_DATA_STORE_PREFERENCE_PATH =
-      "/com/google/cloud/tools/eclipse/login";
+  private static final String PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL = "ACTIVE_ACCOUNT_EMAIL";
+  private static final String PREFERENCE_PATH_ROOT = "/com/google/cloud/tools/eclipse/login";
+  private static final String PREFERENCE_PATH_OAUTH_DATA_STORE =
+      PREFERENCE_PATH_ROOT + "/datastore";
 
   // For the detailed info about each scope, see
   // https://github.com/GoogleCloudPlatform/gcloud-eclipse-tools/wiki/Cloud-Tools-for-Eclipse-Technical-Design#oauth-20-scopes-requested
@@ -63,6 +71,10 @@ public class GoogleLoginService implements IGoogleLoginService {
     return new GoogleAuthorizationCodeRequestUrl(Constants.getOAuthClientId(), redirectUrl,
         GoogleLoginService.OAUTH_SCOPES).toString();
   }
+
+  private Account activeAccount;
+  private Set<Account> accounts;
+  private String preferencePathRoot;
 
   private GoogleLoginState loginState;
 
@@ -85,8 +97,11 @@ public class GoogleLoginService implements IGoogleLoginService {
     loginServiceUi = new LoginServiceUi(workbench, shellProvider, workbench.getDisplay());
     loginState = new GoogleLoginState(
         Constants.getOAuthClientId(), Constants.getOAuthClientSecret(), OAUTH_SCOPES,
-        new JavaPreferenceOAuthDataStore(OAUTH_DATA_STORE_PREFERENCE_PATH, logger),
+        new JavaPreferenceOAuthDataStore(PREFERENCE_PATH_OAUTH_DATA_STORE, logger),
         loginServiceUi, logger);
+
+    preferencePathRoot = PREFERENCE_PATH_ROOT;
+    restoreActiveAccount();
   }
 
   /**
@@ -96,42 +111,108 @@ public class GoogleLoginService implements IGoogleLoginService {
   public GoogleLoginService() {}
 
   @VisibleForTesting
-  GoogleLoginService(
-      OAuthDataStore dataStore, LoginServiceUi uiFacade, LoggerFacade loggerFacade) {
+  GoogleLoginService(String preferencePathRoot, OAuthDataStore dataStore,
+      LoginServiceUi uiFacade, LoggerFacade loggerFacade) {
     loginServiceUi = uiFacade;
     loginState = new GoogleLoginState(
         Constants.getOAuthClientId(), Constants.getOAuthClientSecret(), OAUTH_SCOPES,
         dataStore, uiFacade, loggerFacade);
+
+    this.preferencePathRoot = preferencePathRoot;
+    restoreActiveAccount();
+  }
+
+  private void restoreActiveAccount() {
+    Preferences preferences = Preferences.userRoot().node(preferencePathRoot);
+    String activeAccountEmail = preferences.get(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL, null);
+
+    accounts = loginState.listAccounts();
+    activeAccount = findAccount(accounts, activeAccountEmail);
+  }
+
+  private void persisteActiveAccount() {
+    if (activeAccount != null) {
+      Preferences preferences = Preferences.userRoot().node(preferencePathRoot);
+      preferences.put(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL, activeAccount.getEmail());
+      try {
+        preferences.flush();
+      } catch (BackingStoreException bse) {
+        logger.log(Level.WARNING, bse.getLocalizedMessage());
+      }
+    }
   }
 
   @Override
-  public Credential getActiveCredential(String dialogMessage) {
+  public Account logIn(String dialogMessage) {
     // TODO: holding a lock for a long period of time (especially when waiting for UI events)
     // should be avoided. Make the login library thread-safe, and don't lock during UI events.
     // (https://github.com/GoogleCloudPlatform/ide-login/issues/21)
     synchronized (loginState) {
-      if (loginState.logInWithLocalServer(dialogMessage)) {
-        return loginState.getCredential();
+      Account account = loginState.logInWithLocalServer(dialogMessage);
+      if (account != null) {
+        activeAccount = account;
+        accounts = loginState.listAccounts();
+        persisteActiveAccount();
       }
-      return null;
+      return activeAccount;
     }
   }
 
   @Override
-  public Credential getCachedActiveCredential() {
+  public Account getActiveAccountWithAutoLogin(String dialogMessage) {
     synchronized (loginState) {
-      if (loginState.isLoggedIn()) {
-        return loginState.getCredential();
+      if (activeAccount != null) {
+        return activeAccount;
       }
-      return null;
+      return logIn(dialogMessage);
     }
   }
 
   @Override
-  public void clearCredential() {
+  public Account getActiveAccount() {
     synchronized (loginState) {
-      loginState.logOut(false /* Don't prompt for logout. */);
+      return activeAccount;
     }
+  }
+
+  @Override
+  public void logOutAll() {
+    synchronized (loginState) {
+      loginState.logOutAll(false /* Don't prompt for logout. */);
+      activeAccount = null;
+      accounts = new HashSet<>();
+    }
+  }
+
+  @Override
+  public boolean switchActiveAccount(String email) {
+    Preconditions.checkNotNull(email);
+
+    synchronized (loginState) {
+      Account account = findAccount(accounts, email);
+      if (account != null) {
+        activeAccount = account;
+        persisteActiveAccount();
+        return true;
+      }
+      return false;
+    }
+  }
+
+  @Override
+  public Set<Account> listAccounts() {
+    synchronized (loginState) {
+      return accounts;
+    }
+  }
+
+  private static Account findAccount(Set<Account> accounts, String email) {
+    for (Account account : accounts) {
+      if (account.getEmail().equals(email)) {
+        return account;
+      }
+    }
+    return null;
   }
 
   private static final Logger logger = Logger.getLogger(GoogleLoginService.class.getName());
