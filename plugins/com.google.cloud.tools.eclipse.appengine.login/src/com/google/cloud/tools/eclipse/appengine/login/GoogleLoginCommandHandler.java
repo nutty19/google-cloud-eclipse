@@ -36,7 +36,7 @@ public class GoogleLoginCommandHandler extends AbstractHandler implements IEleme
 
     boolean loggedIn = loginService.getActiveAccount() != null;
     if (!loggedIn) {
-      loginService.getActiveAccountWithAutoLogin(null /* no custom dialog message */);  // Log in.
+      loginService.logIn(null /* no custom dialog message */);
     } else {
       new AccountsPanel(HandlerUtil.getActiveShell(event), loginService).open();
     }
