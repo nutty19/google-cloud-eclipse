@@ -49,10 +49,9 @@ public class AccountsPanel extends PopupDialog {
   private static final int DEFAULT_MARGIN = 5;
   private static final int EMAIL_LEFT_MARGIN = 8;
 
-  private boolean showAtCenter;
   private IGoogleLoginService loginService;
 
-  public AccountsPanel(Shell parent, IGoogleLoginService loginService, boolean showAtCenter) {
+  public AccountsPanel(Shell parent, IGoogleLoginService loginService) {
     super(parent, SWT.MODELESS,
         true /* takeFocusOnOpen */,
         false /* persistSize */,
@@ -61,7 +60,6 @@ public class AccountsPanel extends PopupDialog {
         true /* showPersistActions */,
         null /* no title area */, null /* no info text area */);
     this.loginService = loginService;
-    this.showAtCenter = showAtCenter;
   }
 
   @Override
@@ -159,7 +157,7 @@ public class AccountsPanel extends PopupDialog {
       loginService.switchActiveAccount(email);
 
       close();
-      new AccountsPanel(getParentShell(), loginService, showAtCenter).open();
+      new AccountsPanel(getParentShell(), loginService).open();
     }
   };
 }

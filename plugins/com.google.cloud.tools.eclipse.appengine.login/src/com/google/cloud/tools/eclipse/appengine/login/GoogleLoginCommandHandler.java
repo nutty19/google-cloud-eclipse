@@ -38,7 +38,7 @@ public class GoogleLoginCommandHandler extends AbstractHandler implements IEleme
     if (!loggedIn) {
       loginService.getActiveAccountWithAutoLogin(null /* no custom dialog message */);  // Log in.
     } else {
-      new AccountsPanel(HandlerUtil.getActiveShell(event), loginService, false).open();
+      new AccountsPanel(HandlerUtil.getActiveShell(event), loginService).open();
     }
 
     return null;
