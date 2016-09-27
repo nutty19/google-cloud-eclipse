@@ -32,7 +32,7 @@ public interface IGoogleLoginService {
    * @return signed-in {@link Account} for successful login; {@code null} otherwise,
    *     including failed and canceled login
    */
-  public Account logIn(String dialogMessage);
+  Account logIn(String dialogMessage);
 
   /**
    * Returns an active {@link Account} (among multiple logged-in accounts). Unlike {@link
@@ -41,7 +41,7 @@ public interface IGoogleLoginService {
    *
    * Safe to call from non-UI contexts.
    */
-  public Account getActiveAccount();
+  Account getActiveAccount();
 
   /**
    * Returns an active {@link Account} (among multiple logged-in accounts). If there is no
@@ -60,14 +60,19 @@ public interface IGoogleLoginService {
    *
    * @see #logIn
    */
-  public Account getActiveAccountWithAutoLogin(String dialogMessage);
+  Account getActiveAccountWithAutoLogin(String dialogMessage);
 
   /**
    * Clears all accounts. ("Logging out" from users' perspective.)
    *
    * Safe to call from non-UI contexts.
    */
-  public void logOutAll();
+  void logOutAll();
+
+  /**
+   * @return true iff {@link #getActiveAccount} does not return {@code null}.
+   */
+  boolean isLoggedIn();
 
   /**
    * If there exists an account that matches the given {@code email}, makes it an active account.
@@ -78,7 +83,7 @@ public interface IGoogleLoginService {
    * @return true if there existed an account matching the {@code email} and it became active;
    *     false otherwise
    */
-  public boolean switchActiveAccount(String email);
+  boolean switchActiveAccount(String email);
 
   /**
    * Returns a list of currently logged-in accounts.
@@ -87,5 +92,5 @@ public interface IGoogleLoginService {
    *
    * @return never {@code null}
    */
-  public Set<Account> listAccounts();
+  Set<Account> listAccounts();
 }

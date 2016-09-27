@@ -84,7 +84,7 @@ public class AccountsPanel extends PopupDialog {
 
   private void createAccountsPane(Composite container) {
     Label messageLabel = new Label(container, SWT.NONE);
-    messageLabel.setText(Messages.MESSAGE_LABEL_ACTIVE_ACCOUNT);
+    messageLabel.setText(Messages.LABEL_ACTIVE_ACCOUNT);
     FontUtil.convertFontToBold(messageLabel);
 
     Composite activeAccountIndenter = new Composite(container, SWT.NONE);
@@ -97,7 +97,7 @@ public class AccountsPanel extends PopupDialog {
 
     Set<Account> accounts = loginService.listAccounts();
     if (accounts.size() > 1) {
-      new Label(container, SWT.NONE).setText(Messages.MESSAGE_LABEL_OTHER_ACCOUNTS);
+      new Label(container, SWT.NONE).setText(Messages.LABEL_OTHER_ACCOUNTS);
 
       Composite accountsIndenter = new Composite(container, SWT.NONE);
       GridLayoutFactory.swtDefaults().margins(EMAIL_LEFT_MARGIN, 0).applyTo(accountsIndenter);
@@ -122,8 +122,7 @@ public class AccountsPanel extends PopupDialog {
     addAccountButton.addSelectionListener(new LogInOnClick());
     GridDataFactory.defaultsFor(addAccountButton).applyTo(addAccountButton);
 
-    boolean loggedIn = loginService.getActiveAccount() != null;
-    if (loggedIn) {
+    if (loginService.isLoggedIn()) {
       Button logOutButton = new Button(buttonArea, SWT.PUSH);
       logOutButton.setText(Messages.BUTTON_ACCOUNTS_PANEL_LOGOUT);
       logOutButton.addSelectionListener(new LogOutOnClick());
