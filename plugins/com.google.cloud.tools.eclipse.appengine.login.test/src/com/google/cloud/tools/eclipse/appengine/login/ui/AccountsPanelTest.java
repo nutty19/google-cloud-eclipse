@@ -43,7 +43,7 @@ import java.util.List;
 public class AccountsPanelTest {
 
   @Mock private IGoogleLoginService loginService;
-  @Mock private Display display;
+  private Display display;
 
   @Mock private Account account1;
   @Mock private Account account2;

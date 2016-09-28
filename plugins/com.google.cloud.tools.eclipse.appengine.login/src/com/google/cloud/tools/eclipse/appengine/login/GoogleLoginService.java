@@ -114,18 +114,24 @@ public class GoogleLoginService implements IGoogleLoginService {
   public GoogleLoginService() {}
 
   @VisibleForTesting
-  GoogleLoginService(String preferencePathRoot, OAuthDataStore dataStore,
-      LoginServiceUi uiFacade, LoggerFacade loggerFacade) {
-    loginServiceUi = uiFacade;
-    loginState = new GoogleLoginState(
-        Constants.getOAuthClientId(), Constants.getOAuthClientSecret(), OAUTH_SCOPES,
-        dataStore, uiFacade, loggerFacade);
+  GoogleLoginService(String preferencePathRoot,
+      OAuthDataStore dataStore, LoginServiceUi uiFacade, LoggerFacade loggerFacade) {
+    this(new GoogleLoginState(Constants.getOAuthClientId(), Constants.getOAuthClientSecret(),
+                              OAUTH_SCOPES, dataStore, uiFacade, loggerFacade),
+        preferencePathRoot, dataStore, uiFacade, loggerFacade);
+  }
 
+  @VisibleForTesting
+  GoogleLoginService(GoogleLoginState loginState, String preferencePathRoot,
+      OAuthDataStore dataStore, LoginServiceUi uiFacade, LoggerFacade loggerFacade) {
+    loginServiceUi = uiFacade;
+    this.loginState = loginState;
     this.preferencePathRoot = preferencePathRoot;
     restoreActiveAccount();
   }
 
-  private void restoreActiveAccount() {
+  @VisibleForTesting
+  void restoreActiveAccount() {
     Preferences preferences = Preferences.userRoot().node(preferencePathRoot);
     String activeAccountEmail = preferences.get(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL, null);
 
@@ -133,15 +139,19 @@ public class GoogleLoginService implements IGoogleLoginService {
     activeAccount = findAccount(activeAccountEmail);
   }
 
-  private void persistActiveAccount() {
-    if (activeAccount != null) {
-      Preferences preferences = Preferences.userRoot().node(preferencePathRoot);
+  @VisibleForTesting
+  void persistActiveAccount() {
+    Preferences preferences = Preferences.userRoot().node(preferencePathRoot);
+    if (activeAccount == null) {
+      preferences.remove(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL);
+    } else {
       preferences.put(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL, activeAccount.getEmail());
-      try {
-        preferences.flush();
-      } catch (BackingStoreException bse) {
-        logger.log(Level.WARNING, bse.getLocalizedMessage());
-      }
+    }
+
+    try {
+      preferences.flush();
+    } catch (BackingStoreException bse) {
+      logger.log(Level.WARNING, bse.getLocalizedMessage());
     }
   }
 
@@ -184,6 +194,7 @@ public class GoogleLoginService implements IGoogleLoginService {
       loginState.logOutAll(false /* Don't prompt for logout. */);
       activeAccount = null;
       accounts = new HashSet<>();
+      persistActiveAccount();
     }
   }
 
