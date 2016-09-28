@@ -130,7 +130,7 @@ public class GoogleLoginService implements IGoogleLoginService {
     String activeAccountEmail = preferences.get(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL, null);
 
     accounts = loginState.listAccounts();
-    activeAccount = findAccount(accounts, activeAccountEmail);
+    activeAccount = findAccount(activeAccountEmail);
   }
 
   private void persistActiveAccount() {
@@ -199,7 +199,7 @@ public class GoogleLoginService implements IGoogleLoginService {
     Preconditions.checkNotNull(email);
 
     synchronized (loginState) {
-      Account account = findAccount(accounts, email);
+      Account account = findAccount(email);
       if (account != null) {
         activeAccount = account;
         persistActiveAccount();
@@ -219,7 +219,7 @@ public class GoogleLoginService implements IGoogleLoginService {
     }
   }
 
-  private static Account findAccount(Set<Account> accounts, String email) {
+  private Account findAccount(String email) {
     for (Account account : accounts) {
       if (account.getEmail().equals(email)) {
         return account;

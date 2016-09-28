@@ -46,7 +46,6 @@ import java.util.Set;
  */
 public class AccountsPanel extends PopupDialog {
 
-  private static final int DEFAULT_MARGIN = 5;
   private static final int EMAIL_LEFT_MARGIN = 8;
 
   private IGoogleLoginService loginService;
@@ -57,7 +56,7 @@ public class AccountsPanel extends PopupDialog {
         false /* persistSize */,
         false /* persistLocation */,
         false /* showDialogMenu */,
-        true /* showPersistActions */,
+        false /* showPersistActions */,
         null /* no title area */, null /* no info text area */);
     this.loginService = loginService;
   }
@@ -75,7 +74,7 @@ public class AccountsPanel extends PopupDialog {
   @Override
   protected Control createDialogArea(Composite parent) {
     Composite container = (Composite) super.createDialogArea(parent);
-    GridLayoutFactory.swtDefaults().margins(DEFAULT_MARGIN, DEFAULT_MARGIN).applyTo(container);
+    GridLayoutFactory.swtDefaults().generateLayout(container);
 
     createAccountsPane(container);
     createButtons(container);
@@ -114,8 +113,8 @@ public class AccountsPanel extends PopupDialog {
 
   private void createButtons(Composite container) {
     Composite buttonArea = new Composite(container, SWT.NONE);
-    GridDataFactory.defaultsFor(buttonArea).align(SWT.END, SWT.BEGINNING).applyTo(buttonArea);
-    GridLayoutFactory.swtDefaults().numColumns(2).margins(0, 0).applyTo(buttonArea);
+    GridDataFactory.fillDefaults().applyTo(buttonArea);
+    GridLayoutFactory.fillDefaults().numColumns(2).applyTo(buttonArea);
 
     Button addAccountButton = new Button(buttonArea, SWT.PUSH);
     addAccountButton.setText(Messages.BUTTON_ACCOUNTS_PANEL_ADD_ACCOUNT);
