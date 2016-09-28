@@ -16,8 +16,8 @@ public class Messages extends NLS {
   public static String LOGIN_PROGRESS_DIALOG_TITLE;
   public static String LOGOUT_CONFIRM_DIALOG_MESSAGE;
   public static String LOGOUT_CONFIRM_DIALOG_TITILE;
-  public static String MESSAGE_LABEL_ACTIVE_ACCOUNT;
-  public static String MESSAGE_LABEL_OTHER_ACCOUNTS;
+  public static String LABEL_ACTIVE_ACCOUNT;
+  public static String LABEL_OTHER_ACCOUNTS;
   static {
     // initialize resource bundle
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);

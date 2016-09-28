@@ -34,9 +34,8 @@ public class GoogleLoginCommandHandler extends AbstractHandler implements IEleme
   public Object execute(ExecutionEvent event) throws ExecutionException {
     IGoogleLoginService loginService = ServiceUtils.getService(event, IGoogleLoginService.class);
 
-    boolean loggedIn = loginService.getActiveAccount() != null;
-    if (!loggedIn) {
-      loginService.logIn(null /* no custom dialog message */);
+    if (!loginService.isLoggedIn()) {
+      loginService.getActiveAccountWithAutoLogin(null /* no custom dialog message */);  // Log in.
     } else {
       new AccountsPanel(HandlerUtil.getActiveShell(event), loginService).open();
     }

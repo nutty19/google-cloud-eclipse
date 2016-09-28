@@ -72,8 +72,11 @@ public class GoogleLoginService implements IGoogleLoginService {
         GoogleLoginService.OAUTH_SCOPES).toString();
   }
 
+  // We expose the references 'activeAccount' and 'accounts' to callers as-is. 'GoogleLoginService'
+  // must not modify the states of the objects, rather than updating the references.
   private Account activeAccount;
   private Set<Account> accounts;
+
   private String preferencePathRoot;
 
   private GoogleLoginState loginState;
@@ -130,7 +133,7 @@ public class GoogleLoginService implements IGoogleLoginService {
     activeAccount = findAccount(accounts, activeAccountEmail);
   }
 
-  private void persisteActiveAccount() {
+  private void persistActiveAccount() {
     if (activeAccount != null) {
       Preferences preferences = Preferences.userRoot().node(preferencePathRoot);
       preferences.put(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL, activeAccount.getEmail());
@@ -152,7 +155,7 @@ public class GoogleLoginService implements IGoogleLoginService {
       if (account != null) {
         activeAccount = account;
         accounts = loginState.listAccounts();
-        persisteActiveAccount();
+        persistActiveAccount();
       }
       return activeAccount;
     }
@@ -185,6 +188,13 @@ public class GoogleLoginService implements IGoogleLoginService {
   }
 
   @Override
+  public boolean isLoggedIn() {
+    synchronized (loginState) {
+      return activeAccount != null;
+    }
+  };
+
+  @Override
   public boolean switchActiveAccount(String email) {
     Preconditions.checkNotNull(email);
 
@@ -192,7 +202,7 @@ public class GoogleLoginService implements IGoogleLoginService {
       Account account = findAccount(accounts, email);
       if (account != null) {
         activeAccount = account;
-        persisteActiveAccount();
+        persistActiveAccount();
         return true;
       }
       return false;
@@ -202,6 +212,9 @@ public class GoogleLoginService implements IGoogleLoginService {
   @Override
   public Set<Account> listAccounts() {
     synchronized (loginState) {
+      // 'accounts' is a reference to a copy of Accounts maintained in 'loginState'.
+      // ('loginState.listAccounts()' returns a copy.) We intend to return this
+      // reference to callers, while never modifying the set itself.
       return accounts;
     }
   }
