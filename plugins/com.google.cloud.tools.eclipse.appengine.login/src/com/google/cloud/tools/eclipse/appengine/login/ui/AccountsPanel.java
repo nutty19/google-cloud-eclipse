@@ -20,6 +20,7 @@ import com.google.cloud.tools.eclipse.appengine.login.IGoogleLoginService;
 import com.google.cloud.tools.eclipse.appengine.login.Messages;
 import com.google.cloud.tools.eclipse.ui.util.FontUtil;
 import com.google.cloud.tools.ide.login.Account;
+import com.google.common.annotations.VisibleForTesting;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -36,6 +37,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -49,6 +52,10 @@ public class AccountsPanel extends PopupDialog {
   private static final int EMAIL_LEFT_MARGIN = 8;
 
   private IGoogleLoginService loginService;
+
+  @VisibleForTesting Label activeAccountLabel;
+  @VisibleForTesting Button logOutButton;
+  @VisibleForTesting List<Link> inactiveAccountLinks = new ArrayList<>();
 
   public AccountsPanel(Shell parent, IGoogleLoginService loginService) {
     super(parent, SWT.MODELESS,
@@ -81,18 +88,21 @@ public class AccountsPanel extends PopupDialog {
     return container;
   }
 
-  private void createAccountsPane(Composite container) {
-    Label messageLabel = new Label(container, SWT.NONE);
-    messageLabel.setText(Messages.LABEL_ACTIVE_ACCOUNT);
-    FontUtil.convertFontToBold(messageLabel);
-
-    Composite activeAccountIndenter = new Composite(container, SWT.NONE);
-    GridLayoutFactory.swtDefaults().margins(EMAIL_LEFT_MARGIN, 0).applyTo(activeAccountIndenter);
-
+  @VisibleForTesting
+  void createAccountsPane(Composite container) {
     Account activeAccount = loginService.getActiveAccount();
-    Label accountLabel = new Label(activeAccountIndenter, SWT.NONE);
-    accountLabel.setText(activeAccount.getEmail());
-    FontUtil.convertFontToBold(accountLabel);
+    if (activeAccount != null) {
+      Label messageLabel = new Label(container, SWT.NONE);
+      messageLabel.setText(Messages.LABEL_ACTIVE_ACCOUNT);
+      FontUtil.convertFontToBold(messageLabel);
+
+      Composite activeAccountIndenter = new Composite(container, SWT.NONE);
+      GridLayoutFactory.swtDefaults().margins(EMAIL_LEFT_MARGIN, 0).applyTo(activeAccountIndenter);
+
+      activeAccountLabel = new Label(activeAccountIndenter, SWT.NONE);
+      activeAccountLabel.setText(activeAccount.getEmail());
+      FontUtil.convertFontToBold(activeAccountLabel);
+    }
 
     Set<Account> accounts = loginService.listAccounts();
     if (accounts.size() > 1) {
@@ -106,6 +116,7 @@ public class AccountsPanel extends PopupDialog {
           Link link = new Link(accountsIndenter, SWT.NO_FOCUS);
           link.setText("<a href=\"" + account.getEmail() + "\">" + account.getEmail() + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           link.addSelectionListener(new SwitchAccountOnClick());
+          inactiveAccountLinks.add(link);
         }
       }
     }
@@ -122,7 +133,7 @@ public class AccountsPanel extends PopupDialog {
     GridDataFactory.defaultsFor(addAccountButton).applyTo(addAccountButton);
 
     if (loginService.isLoggedIn()) {
-      Button logOutButton = new Button(buttonArea, SWT.PUSH);
+      logOutButton = new Button(buttonArea, SWT.PUSH);
       logOutButton.setText(Messages.BUTTON_ACCOUNTS_PANEL_LOGOUT);
       logOutButton.addSelectionListener(new LogOutOnClick());
       GridDataFactory.defaultsFor(logOutButton).applyTo(logOutButton);
