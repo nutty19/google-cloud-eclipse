@@ -70,7 +70,7 @@ public interface IGoogleLoginService {
   void logOutAll();
 
   /**
-   * @return true iff {@link #getActiveAccount} does not return {@code null}.
+   * @return true if there is at least one signed-in account; false otherwise
    */
   boolean isLoggedIn();
 
