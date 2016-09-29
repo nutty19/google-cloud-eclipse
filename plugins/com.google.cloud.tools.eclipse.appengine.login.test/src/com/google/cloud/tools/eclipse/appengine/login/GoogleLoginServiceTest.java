@@ -44,8 +44,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -63,8 +61,8 @@ public class GoogleLoginServiceTest {
   @Mock private Account account3;
 
   private static final String PREFERENCE_PATH_ROOT = "google-login-service-test-preference-path";
-  private static final SortedSet<String> OAUTH_SCOPES = Collections.unmodifiableSortedSet(
-      new TreeSet<>(Arrays.asList(
+  private static final Set<String> OAUTH_SCOPES = Collections.unmodifiableSet(
+      new HashSet<>(Arrays.asList(
           "email",
           "https://www.googleapis.com/auth/cloud-platform"
       )));
@@ -243,7 +241,7 @@ public class GoogleLoginServiceTest {
   @Test
   public void testGoogleLoginService_removeSavedCredentialIfScopesChanged() {
     // Persisted credential in the data store has an out-dated scopes.
-    SortedSet<String> newScope = new TreeSet<>(Arrays.asList("new_scope"));
+    Set<String> newScope = new HashSet<>(Arrays.asList("new_scope"));
     when(savedOAuthData.getEmail()).thenReturn("my-email@example.com");
     when(savedOAuthData.getStoredScopes()).thenReturn(newScope);
     when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
