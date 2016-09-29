@@ -35,8 +35,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
@@ -55,8 +53,8 @@ public class GoogleLoginService implements IGoogleLoginService {
 
   // For the detailed info about each scope, see
   // https://github.com/GoogleCloudPlatform/gcloud-eclipse-tools/wiki/Cloud-Tools-for-Eclipse-Technical-Design#oauth-20-scopes-requested
-  private static final SortedSet<String> OAUTH_SCOPES = Collections.unmodifiableSortedSet(
-      new TreeSet<>(Arrays.asList(
+  private static final Set<String> OAUTH_SCOPES = Collections.unmodifiableSet(
+      new HashSet<>(Arrays.asList(
           "email", //$NON-NLS-1$
           "https://www.googleapis.com/auth/cloud-platform" //$NON-NLS-1$
       )));
