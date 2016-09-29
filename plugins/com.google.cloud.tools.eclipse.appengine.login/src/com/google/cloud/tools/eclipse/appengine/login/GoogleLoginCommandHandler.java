@@ -47,7 +47,7 @@ public class GoogleLoginCommandHandler extends AbstractHandler implements IEleme
   public void updateElement(UIElement element, @SuppressWarnings("rawtypes") Map parameters) {
     IGoogleLoginService loginService =
         element.getServiceLocator().getService(IGoogleLoginService.class);
-    boolean loggedIn = loginService.getActiveAccount() != null;
+    boolean loggedIn = loginService.isLoggedIn();
 
     element.setText(loggedIn ? Messages.LOGIN_MENU_LOGGED_IN : Messages.LOGIN_MENU_LOGGED_OUT);
   }
