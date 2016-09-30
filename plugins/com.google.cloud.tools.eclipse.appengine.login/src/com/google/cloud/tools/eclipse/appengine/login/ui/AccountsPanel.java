@@ -93,7 +93,6 @@ public class AccountsPanel extends PopupDialog {
 
   private void createButtons(Composite container) {
     Composite buttonArea = new Composite(container, SWT.NONE);
-    GridDataFactory.fillDefaults().applyTo(buttonArea);
     GridLayoutFactory.fillDefaults().numColumns(2).applyTo(buttonArea);
 
     Button addAccountButton = new Button(buttonArea, SWT.PUSH);
