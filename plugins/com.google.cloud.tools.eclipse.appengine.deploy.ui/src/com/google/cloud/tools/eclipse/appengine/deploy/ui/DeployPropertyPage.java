@@ -24,8 +24,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+import com.google.cloud.tools.eclipse.appengine.login.IGoogleLoginService;
 import com.google.cloud.tools.eclipse.util.AdapterUtil;
 
 public class DeployPropertyPage extends PropertyPage {
@@ -35,9 +37,12 @@ public class DeployPropertyPage extends PropertyPage {
   @Override
   protected Control createContents(Composite parent) {
     IProject project = AdapterUtil.adapt(getElement(), IProject.class);
+    IGoogleLoginService loginService =
+        PlatformUI.getWorkbench().getService(IGoogleLoginService.class);
 
     Composite container = new Composite(parent, SWT.NONE);
-    content = new DeployPreferencesPanel(container, project, getLayoutChangedHandler());
+    content = new DeployPreferencesPanel(container, project,
+        loginService, getLayoutChangedHandler());
 
     GridDataFactory.fillDefaults().grab(true, false).applyTo(content);
     GridDataFactory.fillDefaults().grab(true, true).applyTo(container);

@@ -54,6 +54,9 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.osgi.service.prefs.BackingStoreException;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.cloud.tools.eclipse.appengine.login.IGoogleLoginService;
+import com.google.cloud.tools.eclipse.appengine.login.ui.AccountSelector;
 import com.google.cloud.tools.eclipse.ui.util.FontUtil;
 import com.google.cloud.tools.eclipse.ui.util.databinding.BucketNameValidator;
 import com.google.cloud.tools.eclipse.ui.util.databinding.ProjectIdInputValidator;
@@ -71,6 +74,8 @@ public class DeployPreferencesPanel extends Composite {
   private static final int INDENT_CHECKBOX_ENABLED_WIDGET = 10;
 
   private static Logger logger = Logger.getLogger(DeployPropertyPage.class.getName());
+
+  private AccountSelector accountSelector;
 
   private Label projectIdLabel;
   private Text projectId;
@@ -96,12 +101,15 @@ public class DeployPreferencesPanel extends Composite {
   private Runnable layoutChangedHandler;
   private FormToolkit formToolkit;
 
-  public DeployPreferencesPanel(Composite parent, IProject project, Runnable layoutChangedHandler) {
+  public DeployPreferencesPanel(Composite parent, IProject project,
+                                IGoogleLoginService loginService, Runnable layoutChangedHandler) {
     super(parent, SWT.NONE);
 
     this.layoutChangedHandler = layoutChangedHandler;
 
     initializeFormToolkit();
+
+    createCredentialSection(loginService);
 
     createProjectIdSection();
 
@@ -231,6 +239,21 @@ public class DeployPreferencesPanel extends Composite {
 
   private void loadPreferences(IProject project) {
     model = new DeployPreferencesModel(project);
+  }
+
+  public Credential getSelectedCredential() {
+    return accountSelector.getSelectedCredential();
+  }
+
+  private void createCredentialSection(IGoogleLoginService loginService) {
+    Composite accountComposite = new Composite(this, SWT.NONE);
+
+    new Label(accountComposite, SWT.LEFT).setText(
+        Messages.getString("deploy.preferences.dialog.label.selectCredential"));
+
+    accountSelector = new AccountSelector(accountComposite, loginService,
+        Messages.getString("deploy.preferences.dialog.accountSelector.login"));
+    GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(accountComposite);
   }
 
   private void createProjectIdSection() {

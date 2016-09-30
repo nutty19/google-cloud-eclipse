@@ -54,13 +54,12 @@ import com.google.cloud.tools.eclipse.ui.util.ServiceUtils;
 import com.google.cloud.tools.eclipse.usagetracker.AnalyticsEvents;
 import com.google.cloud.tools.eclipse.usagetracker.AnalyticsPingManager;
 import com.google.cloud.tools.eclipse.util.FacetedProjectHelper;
-import com.google.cloud.tools.ide.login.Account;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Command handler to deploy an App Engine web application project to App Engine Standard.
  * <p>
- * It copies the project's exploded WAR to a staging directory and then executes 
+ * It copies the project's exploded WAR to a staging directory and then executes
  * the staging and deploy operations provided by the App Engine Plugins Core Library.
  */
 public class StandardDeployCommandHandler extends AbstractHandler {
@@ -83,11 +82,14 @@ public class StandardDeployCommandHandler extends AbstractHandler {
     try {
       IProject project = helper.getProject(event);
       if (project != null) {
-        Credential credential = loginIfNeeded(event);
-        if (credential != null) {
-          if (new DeployPreferencesDialog(HandlerUtil.getActiveShell(event), project).open() == Window.OK) {
-            launchDeployJob(project, credential, event);
-          }
+        IGoogleLoginService loginService = ServiceUtils.getService(event, IGoogleLoginService.class);
+        DeployPreferencesDialog dialog =
+            new DeployPreferencesDialog(HandlerUtil.getActiveShell(event), project, loginService);
+        // TODO(chanseok): remove the condition (dialog.getCredential() != null) after fixing
+        // https://github.com/GoogleCloudPlatform/google-cloud-eclipse/issues/759. The fix will
+        // make the condition redundant.
+        if (dialog.open() == Window.OK && dialog.getCredential() != null) {
+          launchDeployJob(project, dialog.getCredential(), event);
         }
       }
       // return value must be null, reserved for future use
@@ -99,10 +101,10 @@ public class StandardDeployCommandHandler extends AbstractHandler {
 
   private void launchDeployJob(IProject project, Credential credential, ExecutionEvent event)
       throws IOException, ExecutionException {
-    
+
     AnalyticsPingManager.getInstance().sendPing(
         AnalyticsEvents.APP_ENGINE_DEPLOY, AnalyticsEvents.APP_ENGINE_DEPLOY_STANDARD, null);
-    
+
     IPath workDirectory = createWorkDirectory();
 
     DefaultDeployConfiguration deployConfiguration = getDeployConfiguration(project, event);
@@ -163,16 +165,6 @@ public class StandardDeployCommandHandler extends AbstractHandler {
     IPath workDirectory = getTempDir().append(now);
     Files.createDirectories(workDirectory.toFile().toPath());
     return workDirectory;
-  }
-
-  private Credential loginIfNeeded(ExecutionEvent event) {
-    IGoogleLoginService loginService = ServiceUtils.getService(event, IGoogleLoginService.class);
-    Account account = loginService.getActiveAccountWithAutoLogin(
-        Messages.getString("deploy.login.dialog.message"));
-    if (account != null) {
-      return account.getOAuth2Credential();
-    }
-    return null;
   }
 
   private void launchCleanupJob() {

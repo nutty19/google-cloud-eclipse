@@ -83,66 +83,45 @@ public class AccountsPanelTest {
   }
 
   @Test
-  public void testActiveAccount_notLoggedIn() {
+  public void testAccountsArea_zeroAccounts() {
     setUpLoginService();
 
     AccountsPanel panel = new AccountsPanel(null, loginService);
     panel.createDialogArea(new Shell(display));
 
-    assertNull(panel.activeAccountLabel);
+    assertTrue(panel.accountLabels.isEmpty());
   }
 
   @Test
-  public void testActiveAccount_loggedIn() {
+  public void testAccountsArea_oneAccount() {
     setUpLoginService(Arrays.asList(account1));
 
     AccountsPanel panel = new AccountsPanel(null, loginService);
     panel.createDialogArea(new Shell(display));
 
-    assertNotNull(panel.activeAccountLabel);
+    assertEquals(1, panel.accountLabels.size());
+    panel.accountLabels.get(0).getText().contains(account2.getEmail());
   }
 
   @Test
-  public void testAccountsArea_zeroInactiveAccounts() {
-    setUpLoginService(Arrays.asList(account1));
-
-    AccountsPanel panel = new AccountsPanel(null, loginService);
-    panel.createDialogArea(new Shell(display));
-
-    assertTrue(panel.inactiveAccountLinks.isEmpty());
-  }
-
-  @Test
-  public void testAccountsArea_oneInactiveAccounts() {
-    setUpLoginService(Arrays.asList(account1, account2));
-
-    AccountsPanel panel = new AccountsPanel(null, loginService);
-    panel.createDialogArea(new Shell(display));
-
-    assertEquals(1, panel.inactiveAccountLinks.size());
-    panel.inactiveAccountLinks.get(0).getText().contains(account2.getEmail());
-  }
-
-  @Test
-  public void testAccountsArea_twoInactiveAccounts() {
+  public void testAccountsArea_threeAccounts() {
     setUpLoginService(Arrays.asList(account1, account2, account3));
 
     AccountsPanel panel = new AccountsPanel(null, loginService);
     panel.createDialogArea(new Shell(display));
 
-    assertEquals(2, panel.inactiveAccountLinks.size());
-    String text1 = panel.inactiveAccountLinks.get(0).getText();
-    String text2 = panel.inactiveAccountLinks.get(1).getText();
-    assertTrue((text1 + text2).contains(account2.getEmail()));
-    assertTrue((text1 + text2).contains(account3.getEmail()));
+    assertEquals(3, panel.accountLabels.size());
+    String text1 = panel.accountLabels.get(0).getText();
+    String text2 = panel.accountLabels.get(1).getText();
+    String text3 = panel.accountLabels.get(2).getText();
+    assertTrue((text1 + text2 + text3).contains(account1.getEmail()));
+    assertTrue((text1 + text2 + text3).contains(account2.getEmail()));
+    assertTrue((text1 + text2 + text3).contains(account3.getEmail()));
   }
 
   private void setUpLoginService(List<Account> accounts) {
-    when(loginService.isLoggedIn()).thenReturn(!accounts.isEmpty());
-    when(loginService.listAccounts()).thenReturn(new HashSet<>(accounts));
-    if (!accounts.isEmpty()) {
-      when(loginService.getActiveAccount()).thenReturn(accounts.get(0));
-    }
+    when(loginService.hasAccounts()).thenReturn(!accounts.isEmpty());
+    when(loginService.getAccounts()).thenReturn(new HashSet<>(accounts));
   }
 
   private void setUpLoginService() {

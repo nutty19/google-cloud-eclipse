@@ -20,11 +20,15 @@ import com.google.cloud.tools.ide.login.Account;
 
 import java.util.Set;
 
+/**
+ * Provides services around managing Google accounts, including adding new accounts, returning
+ * signed-in accounts, signing out, etc.
+ */
 public interface IGoogleLoginService {
 
   /**
    * Initiates user login by launching an external browser that a user will interact with
-   * to log in. The returned {@link Account}, if not {@code null}, becomes an active account.
+   * to log in.
    *
    * Must be called from a UI context.
    *
@@ -33,34 +37,6 @@ public interface IGoogleLoginService {
    *     including failed and canceled login
    */
   Account logIn(String dialogMessage);
-
-  /**
-   * Returns an active {@link Account} (among multiple logged-in accounts). Unlike {@link
-   * #getActiveAccountWithAutoLogin}, this version does not involve login process or make
-   * network calls. Returns {@code null} if there is no account logged in.
-   *
-   * Safe to call from non-UI contexts.
-   */
-  Account getActiveAccount();
-
-  /**
-   * Returns an active {@link Account} (among multiple logged-in accounts). If there is no
-   * account logged in, calls {@link #logIn}. The implementation is effectively as below:
-   *
-   * <pre>
-   * {@code
-   * if (activeAccount != null) {
-   *    return activeAccount;
-   *  }
-   *  return logIn(dialogMessage);
-   * }
-   * </pre>
-   *
-   * Must be called from a UI context.
-   *
-   * @see #logIn
-   */
-  Account getActiveAccountWithAutoLogin(String dialogMessage);
 
   /**
    * Clears all accounts. ("Logging out" from users' perspective.)
@@ -72,18 +48,7 @@ public interface IGoogleLoginService {
   /**
    * @return true if there is at least one signed-in account; false otherwise
    */
-  boolean isLoggedIn();
-
-  /**
-   * If there exists an account that matches the given {@code email}, makes it an active account.
-   *
-   * Safe to call from non-UI contexts.
-   *
-   * @param email cannot be {@null}
-   * @return true if there existed an account matching the {@code email} and it became active;
-   *     false otherwise
-   */
-  boolean switchActiveAccount(String email);
+  boolean hasAccounts();
 
   /**
    * Returns a list of currently logged-in accounts.
@@ -92,5 +57,5 @@ public interface IGoogleLoginService {
    *
    * @return never {@code null}
    */
-  Set<Account> listAccounts();
+  Set<Account> getAccounts();
 }

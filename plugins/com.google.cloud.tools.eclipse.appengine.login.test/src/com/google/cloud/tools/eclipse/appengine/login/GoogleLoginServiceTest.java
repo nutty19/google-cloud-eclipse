@@ -17,7 +17,6 @@ package com.google.cloud.tools.eclipse.appengine.login;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -33,7 +32,6 @@ import com.google.cloud.tools.ide.login.LoggerFacade;
 import com.google.cloud.tools.ide.login.OAuthData;
 import com.google.cloud.tools.ide.login.OAuthDataStore;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,8 +42,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GoogleLoginServiceTest {
@@ -60,7 +56,6 @@ public class GoogleLoginServiceTest {
   @Mock private Account account2;
   @Mock private Account account3;
 
-  private static final String PREFERENCE_PATH_ROOT = "google-login-service-test-preference-path";
   private static final Set<String> OAUTH_SCOPES = Collections.unmodifiableSet(
       new HashSet<>(Arrays.asList(
           "email",
@@ -79,62 +74,55 @@ public class GoogleLoginServiceTest {
 
   @Test
   public void testIsLoggedIn() {
-    assertFalse(newLoginServiceWithMockLoginState(false).isLoggedIn());
+    GoogleLoginService loginService = new GoogleLoginService(dataStore, uiFacade, loggerFacade);
+    assertFalse(loginService.hasAccounts());
   }
 
   @Test
-  public void testGetActiveAccount() {
-    assertNull(newLoginServiceWithMockLoginState(false).getActiveAccount());
-  }
-
-  @Test
-  public void testListAccount() {
-    assertTrue(newLoginServiceWithMockLoginState(false).listAccounts().isEmpty());
+  public void testGetAccount() {
+    GoogleLoginService loginService = new GoogleLoginService(dataStore, uiFacade, loggerFacade);
+    assertTrue(loginService.getAccounts().isEmpty());
   }
 
   @Test
   public void testLogIn_successfulLogin() {
     GoogleLoginService loginService = newLoginServiceWithMockLoginState(true /* set up logins */);
+    Account account = loginService.logIn(null /* no dialog message */);
 
-    loginService.logIn(null /* no dialog message */);
-
-    assertTrue(loginService.isLoggedIn());
+    assertEquals(account1, account);
+    assertTrue(loginService.hasAccounts());
     // Comparison between Account's is conveniently based only on email. (See 'Account.equals().')
-    assertEquals(account1, loginService.getActiveAccount());
-    assertEquals(1, loginService.listAccounts().size());
-    assertEquals(account1, loginService.listAccounts().iterator().next());
+    assertEquals(1, loginService.getAccounts().size());
+    assertEquals(account1, loginService.getAccounts().iterator().next());
   }
 
   @Test
-  public void testNoAutoLoginAfterLogIn() {
-    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true /* set up logins */);
-    loginService.logIn(null /* no dialog message */);
+  public void testLogIn_failedLogin() {
+    GoogleLoginService loginService = newLoginServiceWithMockLoginState(false /* failed login */);
+    Account account = loginService.logIn(null);
 
-    verify(loginState, times(1)).logInWithLocalServer(anyString());
-    assertEquals(account1, loginService.getActiveAccountWithAutoLogin(null));
-    verify(loginState, times(1)).logInWithLocalServer(anyString());
+    assertNull(account);
+    assertFalse(loginService.hasAccounts());
+    assertTrue(loginService.getAccounts().isEmpty());
   }
 
   @Test
   public void testMultipleLogins() {
-    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true /* set up logins */);
+    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true);
 
     loginService.logIn(null /* no dialog message */);
-    assertEquals(account1, loginService.getActiveAccount());
-    Set<Account> accounts1 = loginService.listAccounts();
+    Set<Account> accounts1 = loginService.getAccounts();
     assertEquals(1, accounts1.size());
     assertTrue(accounts1.contains(account1));
 
     loginService.logIn(null);
-    assertEquals(account2, loginService.getActiveAccount());
-    Set<Account> accounts2 = loginService.listAccounts();
+    Set<Account> accounts2 = loginService.getAccounts();
     assertEquals(2, accounts2.size());
     assertTrue(accounts2.contains(account1));
     assertTrue(accounts2.contains(account2));
 
     loginService.logIn(null);
-    assertEquals(account3, loginService.getActiveAccount());
-    Set<Account> accounts3 = loginService.listAccounts();
+    Set<Account> accounts3 = loginService.getAccounts();
     assertEquals(3, accounts3.size());
     assertTrue(accounts3.contains(account1));
     assertTrue(accounts3.contains(account2));
@@ -143,88 +131,19 @@ public class GoogleLoginServiceTest {
 
   @Test
   public void testLogOutAll() {
-    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true /* set up logins */);
+    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true);
 
     loginService.logIn(null /* no dialog message */);
     loginService.logIn(null);
     loginService.logIn(null);
 
-    assertTrue(loginService.isLoggedIn());
-    assertEquals(account3, loginService.getActiveAccount());
-    assertFalse(loginService.listAccounts().isEmpty());
-    assertNotNull(
-        Preferences.userRoot().node(PREFERENCE_PATH_ROOT).get("ACTIVE_ACCOUNT_EMAIL", null));
+    assertTrue(loginService.hasAccounts());
+    assertFalse(loginService.getAccounts().isEmpty());
 
     loginService.logOutAll();
 
-    assertFalse(loginService.isLoggedIn());
-    assertNull(loginService.getActiveAccount());
-    assertTrue(loginService.listAccounts().isEmpty());
-    assertNull(Preferences.userRoot().node(PREFERENCE_PATH_ROOT).get("ACTIVE_ACCOUNT_EMAIL", null));
-  }
-
-  @Test
-  public void testRestoreActiveAccount() {
-    Preferences.userRoot().node(PREFERENCE_PATH_ROOT)
-        .put("ACTIVE_ACCOUNT_EMAIL", "some-email-2@example.com");
-    when(loginState.listAccounts()).thenReturn(
-        new HashSet<Account>(Arrays.asList(account1, account2, account3)));
-
-    GoogleLoginService loginService = newLoginServiceWithMockLoginState(false /* no login setup */);
-    loginService.restoreActiveAccount();
-    assertEquals(account2, loginService.getActiveAccount());
-  }
-
-  @Test
-  public void testPersisteActiveAccount() {
-    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true /* set up logins */);
-
-    loginService.logIn(null /* no dialog message */);
-    loginService.logIn(null);
-    loginService.logIn(null);
-    loginService.persistActiveAccount();
-
-    assertEquals("some-email-3@example.com",
-        Preferences.userRoot().node(PREFERENCE_PATH_ROOT).get("ACTIVE_ACCOUNT_EMAIL", null));
-  }
-
-  @Test
-  public void testLogIn_activeAccountPersisted() {
-    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true /* set up logins */);
-    when(loginState.logInWithLocalServer(anyString())).thenReturn(account2);
-    when(loginState.listAccounts()).thenReturn(new HashSet<>(Arrays.asList(account2)));
-
-    loginService.logIn(null /* no dialog message */);
-
-    assertTrue(loginService.isLoggedIn());
-    assertEquals("some-email-2@example.com",
-        Preferences.userRoot().node(PREFERENCE_PATH_ROOT).get("ACTIVE_ACCOUNT_EMAIL", null));
-  }
-
-  @Test
-  public void testSwitchActiveAccount() {
-    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true /* set up logins */);
-    loginService.logIn(null /* no dialog message */);
-    loginService.logIn(null);
-    loginService.logIn(null);
-
-    assertEquals(account3, loginService.getActiveAccount());
-    loginService.switchActiveAccount("some-email-1@example.com");
-    assertEquals(account1, loginService.getActiveAccount());
-    loginService.switchActiveAccount("some-email-2@example.com");
-    assertEquals(account2, loginService.getActiveAccount());
-    loginService.switchActiveAccount("some-email-3@example.com");
-    assertEquals(account3, loginService.getActiveAccount());
-  }
-
-  @Test
-  public void testSwitchActiveAccount_invalidEmail() {
-    GoogleLoginService loginService = newLoginServiceWithMockLoginState(true /* set up logins */);
-    loginService.logIn(null /* no dialog message */);
-    loginService.logIn(null);
-    loginService.logIn(null);
-    loginService.switchActiveAccount("non-existing-email@example.com");
-    assertEquals(account3, loginService.getActiveAccount());
+    assertFalse(loginService.hasAccounts());
+    assertTrue(loginService.getAccounts().isEmpty());
   }
 
   @Test
@@ -233,9 +152,8 @@ public class GoogleLoginServiceTest {
     when(savedOAuthData.getStoredScopes()).thenReturn(OAUTH_SCOPES);
     when(savedOAuthData.getRefreshToken()).thenReturn(null);
 
-    GoogleLoginService loginService = newLoginService();
+    new GoogleLoginService(dataStore, uiFacade, loggerFacade);
     verify(dataStore, times(1)).removeOAuthData("my-email@example.com");
-    assertNull(loginService.getActiveAccount());
   }
 
   @Test
@@ -246,24 +164,20 @@ public class GoogleLoginServiceTest {
     when(savedOAuthData.getStoredScopes()).thenReturn(newScope);
     when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
 
-    GoogleLoginService loginService = newLoginService();
+    new GoogleLoginService(dataStore, uiFacade, loggerFacade);
     verify(dataStore, times(1)).removeOAuthData("my-email@example.com");
-    assertNull(loginService.getActiveAccount());
   }
 
   @Test
   public void testGoogleLoginService_restoreSavedCredential() {
-    Preferences.userRoot().node(PREFERENCE_PATH_ROOT)
-        .put("ACTIVE_ACCOUNT_EMAIL", "my-email@example.com");
     // Persisted credential in the data store is valid.
     when(savedOAuthData.getEmail()).thenReturn("my-email@example.com");
     when(savedOAuthData.getStoredScopes()).thenReturn(OAUTH_SCOPES);
     when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
 
-    GoogleLoginService loginService = newLoginService();
+    new GoogleLoginService(dataStore, uiFacade, loggerFacade);
     verify(dataStore, never()).removeOAuthData("my-email@example.com");
     verify(dataStore, never()).clearStoredOAuthData();
-    assertNotNull(loginService.getActiveAccount());
   }
 
   @Test
@@ -275,27 +189,22 @@ public class GoogleLoginServiceTest {
     assertTrue(loginUrl.contains("redirect_uri=" + customRedirectUrl));
   }
 
-  private GoogleLoginService newLoginServiceWithMockLoginState(boolean setUpThreeLogins) {
+  private GoogleLoginService newLoginServiceWithMockLoginState(boolean setUpSuccessfulLogins) {
     GoogleLoginService loginService = new GoogleLoginService(
-        loginState, PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
+        loginState, dataStore, uiFacade, loggerFacade);
 
-    if (setUpThreeLogins) {
+    if (setUpSuccessfulLogins) {
       when(loginState.logInWithLocalServer(anyString()))
           .thenReturn(account1).thenReturn(account2).thenReturn(account3);
       when(loginState.listAccounts())
           .thenReturn(new HashSet<>(Arrays.asList(account1)))
           .thenReturn(new HashSet<>(Arrays.asList(account1, account2)))
           .thenReturn(new HashSet<>(Arrays.asList(account1, account2, account3)));
+    } else {
+      when(loginState.logInWithLocalServer(anyString())).thenReturn(null);
+      when(loginState.listAccounts()).thenReturn(new HashSet<Account>());
     }
+
     return loginService;
-  }
-
-  private GoogleLoginService newLoginService() {
-    return new GoogleLoginService(PREFERENCE_PATH_ROOT, dataStore, uiFacade, loggerFacade);
-  }
-
-  @After
-  public void tearDown() throws BackingStoreException {
-    Preferences.userRoot().node(PREFERENCE_PATH_ROOT).removeNode();
   }
 }

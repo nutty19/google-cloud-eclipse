@@ -24,7 +24,6 @@ import com.google.cloud.tools.ide.login.JavaPreferenceOAuthDataStore;
 import com.google.cloud.tools.ide.login.LoggerFacade;
 import com.google.cloud.tools.ide.login.OAuthDataStore;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -37,19 +36,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 
 /**
- * Provides service related to login, e.g., account management, getting a credential of a
- * currently active user, etc.
+ * Provides service related to login, e.g., account management, getting a credential, etc.
  */
 public class GoogleLoginService implements IGoogleLoginService {
 
-  private static final String PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL = "ACTIVE_ACCOUNT_EMAIL";
-  private static final String PREFERENCE_PATH_ROOT = "/com/google/cloud/tools/eclipse/login";
   private static final String PREFERENCE_PATH_OAUTH_DATA_STORE =
-      PREFERENCE_PATH_ROOT + "/datastore";
+      "/com/google/cloud/tools/eclipse/login/datastore";
 
   // For the detailed info about each scope, see
   // https://github.com/GoogleCloudPlatform/gcloud-eclipse-tools/wiki/Cloud-Tools-for-Eclipse-Technical-Design#oauth-20-scopes-requested
@@ -70,13 +64,9 @@ public class GoogleLoginService implements IGoogleLoginService {
         GoogleLoginService.OAUTH_SCOPES).toString();
   }
 
-  // We expose the references 'activeAccount' and 'accounts' to callers as-is. 'GoogleLoginService'
-  // must not modify the states of the objects, rather than updating the references.
-  private Account activeAccount;
-  private Set<Account> accounts;
-
-  private String preferencePathRoot;
-
+  // We expose the reference 'accounts' to callers as-is. 'GoogleLoginService' must not modify
+  // the states of the objects, rather than updating the reference.
+  private Set<Account> accounts = new HashSet<>();
   private GoogleLoginState loginState;
 
   private LoginServiceUi loginServiceUi;
@@ -100,9 +90,7 @@ public class GoogleLoginService implements IGoogleLoginService {
         Constants.getOAuthClientId(), Constants.getOAuthClientSecret(), OAUTH_SCOPES,
         new JavaPreferenceOAuthDataStore(PREFERENCE_PATH_OAUTH_DATA_STORE, logger),
         loginServiceUi, logger);
-
-    preferencePathRoot = PREFERENCE_PATH_ROOT;
-    restoreActiveAccount();
+    accounts = loginState.listAccounts();
   }
 
   /**
@@ -112,45 +100,18 @@ public class GoogleLoginService implements IGoogleLoginService {
   public GoogleLoginService() {}
 
   @VisibleForTesting
-  GoogleLoginService(String preferencePathRoot,
-      OAuthDataStore dataStore, LoginServiceUi uiFacade, LoggerFacade loggerFacade) {
+  GoogleLoginService(OAuthDataStore dataStore, LoginServiceUi uiFacade, LoggerFacade loggerFacade) {
     this(new GoogleLoginState(Constants.getOAuthClientId(), Constants.getOAuthClientSecret(),
                               OAUTH_SCOPES, dataStore, uiFacade, loggerFacade),
-        preferencePathRoot, dataStore, uiFacade, loggerFacade);
+         dataStore, uiFacade, loggerFacade);
   }
 
   @VisibleForTesting
-  GoogleLoginService(GoogleLoginState loginState, String preferencePathRoot,
+  GoogleLoginService(GoogleLoginState loginState,
       OAuthDataStore dataStore, LoginServiceUi uiFacade, LoggerFacade loggerFacade) {
     loginServiceUi = uiFacade;
     this.loginState = loginState;
-    this.preferencePathRoot = preferencePathRoot;
-    restoreActiveAccount();
-  }
-
-  @VisibleForTesting
-  void restoreActiveAccount() {
-    Preferences preferences = Preferences.userRoot().node(preferencePathRoot);
-    String activeAccountEmail = preferences.get(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL, null);
-
     accounts = loginState.listAccounts();
-    activeAccount = findAccount(activeAccountEmail);
-  }
-
-  @VisibleForTesting
-  void persistActiveAccount() {
-    Preferences preferences = Preferences.userRoot().node(preferencePathRoot);
-    if (activeAccount == null) {
-      preferences.remove(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL);
-    } else {
-      preferences.put(PREFERENCE_KEY_ACTIVE_ACCOUNT_EMAIL, activeAccount.getEmail());
-    }
-
-    try {
-      preferences.flush();
-    } catch (BackingStoreException bse) {
-      logger.log(Level.WARNING, bse.getLocalizedMessage());
-    }
   }
 
   @Override
@@ -161,28 +122,9 @@ public class GoogleLoginService implements IGoogleLoginService {
     synchronized (loginState) {
       Account account = loginState.logInWithLocalServer(dialogMessage);
       if (account != null) {
-        activeAccount = account;
         accounts = loginState.listAccounts();
-        persistActiveAccount();
       }
-      return activeAccount;
-    }
-  }
-
-  @Override
-  public Account getActiveAccountWithAutoLogin(String dialogMessage) {
-    synchronized (loginState) {
-      if (activeAccount != null) {
-        return activeAccount;
-      }
-      return logIn(dialogMessage);
-    }
-  }
-
-  @Override
-  public Account getActiveAccount() {
-    synchronized (loginState) {
-      return activeAccount;
+      return account;
     }
   }
 
@@ -190,51 +132,25 @@ public class GoogleLoginService implements IGoogleLoginService {
   public void logOutAll() {
     synchronized (loginState) {
       loginState.logOutAll(false /* Don't prompt for logout. */);
-      activeAccount = null;
       accounts = new HashSet<>();
-      persistActiveAccount();
     }
   }
 
   @Override
-  public boolean isLoggedIn() {
+  public boolean hasAccounts() {
     synchronized (loginState) {
-      return activeAccount != null;
-    }
-  };
-
-  @Override
-  public boolean switchActiveAccount(String email) {
-    Preconditions.checkNotNull(email);
-
-    synchronized (loginState) {
-      Account account = findAccount(email);
-      if (account != null) {
-        activeAccount = account;
-        persistActiveAccount();
-        return true;
-      }
-      return false;
+      return !accounts.isEmpty();
     }
   }
 
   @Override
-  public Set<Account> listAccounts() {
+  public Set<Account> getAccounts() {
     synchronized (loginState) {
       // 'accounts' is a reference to a copy of Accounts maintained in 'loginState'.
       // ('loginState.listAccounts()' returns a copy.) We intend to return this
       // reference to callers, while never modifying the set itself.
       return accounts;
     }
-  }
-
-  private Account findAccount(String email) {
-    for (Account account : accounts) {
-      if (account.getEmail().equals(email)) {
-        return account;
-      }
-    }
-    return null;
   }
 
   private static final Logger logger = Logger.getLogger(GoogleLoginService.class.getName());
@@ -250,5 +166,5 @@ public class GoogleLoginService implements IGoogleLoginService {
     public void logWarning(String message) {
       logger.log(Level.WARNING, message);
     }
-  };
+  }
 }
