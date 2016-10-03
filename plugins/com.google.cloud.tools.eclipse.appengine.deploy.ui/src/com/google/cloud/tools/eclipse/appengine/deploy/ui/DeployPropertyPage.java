@@ -30,14 +30,14 @@ import com.google.cloud.tools.eclipse.util.AdapterUtil;
 
 public class DeployPropertyPage extends PropertyPage {
 
-  private DeployPreferencesPanel content;
+  private StandardDeployPreferencesPanel content;
 
   @Override
   protected Control createContents(Composite parent) {
     IProject project = AdapterUtil.adapt(getElement(), IProject.class);
 
     Composite container = new Composite(parent, SWT.NONE);
-    content = new DeployPreferencesPanel(container, project, getLayoutChangedHandler());
+    content = new StandardDeployPreferencesPanel(container, project, getLayoutChangedHandler());
 
     GridDataFactory.fillDefaults().grab(true, false).applyTo(content);
     GridDataFactory.fillDefaults().grab(true, true).applyTo(container);

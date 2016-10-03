@@ -63,7 +63,7 @@ import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener.Err
 import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener.QueryParameterProvider;
 import com.google.common.base.Preconditions;
 
-public class DeployPreferencesPanel extends Composite {
+public class StandardDeployPreferencesPanel extends Composite {
 
   private static final String APPENGINE_VERSIONS_URL = "https://console.cloud.google.com/appengine/versions";
   private static final String URI_PARAM_PROJECT = "project";
@@ -96,7 +96,7 @@ public class DeployPreferencesPanel extends Composite {
   private Runnable layoutChangedHandler;
   private FormToolkit formToolkit;
 
-  public DeployPreferencesPanel(Composite parent, IProject project, Runnable layoutChangedHandler) {
+  public StandardDeployPreferencesPanel(Composite parent, IProject project, Runnable layoutChangedHandler) {
     super(parent, SWT.NONE);
 
     this.layoutChangedHandler = layoutChangedHandler;
