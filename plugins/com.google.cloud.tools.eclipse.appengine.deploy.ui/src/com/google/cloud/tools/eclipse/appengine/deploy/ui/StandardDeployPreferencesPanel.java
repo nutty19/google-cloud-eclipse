@@ -63,7 +63,7 @@ import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener.Err
 import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener.QueryParameterProvider;
 import com.google.common.base.Preconditions;
 
-public class StandardDeployPreferencesPanel extends Composite {
+public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
 
   private static final String APPENGINE_VERSIONS_URL = "https://console.cloud.google.com/appengine/versions";
   private static final String URI_PARAM_PROJECT = "project";

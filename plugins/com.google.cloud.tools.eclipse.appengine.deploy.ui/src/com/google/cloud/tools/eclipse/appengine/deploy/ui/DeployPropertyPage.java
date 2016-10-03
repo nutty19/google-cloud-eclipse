@@ -16,7 +16,11 @@
 
 package com.google.cloud.tools.eclipse.appengine.deploy.ui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.databinding.preference.PreferencePageSupport;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -25,19 +29,27 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.wst.common.project.facet.core.IFacetedProject;
+import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 
+import com.google.cloud.tools.eclipse.appengine.facets.AppEngineFlexFacet;
+import com.google.cloud.tools.eclipse.appengine.facets.AppEngineStandardFacet;
 import com.google.cloud.tools.eclipse.util.AdapterUtil;
 
+/**
+ * Displays the App Engine deployment page for the selected project in the property page dialog.
+ * The contents of the App Engine deployment page varies depending on if the selected project
+ * has the App Engine Standard facet, the App Engine flex facet or no App Engine facet.
+ */
 public class DeployPropertyPage extends PropertyPage {
 
-  private StandardDeployPreferencesPanel content;
+  private DeployPreferencesPanel content;
+  private static final Logger logger = Logger.getLogger(DeployPropertyPage.class.getName());
 
   @Override
   protected Control createContents(Composite parent) {
-    IProject project = AdapterUtil.adapt(getElement(), IProject.class);
-
     Composite container = new Composite(parent, SWT.NONE);
-    content = new StandardDeployPreferencesPanel(container, project, getLayoutChangedHandler());
+    content = getPreferencesPanel(container);
 
     GridDataFactory.fillDefaults().grab(true, false).applyTo(content);
     GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
@@ -85,5 +97,23 @@ public class DeployPropertyPage extends PropertyPage {
   public void dispose() {
     content.dispose();
     super.dispose();
+  }
+
+  private DeployPreferencesPanel getPreferencesPanel(Composite container) {
+    IProject project = AdapterUtil.adapt(getElement(), IProject.class);
+    IFacetedProject facetedProject = null;
+    try {
+      facetedProject = ProjectFacetsManager.create(project);
+    } catch (CoreException ex) {
+      logger.log(Level.WARNING, ex.getMessage());
+      return null;
+    }
+
+    if (AppEngineStandardFacet.hasAppEngineFacet(facetedProject)) {
+      return new StandardDeployPreferencesPanel(container, project, getLayoutChangedHandler());
+    } else if (AppEngineFlexFacet.hasAppEngineFacet(facetedProject)) {
+      return new FlexDeployPreferencesPanel(container);
+    }
+    throw new IllegalStateException(project.getName() + " does not have an App Engine facet.");
   }
 }
