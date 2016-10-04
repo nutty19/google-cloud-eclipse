@@ -17,6 +17,7 @@
 package com.google.cloud.tools.eclipse.appengine.login.ui;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -132,8 +133,7 @@ public class AccountSelectorTest {
     assertNull(selector.getSelectedCredential());
     String emailAtIndex1 = selector.combo.getItem(1);
 
-    selector.combo.select(1);
-    selector.logInOnSelect.widgetSelected(mock(SelectionEvent.class));
+    simulateSelect(selector, 1);
 
     assertEquals(1, selector.combo.getSelectionIndex());
     assertEquals(emailAtIndex1, selector.combo.getItem(1));
@@ -148,8 +148,7 @@ public class AccountSelectorTest {
     assertEquals(3, selector.combo.getItemCount());
 
     assertEquals("<select this to login>", selector.combo.getItem(2));
-    selector.combo.select(2);
-    selector.logInOnSelect.widgetSelected(mock(SelectionEvent.class));
+    simulateSelect(selector, 2);
 
     assertEquals(4, selector.combo.getItemCount());
     assertEquals("some-email-3@example.com", selector.combo.getItem(0));
@@ -165,6 +164,10 @@ public class AccountSelectorTest {
     AccountSelector selector = new AccountSelector(shell, loginService, "<select this to login>");
     assertEquals(3, selector.combo.getItemCount());
 
+    simulateSelect(selector, 1);
+    assertEquals(1, selector.combo.getSelectionIndex());
+    assertNotNull(selector.getSelectedCredential());
+
     assertEquals("<select this to login>", selector.combo.getItem(2));
     selector.combo.select(2);
     selector.logInOnSelect.widgetSelected(mock(SelectionEvent.class));
@@ -173,5 +176,10 @@ public class AccountSelectorTest {
     assertEquals(-1, selector.combo.getSelectionIndex());
     assertNull(selector.getSelectedCredential());
     assertEquals("<select this to login>", selector.combo.getItem(2));
+  }
+
+  private void simulateSelect(AccountSelector selector, int index) {
+    selector.combo.select(index);
+    selector.logInOnSelect.widgetSelected(mock(SelectionEvent.class));
   }
 }
