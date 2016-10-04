@@ -172,6 +172,7 @@ public class AccountSelectorTest {
 
     assertEquals(4, selector.combo.getItemCount());
     assertNotEquals(-1, selector.combo.getSelectionIndex());
+    assertEquals("some-email-1@example.com", selector.combo.getText());
     assertEquals(credential1, selector.getSelectedCredential());
   }
 
