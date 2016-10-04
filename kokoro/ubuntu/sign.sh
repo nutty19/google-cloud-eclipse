@@ -5,4 +5,5 @@ set -e
 # Display commands being run.
 set -x
 
+echo {$KOKORO_PIPER_DIR}
 
