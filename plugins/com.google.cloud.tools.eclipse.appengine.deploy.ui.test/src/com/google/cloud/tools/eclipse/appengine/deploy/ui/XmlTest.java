@@ -20,6 +20,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.cloud.tools.eclipse.appengine.facets.AppEngineFlexFacet;
 import com.google.cloud.tools.eclipse.appengine.facets.AppEngineStandardFacet;
 
 public class XmlTest {
@@ -43,7 +44,7 @@ public class XmlTest {
     NodeList enabledWhen = doc.getElementsByTagName("enabledWhen");
     Assert.assertEquals(3, enabledWhen.getLength());
     NodeList tests = doc.getElementsByTagName("test");
-    Assert.assertEquals(3, tests.getLength());
+    Assert.assertEquals(4, tests.getLength());
     NodeList adapts = doc.getElementsByTagName("adapt");
     Assert.assertEquals(1, adapts.getLength());
 
@@ -57,9 +58,13 @@ public class XmlTest {
     Assert.assertEquals("org.eclipse.core.resources.IProject", adapt.getAttribute("type"));
 
     NodeList adaptTestNodes = adapt.getElementsByTagName("test");
-    Assert.assertEquals(1, adaptTestNodes.getLength());
-    Element adaptTestEntry = (Element) adaptTestNodes.item(0);
-    Assert.assertEquals("org.eclipse.wst.common.project.facet.core.projectFacet", adaptTestEntry.getAttribute("property"));
-    Assert.assertEquals(AppEngineStandardFacet.ID, adaptTestEntry.getAttribute("value"));
+    Assert.assertEquals(2, adaptTestNodes.getLength());
+    Element adaptTestEntry1 = (Element) adaptTestNodes.item(0);
+    String adaptTestProperty = "org.eclipse.wst.common.project.facet.core.projectFacet";
+    Assert.assertEquals(adaptTestProperty, adaptTestEntry1.getAttribute("property"));
+    Assert.assertEquals(AppEngineStandardFacet.ID, adaptTestEntry1.getAttribute("value"));
+    Element adaptTestEntry2 = (Element) adaptTestNodes.item(1);
+    Assert.assertEquals(adaptTestProperty, adaptTestEntry2.getAttribute("property"));
+    Assert.assertEquals(AppEngineFlexFacet.ID, adaptTestEntry2.getAttribute("value"));
   }
 }
