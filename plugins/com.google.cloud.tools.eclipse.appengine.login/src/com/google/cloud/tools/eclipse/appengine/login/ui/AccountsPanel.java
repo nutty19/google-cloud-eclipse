@@ -119,8 +119,16 @@ public class AccountsPanel extends PopupDialog {
   private class LogOutOnClick extends SelectionAdapter {
     @Override
     public void widgetSelected(SelectionEvent event) {
-      if (MessageDialog.openConfirm(getShell(),
-          Messages.LOGOUT_CONFIRM_DIALOG_TITILE, Messages.LOGOUT_CONFIRM_DIALOG_MESSAGE)) {
+      String[] dialogButtonLabels = {"Sign Out", "Don't Sign Out"};
+      MessageDialog logoutDialog = new MessageDialog(
+          getShell(),
+          Messages.LOGOUT_CONFIRM_DIALOG_TITLE,
+          null /* dialogTitleImage */,
+          Messages.LOGOUT_CONFIRM_DIALOG_MESSAGE,
+          MessageDialog.QUESTION,
+          dialogButtonLabels, 0);
+      boolean shouldLogout = logoutDialog.open() == 0;
+      if (shouldLogout) {
         close();
         loginService.logOutAll();
       }
