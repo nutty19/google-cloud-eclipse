@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -87,9 +88,15 @@ public class StandardDeployCommandHandler extends AbstractHandler {
             new DeployPreferencesDialog(HandlerUtil.getActiveShell(event), project, loginService);
         // TODO(chanseok): remove the condition (dialog.getCredential() != null) after fixing
         // https://github.com/GoogleCloudPlatform/google-cloud-eclipse/issues/759. The fix will
-        // make the condition redundant.
-        if (dialog.open() == Window.OK && dialog.getCredential() != null) {
-          launchDeployJob(project, dialog.getCredential(), event);
+        // make the condition redundant. Also remove the stopgap message dialog.
+        if (dialog.open() == Window.OK) {
+          if (dialog.getCredential() != null) {
+            launchDeployJob(project, dialog.getCredential(), event);
+          } else {
+            // Stopgap (https://github.com/GoogleCloudPlatform/google-cloud-eclipse/issues/759)
+            MessageDialog.openInformation(HandlerUtil.getActiveShell(event),
+                "Account Required for Deploy", "Please select an account to deploy.");
+          }
         }
       }
       // return value must be null, reserved for future use
