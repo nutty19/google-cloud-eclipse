@@ -58,7 +58,7 @@ import com.google.cloud.tools.eclipse.util.FacetedProjectHelper;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
- * Command handler to deploy an web application project to App Engine Standard.
+ * Command handler to deploy a web application project to App Engine Standard.
  * <p>
  * It copies the project's exploded WAR to a staging directory and then executes
  * the staging and deploy operations provided by the App Engine Plugins Core Library.
@@ -95,7 +95,8 @@ public class StandardDeployCommandHandler extends AbstractHandler {
           } else {
             // Stopgap (https://github.com/GoogleCloudPlatform/google-cloud-eclipse/issues/759)
             MessageDialog.openInformation(HandlerUtil.getActiveShell(event),
-                "Account Required for Deploy", "Please select an account to deploy.");
+                Messages.getString("deploy.account.missing.dialog.title"),
+                Messages.getString("deploy.account.missing.dialog.message"));
           }
         }
       }
