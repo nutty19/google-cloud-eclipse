@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.databinding.preference.PreferencePageSupport;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -49,7 +50,13 @@ public class DeployPropertyPage extends PropertyPage {
   @Override
   protected Control createContents(Composite parent) {
     Composite container = new Composite(parent, SWT.NONE);
-    content = getPreferencesPanel(container);
+    try {
+      content = getPreferencesPanel(container);
+    } catch (CoreException ex) {
+      logger.log(Level.WARNING, ex.getMessage());
+      MessageDialog.openError(getShell(), "Error creating App Engine Deployment property page", ex.getMessage());
+      return container;
+    }
 
     GridDataFactory.fillDefaults().grab(true, false).applyTo(content);
     GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
@@ -99,21 +106,16 @@ public class DeployPropertyPage extends PropertyPage {
     super.dispose();
   }
 
-  private DeployPreferencesPanel getPreferencesPanel(Composite container) {
+  private DeployPreferencesPanel getPreferencesPanel(Composite container) throws CoreException {
     IProject project = AdapterUtil.adapt(getElement(), IProject.class);
-    IFacetedProject facetedProject = null;
-    try {
-      facetedProject = ProjectFacetsManager.create(project);
-    } catch (CoreException ex) {
-      logger.log(Level.WARNING, ex.getMessage());
-      return null;
-    }
+    IFacetedProject facetedProject = ProjectFacetsManager.create(project);
 
     if (AppEngineStandardFacet.hasAppEngineFacet(facetedProject)) {
       return new StandardDeployPreferencesPanel(container, project, getLayoutChangedHandler());
     } else if (AppEngineFlexFacet.hasAppEngineFacet(facetedProject)) {
       return new FlexDeployPreferencesPanel(container);
+    } else {
+      throw new IllegalStateException(project.getName() + " does not have an App Engine facet.");
     }
-    throw new IllegalStateException(project.getName() + " does not have an App Engine facet.");
   }
 }
