@@ -17,6 +17,7 @@
 package com.google.cloud.tools.eclipse.appengine.login.ui;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -155,6 +156,23 @@ public class AccountSelectorTest {
     assertEquals(0, selector.combo.getSelectionIndex());
     assertEquals(credential3, selector.getSelectedCredential());
     assertEquals("<select this to login>", selector.combo.getItem(3));
+  }
+
+  @Test
+  public void testLogin_existingEmail() {
+    when(loginService.getAccounts())
+        .thenReturn(new HashSet<>(Arrays.asList(account1, account2, account3)));
+    when(loginService.logIn(anyString())).thenReturn(account1);
+    AccountSelector selector = new AccountSelector(shell, loginService, "<select this to login>");
+    assertEquals(4, selector.combo.getItemCount());
+    assertEquals(-1, selector.combo.getSelectionIndex());
+
+    assertEquals("<select this to login>", selector.combo.getItem(3));
+    simulateSelect(selector, 3);
+
+    assertEquals(4, selector.combo.getItemCount());
+    assertNotEquals(-1, selector.combo.getSelectionIndex());
+    assertEquals(credential1, selector.getSelectedCredential());
   }
 
   @Test

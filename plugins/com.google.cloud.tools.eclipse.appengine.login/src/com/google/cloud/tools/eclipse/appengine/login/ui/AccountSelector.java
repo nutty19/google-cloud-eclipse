@@ -74,18 +74,31 @@ public class AccountSelector extends Composite {
       if (combo.getText().equals(loginMessage)) {
         Account account = loginService.logIn(null /* no custom dialog message */);
         if (account != null) {
-          combo.add(account.getEmail(), 0 /* place at top */);
-          combo.setData(account.getEmail(), account.getOAuth2Credential());
-          combo.select(0);
+          addAndSelectAccount(account);
         } else {
           combo.deselect(combo.getSelectionIndex());
         }
       }
 
       int selectedIndex = combo.getSelectionIndex();
-      if (selectedIndex != -1) {
+      if (selectedIndex == -1) {
+        selectedCredential = null;
+      } else {
         selectedCredential = (Credential) combo.getData(combo.getItem(selectedIndex));
       }
+    }
+
+    private void addAndSelectAccount(Account account) {
+      // If the combo already has the email, just select it.
+      for (int i = 0; i < combo.getItemCount(); i++) {
+        if (combo.getItem(i).equals(account.getEmail())) {
+          combo.select(i);
+          return;
+        }
+      }
+      combo.add(account.getEmail(), 0 /* place at top */);
+      combo.setData(account.getEmail(), account.getOAuth2Credential());
+      combo.select(0);
     }
   }
 }
