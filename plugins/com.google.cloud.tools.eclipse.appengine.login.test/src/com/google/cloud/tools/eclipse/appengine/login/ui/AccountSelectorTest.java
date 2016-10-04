@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -122,6 +123,10 @@ public class AccountSelectorTest {
     when(loginService.getAccounts())
         .thenReturn(new HashSet<>(Arrays.asList(account1, account2, account3)));
     AccountSelector selector = new AccountSelector(shell, loginService, "<select this to login>");
+    HashMap<String, Credential> credentialMap = new HashMap<>();
+    credentialMap.put("some-email-1@example.com", credential1);
+    credentialMap.put("some-email-2@example.com", credential2);
+    credentialMap.put("some-email-3@example.com", credential3);
 
     assertEquals(-1, selector.combo.getSelectionIndex());
     assertNull(selector.getSelectedCredential());
@@ -132,19 +137,7 @@ public class AccountSelectorTest {
 
     assertEquals(1, selector.combo.getSelectionIndex());
     assertEquals(emailAtIndex1, selector.combo.getItem(1));
-    switch (emailAtIndex1) {
-      case "some-email-1@example.com":
-        assertEquals(credential1, selector.getSelectedCredential());
-        break;
-      case "some-email-2@example.com":
-        assertEquals(credential2, selector.getSelectedCredential());
-        break;
-      case "some-email-3@example.com":
-        assertEquals(credential3, selector.getSelectedCredential());
-        break;
-      default:
-        throw new RuntimeException();
-    }
+    assertEquals(credentialMap.get(emailAtIndex1), selector.getSelectedCredential());
   }
 
   @Test

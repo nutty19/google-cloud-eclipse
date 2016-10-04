@@ -51,7 +51,7 @@ public interface IGoogleLoginService {
   boolean hasAccounts();
 
   /**
-   * Returns a list of currently logged-in accounts.
+   * Returns currently logged-in accounts.
    *
    * Safe to call from non-UI contexts.
    *

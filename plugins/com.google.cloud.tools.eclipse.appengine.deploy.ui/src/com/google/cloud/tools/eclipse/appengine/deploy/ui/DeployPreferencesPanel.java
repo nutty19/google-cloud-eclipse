@@ -249,7 +249,7 @@ public class DeployPreferencesPanel extends Composite {
     Composite accountComposite = new Composite(this, SWT.NONE);
 
     new Label(accountComposite, SWT.LEFT).setText(
-        Messages.getString("deploy.preferences.dialog.label.selectCredential"));
+        Messages.getString("deploy.preferences.dialog.label.selectAccount"));
 
     accountSelector = new AccountSelector(accountComposite, loginService,
         Messages.getString("deploy.preferences.dialog.accountSelector.login"));

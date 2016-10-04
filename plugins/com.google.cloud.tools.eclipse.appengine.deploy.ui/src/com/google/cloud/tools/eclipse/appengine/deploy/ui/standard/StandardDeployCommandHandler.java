@@ -57,7 +57,7 @@ import com.google.cloud.tools.eclipse.util.FacetedProjectHelper;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
- * Command handler to deploy an App Engine web application project to App Engine Standard.
+ * Command handler to deploy an web application project to App Engine Standard.
  * <p>
  * It copies the project's exploded WAR to a staging directory and then executes
  * the staging and deploy operations provided by the App Engine Plugins Core Library.

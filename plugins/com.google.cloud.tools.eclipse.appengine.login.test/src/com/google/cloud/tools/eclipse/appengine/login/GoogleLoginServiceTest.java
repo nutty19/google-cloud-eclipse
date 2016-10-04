@@ -91,7 +91,7 @@ public class GoogleLoginServiceTest {
 
     assertEquals(account1, account);
     assertTrue(loginService.hasAccounts());
-    // Comparison between Account's is conveniently based only on email. (See 'Account.equals().')
+    // Comparison between accounts is conveniently based only on email. (See 'Account.equals().')
     assertEquals(1, loginService.getAccounts().size());
     assertEquals(account1, loginService.getAccounts().iterator().next());
   }
