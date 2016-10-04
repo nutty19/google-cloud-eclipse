@@ -38,8 +38,8 @@ import com.google.cloud.tools.eclipse.util.AdapterUtil;
 
 /**
  * Displays the App Engine deployment page for the selected project in the property page dialog.
- * The contents of the App Engine deployment page varies depending on if the selected project
- * has the App Engine Standard facet, the App Engine flex facet or no App Engine facet.
+ * The contents of the App Engine deployment page vary depending on if the selected project
+ * has the App Engine Standard facet, the App Engine flex facet, or no App Engine facet.
  */
 public class DeployPropertyPage extends PropertyPage {
 
