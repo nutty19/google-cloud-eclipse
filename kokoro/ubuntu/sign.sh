@@ -6,5 +6,5 @@ set -e
 set -x
 
 echo ${KOKORO_GFILE_DIR}
-ls ${KOKORO_GFILE_DIR}
-
+cd $KOKORO_GFILE_DIR
+mkdir -p signed && chmod 777 signed
