@@ -6,4 +6,5 @@ set -e
 set -x
 
 echo ${KOKORO_GFILE_DIR}
+ls ${KOKORO_GFILE_DIR}
 
