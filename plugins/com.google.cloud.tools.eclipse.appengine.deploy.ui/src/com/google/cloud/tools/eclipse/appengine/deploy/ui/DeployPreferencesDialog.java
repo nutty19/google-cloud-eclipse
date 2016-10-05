@@ -27,7 +27,7 @@ public class DeployPreferencesDialog extends TitleAreaDialog {
   // seems like an Eclipse/JFace bug
   private Image titleImage = AppEngineImages.appEngine(64).createImage();
 
-  private DeployPreferencesPanel content;
+  private StandardDeployPreferencesPanel content;
   private IProject project;
   private IGoogleLoginService loginService;
 
@@ -63,9 +63,8 @@ public class DeployPreferencesDialog extends TitleAreaDialog {
     Composite dialogArea = (Composite) super.createDialogArea(parent);
 
     Composite container = new Composite(dialogArea, SWT.NONE);
-
-    content = new DeployPreferencesPanel(container, project,
-                                         loginService, getLayoutChangedHandler());
+    content = new StandardDeployPreferencesPanel(
+        container, project, loginService, getLayoutChangedHandler());
     GridDataFactory.fillDefaults().grab(true, false).applyTo(content);
 
     // we pull in Dialog's content margins which are zeroed out by TitleAreaDialog
