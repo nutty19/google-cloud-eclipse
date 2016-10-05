@@ -158,7 +158,7 @@ public class GoogleLoginServiceTest {
 
   @Test
   public void testGoogleLoginService_removeSavedCredentialIfScopesChanged() {
-    // Persisted credential in the data store has an out-dated scopes.
+    // Credential in the data store has an out-dated scopes.
     Set<String> newScope = new HashSet<>(Arrays.asList("new_scope"));
     when(savedOAuthData.getEmail()).thenReturn("my-email@example.com");
     when(savedOAuthData.getStoredScopes()).thenReturn(newScope);
@@ -170,7 +170,7 @@ public class GoogleLoginServiceTest {
 
   @Test
   public void testGoogleLoginService_restoreSavedCredential() {
-    // Persisted credential in the data store is valid.
+    // Credential in the data store is valid.
     when(savedOAuthData.getEmail()).thenReturn("my-email@example.com");
     when(savedOAuthData.getStoredScopes()).thenReturn(OAUTH_SCOPES);
     when(savedOAuthData.getRefreshToken()).thenReturn("fake_refresh_token");
