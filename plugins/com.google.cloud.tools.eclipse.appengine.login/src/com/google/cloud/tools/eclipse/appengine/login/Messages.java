@@ -4,6 +4,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
   private static final String BUNDLE_NAME = "com.google.cloud.tools.eclipse.appengine.login.messages"; //$NON-NLS-1$
+  public static String ACCOUNTS_PANEL_INFO_TEXT;
   public static String BUTTON_ACCOUNTS_PANEL_ADD_ACCOUNT;
   public static String BUTTON_ACCOUNTS_PANEL_LOGOUT;
   public static String LOGIN_ERROR_CANNOT_OPEN_BROWSER;

@@ -21,6 +21,7 @@ import com.google.cloud.tools.eclipse.appengine.login.Messages;
 import com.google.cloud.tools.ide.login.Account;
 import com.google.common.annotations.VisibleForTesting;
 
+import org.eclipse.jface.bindings.keys.SWTKeyLookup;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +60,8 @@ public class AccountsPanel extends PopupDialog {
         false /* persistLocation */,
         false /* showDialogMenu */,
         false /* showPersistActions */,
-        null /* no title area */, null /* no info text area */);
+        null /* no title area */,
+        MessageFormat.format(Messages.ACCOUNTS_PANEL_INFO_TEXT, SWTKeyLookup.ESC_NAME));
     this.loginService = loginService;
   }
 
