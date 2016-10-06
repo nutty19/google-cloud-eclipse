@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 // TODO: persist values
-public class FlexDeployPreferencesPanel extends DeployPreferencesPanel{
+public class FlexDeployPreferencesPanel extends DeployPreferencesPanel {
   private Button useValuesButton;
   private Label gaeConfigFolderLabel;
   private Text gaeConfigFolderText;
@@ -62,6 +62,12 @@ public class FlexDeployPreferencesPanel extends DeployPreferencesPanel{
     useValuesButton = new Button(this, SWT.CHECK);
     useValuesButton.setText(Messages.getString("use.config.values"));
     useValuesButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1));
+    useValuesButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+      public void widgetSelected(SelectionEvent event) {
+              updateControls();
+            }
+        });
 
     gaeConfigFolderLabel = new Label(this, SWT.LEFT);
     gaeConfigFolderLabel.setText(Messages.getString("config.folder.location"));
@@ -88,6 +94,7 @@ public class FlexDeployPreferencesPanel extends DeployPreferencesPanel{
         });
 
     GridLayoutFactory.fillDefaults().numColumns(3).generateLayout(this);
+    updateControls();
   }
 
   private void browseForConfigFolder() {
@@ -113,6 +120,16 @@ public class FlexDeployPreferencesPanel extends DeployPreferencesPanel{
       return;
     }
     dockerFileText.setText(result);
+  }
+
+  private void updateControls() {
+    boolean enabled = useValuesButton.getSelection();
+    gaeConfigFolderLabel.setEnabled(enabled);
+    gaeConfigFolderText.setEnabled(enabled);
+    gaeConfigFolderBrowseButton.setEnabled(enabled);
+    dockerFileLabel.setEnabled(enabled);
+    dockerFileText.setEnabled(enabled);
+    dockerFileBrowseButton.setEnabled(enabled);
   }
 
 }
