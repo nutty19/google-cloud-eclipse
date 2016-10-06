@@ -17,16 +17,25 @@
 package com.google.cloud.tools.eclipse.appengine.deploy.ui;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
+// TODO: persist values
 public class FlexDeployPreferencesPanel extends DeployPreferencesPanel{
+  private Button useValuesButton;
+  private Label gaeConfigFolderLabel;
+  private Text gaeConfigFolderText;
+  private Label dockerFileLabel;
+  private Text dockerFileText;
 
   public FlexDeployPreferencesPanel(Composite parent) {
     super(parent, SWT.NONE);
-    Label label = new Label(parent, SWT.NONE);
-    label.setText("Flex deployment settings coming.");
+    createConfigurationFilesSection();
   }
 
   @Override
@@ -42,6 +51,22 @@ public class FlexDeployPreferencesPanel extends DeployPreferencesPanel{
   @Override
   public boolean savePreferences() {
     return false;
+  }
+
+  private void createConfigurationFilesSection() {
+    useValuesButton = new Button(this, SWT.CHECK);
+    useValuesButton.setText(Messages.getString("use.config.values"));
+    useValuesButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
+
+    gaeConfigFolderLabel = new Label(this, SWT.LEFT);
+    gaeConfigFolderLabel.setText(Messages.getString("config.folder.location"));
+    gaeConfigFolderText = new Text(this, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
+
+    dockerFileLabel = new Label(this, SWT.LEFT);
+    dockerFileLabel.setText(Messages.getString("docker.file.location"));
+    dockerFileText = new Text(this, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
+
+    GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(this);
   }
 
 }
