@@ -21,7 +21,6 @@ import com.google.cloud.tools.eclipse.appengine.login.Messages;
 import com.google.cloud.tools.ide.login.Account;
 import com.google.common.annotations.VisibleForTesting;
 
-import org.eclipse.jface.bindings.keys.SWTKeyLookup;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -36,7 +35,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +58,7 @@ public class AccountsPanel extends PopupDialog {
         false /* persistLocation */,
         false /* showDialogMenu */,
         false /* showPersistActions */,
-        null /* no title area */,
-        MessageFormat.format(Messages.ACCOUNTS_PANEL_INFO_TEXT, SWTKeyLookup.ESC_NAME));
+        null /* no title area */, null /* no info text area */);
     this.loginService = loginService;
   }
 
@@ -98,13 +95,13 @@ public class AccountsPanel extends PopupDialog {
     Composite buttonArea = new Composite(container, SWT.NONE);
     GridLayoutFactory.fillDefaults().numColumns(2).applyTo(buttonArea);
 
-    Button addAccountButton = new Button(buttonArea, SWT.PUSH);
+    Button addAccountButton = new Button(buttonArea, SWT.FLAT);
     addAccountButton.setText(Messages.BUTTON_ACCOUNTS_PANEL_ADD_ACCOUNT);
     addAccountButton.addSelectionListener(new LogInOnClick());
     GridDataFactory.defaultsFor(addAccountButton).applyTo(addAccountButton);
 
     if (loginService.hasAccounts()) {
-      logOutButton = new Button(buttonArea, SWT.PUSH);
+      logOutButton = new Button(buttonArea, SWT.FLAT);
       logOutButton.setText(Messages.BUTTON_ACCOUNTS_PANEL_LOGOUT);
       logOutButton.addSelectionListener(new LogOutOnClick());
       GridDataFactory.defaultsFor(logOutButton).applyTo(logOutButton);
