@@ -16,6 +16,8 @@
 
 package com.google.cloud.tools.eclipse.integration.appengine;
 
+import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.widgetOfType;
+
 import com.google.cloud.tools.eclipse.appengine.deploy.AppEngineDeployInfo;
 import com.google.cloud.tools.eclipse.swtbot.SwtBotTestingUtilities;
 import com.google.cloud.tools.eclipse.swtbot.SwtBotTimeoutManager;
@@ -26,10 +28,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -163,5 +171,53 @@ public class SwtBotAppEngineActions {
       }
       return projectId;
     }
+  }
+
+  /**
+   * Returns the Package Explorer view.
+   */
+  public static SWTBotView getPackageExplorer(final SWTWorkbenchBot bot) {
+    SWTBotView explorer = null;
+    for (SWTBotView view : bot.views()) {
+      if (view.getTitle().equals("Package Explorer")) {
+        explorer = view;
+        break;
+      }
+    }
+    return explorer;
+  }
+
+  /**
+   * Returns the project with the specified project name in the Package Explorer view.
+   */
+  public static SWTBotTreeItem selectProjectInPackageExplorer(SWTWorkbenchBot bot, String projectName) {
+    SWTBotView explorer = getPackageExplorer(bot);
+    for (SWTBotView view : bot.views()) {
+      if (view.getTitle().equals("Package Explorer")) {
+        explorer = view;
+        break;
+      }
+    }
+
+    if (explorer == null) {
+      throw new WidgetNotFoundException(
+          "Could not find the 'Package Explorer' view.");
+    }
+
+    // Select the root of the project tree in the explorer view
+    Widget explorerWidget = explorer.getWidget();
+    Tree explorerTree = bot.widget(widgetOfType(Tree.class), explorerWidget);
+    return new SWTBotTree(explorerTree).getTreeItem(projectName).select();
+  }
+
+  /**
+   * Opens the Property Dialog for the specified project. This method assumes that the
+   * Package Explorer view is visible.
+   */
+  public static void openProjectProperties(final SWTWorkbenchBot bot, String projectName) {
+    SWTBotTreeItem projectTreeItem = selectProjectInPackageExplorer(bot, projectName);
+    projectTreeItem.contextMenu("Properties").click();
+    SWTBotShell shell = bot.shell("Properties for " + projectName);
+    shell.activate();
   }
 }
