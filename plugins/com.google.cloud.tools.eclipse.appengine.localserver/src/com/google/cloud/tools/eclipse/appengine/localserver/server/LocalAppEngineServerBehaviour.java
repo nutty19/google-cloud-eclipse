@@ -131,8 +131,9 @@ public class LocalAppEngineServerBehaviour extends ServerBehaviourDelegate {
    *
    * @param runnables the path to directories that contain configuration files like appengine-web.xml
    * @param stream the stream to send development server process output to
+   * @param host
    */
-  void startDevServer(List<File> runnables, MessageConsoleStream stream) {
+  void startDevServer(List<File> runnables, MessageConsoleStream stream, String host) {
     setServerState(IServer.STATE_STARTING);
 
     // Create dev app server instance
@@ -141,6 +142,7 @@ public class LocalAppEngineServerBehaviour extends ServerBehaviourDelegate {
     // Create run configuration
     DefaultRunConfiguration devServerRunConfiguration = new DefaultRunConfiguration();
     devServerRunConfiguration.setAppYamls(runnables);
+    devServerRunConfiguration.setHost(host);
 
     // FIXME: workaround bug when running on a Java8 JVM
     // https://github.com/GoogleCloudPlatform/gcloud-eclipse-tools/issues/181
@@ -162,7 +164,8 @@ public class LocalAppEngineServerBehaviour extends ServerBehaviourDelegate {
    * @param stream the stream to send development server process output to
    * @param debugPort the port to attach a debugger to if launch is in debug mode
    */
-  void startDebugDevServer(List<File> runnables, MessageConsoleStream stream, int debugPort) {
+  void startDebugDevServer(List<File> runnables, MessageConsoleStream stream,
+                           String host, int debugPort) {
     setServerState(IServer.STATE_STARTING);
 
     // Create dev app server instance
@@ -171,6 +174,7 @@ public class LocalAppEngineServerBehaviour extends ServerBehaviourDelegate {
     // Create run configuration
     DefaultRunConfiguration devServerRunConfiguration = new DefaultRunConfiguration();
     devServerRunConfiguration.setAppYamls(runnables);
+    devServerRunConfiguration.setHost(host);
 
     // todo: make this a configurable option, but default to
     // 1 instance to simplify debugging
