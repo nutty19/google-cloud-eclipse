@@ -16,10 +16,18 @@
 
 package com.google.cloud.tools.eclipse.appengine.deploy.ui;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.cloud.tools.eclipse.appengine.login.IGoogleLoginService;
+import com.google.cloud.tools.eclipse.appengine.login.ui.AccountSelector;
+import com.google.cloud.tools.eclipse.appengine.login.ui.AccountSelectorObservableValue;
+import com.google.cloud.tools.eclipse.ui.util.FontUtil;
+import com.google.cloud.tools.eclipse.ui.util.databinding.BucketNameValidator;
+import com.google.cloud.tools.eclipse.ui.util.databinding.ProjectIdInputValidator;
+import com.google.cloud.tools.eclipse.ui.util.databinding.ProjectVersionValidator;
+import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener;
+import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener.ErrorHandler;
+import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener.QueryParameterProvider;
+import com.google.common.base.Preconditions;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ObservablesManager;
@@ -55,17 +63,10 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.osgi.service.prefs.BackingStoreException;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.cloud.tools.eclipse.appengine.login.IGoogleLoginService;
-import com.google.cloud.tools.eclipse.appengine.login.ui.AccountSelector;
-import com.google.cloud.tools.eclipse.ui.util.FontUtil;
-import com.google.cloud.tools.eclipse.ui.util.databinding.BucketNameValidator;
-import com.google.cloud.tools.eclipse.ui.util.databinding.ProjectIdInputValidator;
-import com.google.cloud.tools.eclipse.ui.util.databinding.ProjectVersionValidator;
-import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener;
-import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener.ErrorHandler;
-import com.google.cloud.tools.eclipse.ui.util.event.OpenUriSelectionListener.QueryParameterProvider;
-import com.google.common.base.Preconditions;
+import java.util.Collections;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
 
@@ -77,7 +78,7 @@ public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
   private static Logger logger = Logger.getLogger(DeployPropertyPage.class.getName());
 
   private AccountSelector accountSelector;
-  
+
   private Label projectIdLabel;
   private Text projectId;
 
@@ -109,7 +110,7 @@ public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
     this.layoutChangedHandler = layoutChangedHandler;
 
     initializeFormToolkit();
-    
+
     createCredentialSection(loginService);
 
     createProjectIdSection();
@@ -139,6 +140,7 @@ public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
   private void setupDataBinding() {
     bindingContext = new DataBindingContext();
 
+    setupAccountDataBinding(bindingContext);
     setupProjectIdDataBinding(bindingContext);
     setupProjectVersionDataBinding(bindingContext);
     setupAutoPromoteDataBinding(bindingContext);
@@ -146,6 +148,33 @@ public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
 
     observables = new ObservablesManager();
     observables.addObservablesFromContext(bindingContext, true, true);
+  }
+
+  private void setupAccountDataBinding(DataBindingContext context) {
+    final IObservableValue accountEmailModel = PojoProperties.value("accountEmail").observe(model);
+    context.bindValue(new AccountSelectorObservableValue(accountSelector), accountEmailModel);
+    context.addValidationStatusProvider(new MultiValidator() {
+
+      @Override
+      protected IStatus validate() {
+        String email = (String) accountEmailModel.getValue();
+        // It is possible that no account is selected while a valid email has been saved in
+        // the model if the corresponding account is signed out, so check the selection too.
+        if (email.isEmpty() || accountSelector.getSelectedEmail().isEmpty()) {
+          return ValidationStatus.error(Messages.getString("error.account.missing"));
+        }
+        return ValidationStatus.ok();
+      }
+
+      @Override
+      public IObservableList getTargets() {
+        // BUGFIX: https://bugs.eclipse.org/bugs/show_bug.cgi?id=312785
+        if (isDisposed()) {
+          return Observables.emptyObservableList();
+        }
+        return super.getTargets();
+      }
+    });
   }
 
   private void setupProjectIdDataBinding(DataBindingContext context) {
@@ -224,6 +253,7 @@ public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
                                                               new BucketNameValidator()));
   }
 
+  @Override
   public boolean savePreferences() {
     try {
       model.savePreferences();
@@ -248,7 +278,7 @@ public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
 
   private void createCredentialSection(IGoogleLoginService loginService) {
     Composite accountComposite = new Composite(this, SWT.NONE);
-    
+
     new Label(accountComposite, SWT.LEFT).setText(
         Messages.getString("deploy.preferences.dialog.label.selectAccount"));
 
@@ -409,10 +439,12 @@ public class StandardDeployPreferencesPanel extends DeployPreferencesPanel {
     }
   }
 
+  @Override
   public DataBindingContext getDataBindingContext() {
     return bindingContext;
   }
 
+  @Override
   public void resetToDefaults() {
     model.resetToDefaults();
     bindingContext.updateTargets();

@@ -26,6 +26,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
@@ -67,6 +68,19 @@ public class AccountSelector extends Composite {
     return selectedCredential;
   }
 
+  public String getSelectedEmail() {
+    return combo.getText();
+  }
+
+  public void selectAccount(String email) {
+    System.out.println("Setting combo text: " + email);
+    int index = combo.indexOf(email);
+    if (index != -1) {
+      combo.select(index);
+    }
+    System.out.println("Setting combo text: " + combo.getText());
+  }
+
   @VisibleForTesting
   class LogInOnSelect extends SelectionAdapter {
     @Override
@@ -76,7 +90,7 @@ public class AccountSelector extends Composite {
         if (account != null) {
           addAndSelectAccount(account);
         } else {
-          combo.deselect(combo.getSelectionIndex());
+          combo.deselectAll();
         }
       }
 
@@ -100,5 +114,13 @@ public class AccountSelector extends Composite {
       combo.setData(account.getEmail(), account.getOAuth2Credential());
       combo.select(0);
     }
+  }
+
+  public void addSelectionListener(SelectionListener listener) {
+    combo.addSelectionListener(listener);
+  }
+
+  public void removeSelectionListener(SelectionListener listener) {
+    combo.removeSelectionListener(listener);
   }
 }
