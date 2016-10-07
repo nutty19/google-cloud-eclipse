@@ -17,6 +17,7 @@
 package com.google.cloud.tools.eclipse.appengine.deploy.ui;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Text;
 
 // TODO: persist values
 public class FlexDeployPreferencesPanel extends DeployPreferencesPanel {
+  private static final int LINKED_CHILD_INDENT = 10;
   private Button useValuesButton;
   private Label gaeConfigFolderLabel;
   private Text gaeConfigFolderText;
@@ -63,11 +65,11 @@ public class FlexDeployPreferencesPanel extends DeployPreferencesPanel {
     useValuesButton.setText(Messages.getString("use.config.values"));
     useValuesButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1));
     useValuesButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+      @Override
       public void widgetSelected(SelectionEvent event) {
-              updateControls();
-            }
-        });
+        updateControls();
+      }
+    });
 
     gaeConfigFolderLabel = new Label(this, SWT.LEFT);
     gaeConfigFolderLabel.setText(Messages.getString("config.folder.location"));
@@ -75,11 +77,11 @@ public class FlexDeployPreferencesPanel extends DeployPreferencesPanel {
     gaeConfigFolderBrowseButton = new Button(this, SWT.PUSH);
     gaeConfigFolderBrowseButton.setText(Messages.getString("browse.button"));
     gaeConfigFolderBrowseButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+      @Override
       public void widgetSelected(SelectionEvent event) {
-              browseForConfigFolder();
-            }
-        });
+        browseForConfigFolder();
+      }
+    });
 
     dockerFileLabel = new Label(this, SWT.LEFT);
     dockerFileLabel.setText(Messages.getString("docker.file.location"));
@@ -87,11 +89,15 @@ public class FlexDeployPreferencesPanel extends DeployPreferencesPanel {
     dockerFileBrowseButton = new Button(this, SWT.PUSH);
     dockerFileBrowseButton.setText(Messages.getString("browse.button"));
     dockerFileBrowseButton.addSelectionListener(new SelectionAdapter() {
-            @Override
+      @Override
       public void widgetSelected(SelectionEvent event) {
-              browseForDockerFile();
-            }
-        });
+        browseForDockerFile();
+      }
+    });
+
+    GridDataFactory linkedChildData = GridDataFactory.swtDefaults().indent(LINKED_CHILD_INDENT, 0);
+    linkedChildData.applyTo(gaeConfigFolderLabel);
+    linkedChildData.applyTo(dockerFileLabel);
 
     GridLayoutFactory.fillDefaults().numColumns(3).generateLayout(this);
     updateControls();

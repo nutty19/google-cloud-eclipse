@@ -44,7 +44,7 @@ abstract class DeployPreferencesPanel extends Composite {
     super.dispose();
   }
 
-  public FormToolkit getFormToolkit() {
+  protected FormToolkit getFormToolkit() {
     return formToolkit;
   }
 
