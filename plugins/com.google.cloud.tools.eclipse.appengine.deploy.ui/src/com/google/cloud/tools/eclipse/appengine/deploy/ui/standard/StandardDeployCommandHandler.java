@@ -26,7 +26,9 @@ import java.util.Locale;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -83,6 +85,13 @@ public class StandardDeployCommandHandler extends AbstractHandler {
     try {
       IProject project = helper.getProject(event);
       if (project != null) {
+        if (!checkProjectErrors(project)) {
+          MessageDialog.openInformation(HandlerUtil.getActiveShell(event),
+                                        Messages.getString("build.error.dialog.title"),
+                                        Messages.getString("build.error.dialog.message"));
+          return null;
+        }
+
         IGoogleLoginService loginService = ServiceUtils.getService(event, IGoogleLoginService.class);
         DeployPreferencesDialog dialog =
             new DeployPreferencesDialog(HandlerUtil.getActiveShell(event), project, loginService);
@@ -105,6 +114,12 @@ public class StandardDeployCommandHandler extends AbstractHandler {
     } catch (CoreException | IOException exception) {
       throw new ExecutionException(Messages.getString("deploy.failed.error.message"), exception); //$NON-NLS-1$
     }
+  }
+
+  private static boolean checkProjectErrors(IProject project) throws CoreException {
+    int severity = project.findMaxProblemSeverity(
+        IMarker.PROBLEM, true /* includeSubtypes */, IResource.DEPTH_INFINITE);
+    return severity != IMarker.SEVERITY_ERROR;
   }
 
   private void launchDeployJob(IProject project, Credential credential, ExecutionEvent event)
