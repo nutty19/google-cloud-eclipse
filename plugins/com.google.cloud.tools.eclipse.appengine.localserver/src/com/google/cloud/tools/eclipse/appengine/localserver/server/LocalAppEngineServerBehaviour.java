@@ -130,14 +130,14 @@ public class LocalAppEngineServerBehaviour extends ServerBehaviourDelegate {
    * Starts the development server.
    *
    * @param runnables the path to directories that contain configuration files like appengine-web.xml
-   * @param stream the stream to send development server process output to
-   * @param host
+   * @param console the stream (Eclipse console) to send development server process output to
+   * @param host the host name to which application modules should bind
    */
-  void startDevServer(List<File> runnables, MessageConsoleStream stream, String host) {
+  void startDevServer(List<File> runnables, MessageConsoleStream console, String host) {
     setServerState(IServer.STATE_STARTING);
 
     // Create dev app server instance
-    initializeDevServer(stream);
+    initializeDevServer(console);
 
     // Create run configuration
     DefaultRunConfiguration devServerRunConfiguration = new DefaultRunConfiguration();
@@ -161,15 +161,16 @@ public class LocalAppEngineServerBehaviour extends ServerBehaviourDelegate {
    * Starts the development server in debug mode.
    *
    * @param runnables the path to directories that contain configuration files like appengine-web.xml
-   * @param stream the stream to send development server process output to
+   * @param console the stream (Eclipse console) to send development server process output to
+   * @param host the host name to which application modules should bind
    * @param debugPort the port to attach a debugger to if launch is in debug mode
    */
-  void startDebugDevServer(List<File> runnables, MessageConsoleStream stream,
+  void startDebugDevServer(List<File> runnables, MessageConsoleStream console,
                            String host, int debugPort) {
     setServerState(IServer.STATE_STARTING);
 
     // Create dev app server instance
-    initializeDevServer(stream);
+    initializeDevServer(console);
 
     // Create run configuration
     DefaultRunConfiguration devServerRunConfiguration = new DefaultRunConfiguration();
@@ -202,9 +203,9 @@ public class LocalAppEngineServerBehaviour extends ServerBehaviourDelegate {
     }
   }
 
-  private void initializeDevServer(MessageConsoleStream stream) {
+  private void initializeDevServer(MessageConsoleStream console) {
     MessageConsoleWriterOutputLineListener outputListener =
-        new MessageConsoleWriterOutputLineListener(stream);
+        new MessageConsoleWriterOutputLineListener(console);
 
     // dev_appserver output goes to stderr
     CloudSdk cloudSdk = new CloudSdk.Builder()
