@@ -41,8 +41,6 @@ import java.util.List;
 /**
  * A panel listing all currently logged-in accounts. The panel allows adding new accounts and
  * logging out all accounts.
- *
- * TODO(chanseok): move the panel to the bottom-right corner: https://github.com/GoogleCloudPlatform/google-cloud-eclipse/issues/740
  */
 public class AccountsPanel extends PopupDialog {
 
